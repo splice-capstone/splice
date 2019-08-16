@@ -144,47 +144,38 @@ export default class ReceiptScreen extends React.Component {
   handleMountError = ({ message }) => console.error(message);
 
   sendToTaggun = async photo => {
+    console.log('sending to taggun...');
     const body = {
       image: photo.base64,
-      filename: 'receipt.jpg',
+      filename: 'example.jpg',
       contentType: 'image/jpeg',
-      refresh: false,
-      incognito: false,
-      ipAddress: '32.4.2.223',
-      near: 'Kalamazoo, MI, USA',
-      ignoreMerchantName: 'string',
-      language: 'en',
     };
-    const headers = {
-      apikey: Constants.manifest.extra.taggunApiKey,
-      'content-type': 'application/json',
-      accept: 'application/json',
-    };
-    console.log('headers', headers);
     try {
-      console.log('hellO!!!');
       const response = await axios.post(
         'https://api.taggun.io/api/receipt/v1/verbose/encoded',
         body,
-        headers
+        {
+          headers: {
+            apikey: Constants.manifest.extra.taggunApiKey,
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+        }
       );
-      console.log('response', response);
+      console.log('response', response.data);
     } catch (error) {
-      console.log('**********');
+      console.log('hit an error');
       console.error(error);
     }
   };
 
   onPictureSaved = async photo => {
     this.sendToTaggun(photo);
-
-    console.log('here');
     await FileSystem.moveAsync({
       from: photo.uri,
       to: `${FileSystem.documentDirectory}photos/${Date.now()}.jpg`,
     });
     this.setState({ newPhotos: true });
-    console.log('NOW**HERE');
   };
 
   collectPictureSizes = async () => {
