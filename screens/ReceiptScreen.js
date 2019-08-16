@@ -2,7 +2,7 @@ import * as WebBrowser from 'expo-web-browser';
 import React, { useState, useEffect } from 'react';
 
 import { MonoText } from '../components/StyledText';
-import { Constants, Camera } from 'expo';
+import { Constants } from 'expo';
 import {
   Alert,
   StyleSheet,
@@ -16,6 +16,7 @@ import GalleryScreen from './GalleryScreen';
 import { ifIphoneX } from 'react-native-iphone-x-helper';
 import * as FileSystem from 'expo-file-system';
 import * as Permissions from 'expo-permissions';
+import { Camera } from 'expo-camera';
 
 import {
   Ionicons,
@@ -70,7 +71,6 @@ export default class ReceiptScreen extends React.Component {
     ratios: [],
     barcodeScanning: false,
     faceDetecting: false,
-    faces: [],
     newPhotos: false,
     permissionsGranted: false,
     pictureSize: undefined,
@@ -132,7 +132,11 @@ export default class ReceiptScreen extends React.Component {
 
   takePicture = () => {
     if (this.camera) {
-      this.camera.takePictureAsync({ onPictureSaved: this.onPictureSaved });
+      this.camera.takePictureAsync({
+        onPictureSaved: this.onPictureSaved,
+        base64: true,
+      });
+      console.log('took photo');
     }
   };
 
@@ -144,6 +148,8 @@ export default class ReceiptScreen extends React.Component {
       to: `${FileSystem.documentDirectory}photos/${Date.now()}.jpg`,
     });
     this.setState({ newPhotos: true });
+    console.log('photo taken', photo.uri);
+    console.log('photo taken base 64', photo.base64);
   };
 
   collectPictureSizes = async () => {
@@ -413,35 +419,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  facesContainer: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    left: 0,
-    top: 0,
-  },
-  face: {
-    padding: 10,
-    borderWidth: 2,
-    borderRadius: 2,
-    position: 'absolute',
-    borderColor: '#FFD700',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  landmark: {
-    width: landmarkSize,
-    height: landmarkSize,
-    position: 'absolute',
-    backgroundColor: 'red',
-  },
-  faceText: {
-    color: '#FFD700',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    margin: 10,
-    backgroundColor: 'transparent',
-  },
+
   row: {
     flexDirection: 'row',
   },
