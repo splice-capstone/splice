@@ -2,7 +2,7 @@ import * as WebBrowser from 'expo-web-browser';
 import React, { useState, useEffect } from 'react';
 
 import { MonoText } from '../components/StyledText';
-import { Constants } from 'expo';
+import Constants from 'expo-constants';
 import {
   Alert,
   StyleSheet,
@@ -17,6 +17,7 @@ import { ifIphoneX } from 'react-native-iphone-x-helper';
 import * as FileSystem from 'expo-file-system';
 import * as Permissions from 'expo-permissions';
 import { Camera } from 'expo-camera';
+import axios from 'axios';
 
 import {
   Ionicons,
@@ -142,14 +143,48 @@ export default class ReceiptScreen extends React.Component {
 
   handleMountError = ({ message }) => console.error(message);
 
+  sendToTaggun = async photo => {
+    const body = {
+      image: photo.base64,
+      filename: 'receipt.jpg',
+      contentType: 'image/jpeg',
+      refresh: false,
+      incognito: false,
+      ipAddress: '32.4.2.223',
+      near: 'Kalamazoo, MI, USA',
+      ignoreMerchantName: 'string',
+      language: 'en',
+    };
+    const headers = {
+      apikey: Constants.manifest.extra.taggunApiKey,
+      'content-type': 'application/json',
+      accept: 'application/json',
+    };
+    console.log('headers', headers);
+    try {
+      console.log('hellO!!!');
+      const response = await axios.post(
+        'https://api.taggun.io/api/receipt/v1/verbose/encoded',
+        body,
+        headers
+      );
+      console.log('response', response);
+    } catch (error) {
+      console.log('**********');
+      console.error(error);
+    }
+  };
+
   onPictureSaved = async photo => {
+    this.sendToTaggun(photo);
+
+    console.log('here');
     await FileSystem.moveAsync({
       from: photo.uri,
       to: `${FileSystem.documentDirectory}photos/${Date.now()}.jpg`,
     });
     this.setState({ newPhotos: true });
-    console.log('photo taken', photo.uri);
-    console.log('photo taken base 64', photo.base64);
+    console.log('NOW**HERE');
   };
 
   collectPictureSizes = async () => {
