@@ -17,7 +17,6 @@ const PHOTOS_DIR = FileSystem.documentDirectory + 'photos';
 
 export default class GalleryScreen extends React.Component {
   state = {
-    faces: {},
     images: {},
     photos: [],
     selected: [],
