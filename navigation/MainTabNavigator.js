@@ -9,6 +9,7 @@ import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import ReceiptScreen from '../screens/ReceiptScreen';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -76,10 +77,30 @@ SettingsStack.navigationOptions = {
 
 SettingsStack.path = '';
 
+const ReceiptStack = createStackNavigator(
+  {
+    Receipt: ReceiptScreen,
+  },
+  config
+);
+
+ReceiptStack.navigationOptions = {
+  tabBarLabel: 'Add Receipt',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'}
+    />
+  ),
+};
+
+ReceiptStack.path = '';
+
 const tabNavigator = createBottomTabNavigator({
   HomeStack,
   LinksStack,
   SettingsStack,
+  ReceiptStack,
 });
 
 tabNavigator.path = '';
