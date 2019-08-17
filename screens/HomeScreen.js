@@ -9,12 +9,50 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
 import { MonoText } from '../components/StyledText';
 import db, { userInit } from '../src/tools/firebase';
+import Constants from 'expo-constants';
+import LoginScreen from './LoginScreen';
+import LoggedInScreen from './LoggedInScreen';
+import Expo from 'expo';
+import * as GoogleSignIn from 'expo-google-sign-in';
 
 export default function HomeScreen() {
   const [user, setUser] = useState({});
+
+  const checkIfLoggedIn = () => {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.props.navigation.navigate('ReceiptScreen');
+      } else {
+        this.props.navigation.navigate('LoginScreen');
+      }
+    });
+  };
+
+  const signIn = async () => {
+    try {
+      console.log('success');
+      const result = await Expo.Google.logInAsync({
+        androidClientId: Constants.manifest.extra.androidClientId,
+        iosClientId: Constants.manifest.extra.iosClientId,
+        scopes: ['profile', 'email'],
+      });
+      console.log('result', result);
+
+      if (result.type === 'success') {
+        setUser(result.user);
+        console.log('success', result);
+
+        return result.accessToken;
+      } else {
+        return { cancelled: true };
+        console.log('fail');
+      }
+    } catch (e) {
+      return { error: true };
+    }
+  };
 
   const initStuff = async () => {
     await userInit();
@@ -22,13 +60,13 @@ export default function HomeScreen() {
       .collection('users')
       .doc('f9ArtRIEWMHokxUxWxLg')
       .get();
-    console.log('user2', userDoc.data().name);
     setUser(userDoc.data());
   };
 
-  useEffect(() => {
-    initStuff();
-  }, []);
+  // useEffect(() => {
+  //   // initStuff();
+  //   // signIn();
+  // }, []);
 
   return (
     <View style={styles.container}>
@@ -38,33 +76,19 @@ export default function HomeScreen() {
       >
         <View style={styles.welcomeContainer}>
           <Image
-            source={
-              __DEV__
-                ? require('../assets/images/robot-dev.png')
-                : require('../assets/images/robot-prod.png')
-            }
+            source={require('../assets/images/splice_logo.jpg')}
             style={styles.welcomeImage}
           />
+          {user.length ? (
+            <LoggedInScreen user={user} />
+          ) : (
+            <LoginScreen signIn={signIn} />
+          )}
         </View>
-
         <View style={styles.getStartedContainer}>
           <Text style={styles.welcome}>user's name: {user.name}</Text>
         </View>
       </ScrollView>
-
-      <View style={styles.tabBarInfoContainer}>
-        <Text style={styles.tabBarInfoText}>
-          This is a tab bar. You can edit it in:
-        </Text>
-
-        <View
-          style={[styles.codeHighlightContainer, styles.navigationFilename]}
-        >
-          <MonoText style={styles.codeHighlightText}>
-            navigation/MainTabNavigator.js
-          </MonoText>
-        </View>
-      </View>
     </View>
   );
 }
@@ -72,41 +96,6 @@ export default function HomeScreen() {
 HomeScreen.navigationOptions = {
   header: null,
 };
-
-function DevelopmentModeNotice() {
-  if (__DEV__) {
-    const learnMoreButton = (
-      <Text onPress={handleLearnMorePress} style={styles.helpLinkText}>
-        Learn more
-      </Text>
-    );
-
-    return (
-      <Text style={styles.developmentModeText}>
-        Development mode is enabled: your app will be slower but you can use
-        useful development tools. {learnMoreButton}
-      </Text>
-    );
-  } else {
-    return (
-      <Text style={styles.developmentModeText}>
-        You are not in development mode: your app will run at full speed.
-      </Text>
-    );
-  }
-}
-
-function handleLearnMorePress() {
-  WebBrowser.openBrowserAsync(
-    'https://docs.expo.io/versions/latest/workflow/development-mode/'
-  );
-}
-
-function handleHelpPress() {
-  WebBrowser.openBrowserAsync(
-    'https://docs.expo.io/versions/latest/workflow/up-and-running/#cant-see-your-changes'
-  );
-}
 
 const styles = StyleSheet.create({
   container: {
