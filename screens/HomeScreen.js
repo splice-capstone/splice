@@ -15,7 +15,7 @@ import Constants from 'expo-constants';
 import LoginScreen from './LoginScreen';
 import LoggedInScreen from './LoggedInScreen';
 import Expo from 'expo';
-import * as GoogleSignIn from 'expo-google-sign-in';
+import * as Google from 'expo-google-app-auth';
 
 export default function HomeScreen() {
   const [user, setUser] = useState({});
@@ -33,7 +33,7 @@ export default function HomeScreen() {
   const signIn = async () => {
     try {
       console.log('success');
-      const result = await Expo.Google.logInAsync({
+      const result = await Google.logInAsync({
         androidClientId: Constants.manifest.extra.androidClientId,
         iosClientId: Constants.manifest.extra.iosClientId,
         scopes: ['profile', 'email'],
@@ -42,7 +42,13 @@ export default function HomeScreen() {
 
       if (result.type === 'success') {
         setUser(result.user);
-        console.log('success', result);
+        let userInfoResponse = await fetch(
+          'https://www.googleapis.com/userinfo/v2/me',
+          {
+            headers: { Authorization: `Bearer ${result.accessToken}` },
+          }
+        );
+        console.log('success', userInfoResponse);
 
         return result.accessToken;
       } else {

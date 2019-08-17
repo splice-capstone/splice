@@ -18,3 +18,14 @@ export async function userInit() {
     return 'stuff';
   }
 }
+
+export async function findOrCreateUser() {
+  try {
+    const user = await db
+      .collection('users')
+      .doc(user_id)
+      .set({ foo: 'bar' }, { merge: true });
+  } catch (err) {
+    return 'error';
+  }
+}
