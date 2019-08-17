@@ -64,7 +64,7 @@ export default function HomeScreen() {
     await userInit();
     const userDoc = await db
       .collection('users')
-      .doc('f9ArtRIEWMHokxUxWxLg')
+      .doc('tomsinovich@gmail.com')
       .get();
     setUser(userDoc.data());
   };
