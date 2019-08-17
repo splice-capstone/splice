@@ -20,7 +20,7 @@ export default function HomeScreen() {
     await userInit();
     const userDoc = await db
       .collection('users')
-      .doc('f9ArtRIEWMHokxUxWxLg')
+      .doc('tomsinovich@gmail.com')
       .get();
     console.log('user2', userDoc.data().name);
     setUser(userDoc.data());
@@ -51,20 +51,6 @@ export default function HomeScreen() {
           <Text style={styles.welcome}>user's name: {user.name}</Text>
         </View>
       </ScrollView>
-
-      <View style={styles.tabBarInfoContainer}>
-        <Text style={styles.tabBarInfoText}>
-          This is a tab bar. You can edit it in:
-        </Text>
-
-        <View
-          style={[styles.codeHighlightContainer, styles.navigationFilename]}
-        >
-          <MonoText style={styles.codeHighlightText}>
-            navigation/MainTabNavigator.js
-          </MonoText>
-        </View>
-      </View>
     </View>
   );
 }
