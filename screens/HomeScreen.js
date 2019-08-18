@@ -10,12 +10,13 @@ import {
   View,
 } from 'react-native';
 import { MonoText } from '../components/StyledText';
-import db, { userInit } from '../src/tools/firebase';
+import db, { userInit, findOrCreateUser } from '../src/tools/firebase';
 import Constants from 'expo-constants';
 import LoginScreen from './LoginScreen';
 import LoggedInScreen from './LoggedInScreen';
 import Expo from 'expo';
 import * as Google from 'expo-google-app-auth';
+// import console = require('console');
 
 export default function HomeScreen() {
   const [user, setUser] = useState({});
@@ -32,47 +33,29 @@ export default function HomeScreen() {
 
   const signIn = async () => {
     try {
-      console.log('success');
       const result = await Google.logInAsync({
         androidClientId: Constants.manifest.extra.androidClientId,
         iosClientId: Constants.manifest.extra.iosClientId,
         scopes: ['profile', 'email'],
       });
-      console.log('result', result);
-
       if (result.type === 'success') {
-        setUser(result.user);
         let userInfoResponse = await fetch(
           'https://www.googleapis.com/userinfo/v2/me',
           {
             headers: { Authorization: `Bearer ${result.accessToken}` },
           }
         );
-        console.log('success', userInfoResponse);
-
-        return result.accessToken;
+        setUser(result.user);
+        findOrCreateUser(result.user);
+        this.props.navigation.navigate('Receipt');
+        return 'logged in';
       } else {
         return { cancelled: true };
-        console.log('fail');
       }
-    } catch (e) {
-      return { error: true };
+    } catch (err) {
+      return { error: err };
     }
   };
-
-  const initStuff = async () => {
-    await userInit();
-    const userDoc = await db
-      .collection('users')
-      .doc('tomsinovich@gmail.com')
-      .get();
-    setUser(userDoc.data());
-  };
-
-  // useEffect(() => {
-  //   // initStuff();
-  //   // signIn();
-  // }, []);
 
   return (
     <View style={styles.container}>
@@ -82,7 +65,7 @@ export default function HomeScreen() {
       >
         <View style={styles.welcomeContainer}>
           <Image
-            source={require('../assets/images/splice_logo.jpg')}
+            source={require('../assets/images/splice.png')}
             style={styles.welcomeImage}
           />
           {user.length ? (

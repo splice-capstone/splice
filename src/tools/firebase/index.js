@@ -19,12 +19,17 @@ export async function userInit() {
   }
 }
 
-export async function findOrCreateUser() {
+export async function findOrCreateUser(user) {
   try {
-    const user = await db
+    const newUser = await db
       .collection('users')
-      .doc(user_id)
-      .set({ foo: 'bar' }, { merge: true });
+      .doc(user.email)
+      .set(
+        { email: user.email, name: user.name, photoUrl: user.photoUrl },
+        { merge: true }
+      );
+    console.log('new user', newUser);
+    return newUser;
   } catch (err) {
     return 'error';
   }

@@ -14,7 +14,6 @@ import {
 const LoginScreen = props => {
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Sign In With Google</Text>
       <Button title="Sign in with Google" onPress={() => props.signIn()} />
     </View>
   );
