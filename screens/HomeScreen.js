@@ -20,7 +20,7 @@ export default function HomeScreen() {
     await userInit();
     const userDoc = await db
       .collection('users')
-      .doc('f9ArtRIEWMHokxUxWxLg')
+      .doc('vera.krutsina@gmail.com')
       .get();
     console.log('user2', userDoc.data().name);
     setUser(userDoc.data());

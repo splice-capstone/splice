@@ -18,6 +18,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Permissions from 'expo-permissions';
 import { Camera } from 'expo-camera';
 import axios from 'axios';
+import { createReceipt, createItems } from '../src/tools/firebase';
 
 import {
   Ionicons,
@@ -162,7 +163,44 @@ export default class ReceiptScreen extends React.Component {
           },
         }
       );
-      console.log('response', response.data);
+      let theDate = response.data.date.text;
+      let theIndex = theDate.indexOf('2');
+      let newDate = theDate.slice(theIndex);
+      theDate = await newDate;
+
+      const receipt = {
+        date: theDate,
+        restaurant: response.data.merchantName.text,
+        subtotal: '',
+        tax: '',
+        total: '',
+      };
+      // const receiptItems = {
+      //   amount: '',
+      //   name: response.data.amounts.text
+      // }
+      const receiptItems = [];
+      for (let i = 0; i < response.data.amounts.length; i++) {
+        let data = response.data.amounts[i].text.toLowerCase();
+        if (data.includes('ax')) {
+          let theIdx = data.indexOf('$');
+          receipt.tax = Number(data.slice(theIdx + 1)) * 100;
+        }
+        if (data.includes('ub')) {
+          let theIdx = data.indexOf('$');
+          receipt.subtotal = Number(data.slice(theIdx + 1)) * 100;
+        }
+        if (data.includes('Total')) {
+          let theIdx = data.indexOf('$');
+          receipt.total = Number(data.slice(theIdx + 1)) * 100;
+        }
+        if (!data.includes('tax' || 'total')) {
+          receiptItems.push({ amount: data, name: data });
+        }
+      }
+      createReceipt(receipt);
+      createItems(receiptItems);
+      return;
     } catch (error) {
       console.log('hit an error');
       console.error(error);
