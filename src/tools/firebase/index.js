@@ -28,7 +28,6 @@ export async function findOrCreateUser(user) {
         { email: user.email, name: user.name, photoUrl: user.photoUrl },
         { merge: true }
       );
-    console.log('new user', newUser);
     return newUser;
   } catch (err) {
     return 'error';

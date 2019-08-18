@@ -16,20 +16,19 @@ import LoginScreen from './LoginScreen';
 import LoggedInScreen from './LoggedInScreen';
 import Expo from 'expo';
 import * as Google from 'expo-google-app-auth';
-// import console = require('console');
 
-export default function HomeScreen() {
-  const [user, setUser] = useState({});
+export default function HomeScreen(props) {
+  const [user, setUser] = useState();
 
-  const checkIfLoggedIn = () => {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        this.props.navigation.navigate('ReceiptScreen');
-      } else {
-        this.props.navigation.navigate('LoginScreen');
-      }
-    });
-  };
+  // const checkIfLoggedIn = () => {
+  //   firebase.auth().onAuthStateChanged(user => {
+  //     if (user) {
+  //       props.navigation.navigate('LoggedInScreen');
+  //     } else {
+  //       props.navigation.navigate('LoginScreen');
+  //     }
+  //   });
+  // };
 
   const signIn = async () => {
     try {
@@ -45,9 +44,12 @@ export default function HomeScreen() {
             headers: { Authorization: `Bearer ${result.accessToken}` },
           }
         );
-        setUser(result.user);
-        findOrCreateUser(result.user);
-        this.props.navigation.navigate('Receipt');
+        await findOrCreateUser(result.user);
+        await setUser({
+          name: result.user.name,
+          email: result.user.email,
+          photoUrl: result.user.photoUrl,
+        });
         return 'logged in';
       } else {
         return { cancelled: true };
@@ -68,14 +70,16 @@ export default function HomeScreen() {
             source={require('../assets/images/splice.png')}
             style={styles.welcomeImage}
           />
-          {user.length ? (
-            <LoggedInScreen user={user} />
-          ) : (
-            <LoginScreen signIn={signIn} />
-          )}
-        </View>
-        <View style={styles.getStartedContainer}>
-          <Text style={styles.welcome}>user's name: {user.name}</Text>
+          <Text style={styles.header}>splice</Text>
+          <View>
+            {user ? (
+              <LoggedInScreen user={user} />
+            ) : (
+              <View style={styles.loginContainer}>
+                <LoginScreen signIn={signIn} />
+              </View>
+            )}
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -91,15 +95,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
-  },
   contentContainer: {
     paddingTop: 30,
+  },
+  header: {
+    marginTop: 10,
+    fontSize: 18,
   },
   welcomeContainer: {
     alignItems: 'center',
@@ -113,26 +114,11 @@ const styles = StyleSheet.create({
     marginTop: 3,
     marginLeft: -10,
   },
-  getStartedContainer: {
+  loginContainer: {
     alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
+    justifyContent: 'center',
+    marginTop: 200,
+    marginBottom: 20,
   },
   tabBarInfoContainer: {
     position: 'absolute',
@@ -153,24 +139,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fbfbfb',
     paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
   },
 });

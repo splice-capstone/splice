@@ -17,15 +17,13 @@ import AppNavigator from './navigation/AppNavigator';
 export default function App(props) {
   const [isAppReady, setAppReady] = useState(false);
   const [isSplashReady, setSplashReady] = useState(false);
-  const [value] = useState(new Animated.Value(0));
+  const [value] = useState(new Animated.Value(1));
 
   useEffect(() => {
     Animated.timing(value, {
-      toValue: 2,
-      duration: 2000,
-    }).start(() => {
-      console.log('fading');
-    }); // < Don't forget to start!
+      toValue: 0,
+      duration: 3000,
+    }).start();
   });
 
   if (!isSplashReady) {
@@ -50,7 +48,7 @@ export default function App(props) {
     );
   }
   return (
-    <Animated.View style={{ ...styles.container, opacity: value }}>
+    <Animated.View style={{ ...styles.container }}>
       {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
       <AppNavigator />
     </Animated.View>
@@ -66,6 +64,7 @@ async function _cacheResourcesAsync(setAppReady) {
   SplashScreen.hide();
   await Promise.all([
     Asset.loadAsync([require('./assets/images/splice.png')]),
+    Asset.loadAsync([require('./assets/images/google_signin.png')]),
     Font.loadAsync({
       // This is the font that we are using for our tab bar
       ...Ionicons.font,

@@ -14,7 +14,9 @@ import {
 const LoginScreen = props => {
   return (
     <View style={styles.container}>
-      <Button title="Sign in with Google" onPress={() => props.signIn()} />
+      <TouchableOpacity style={styles.container} onPress={() => props.signIn()}>
+        <Image source={require('../assets/images/google_signin.png')} />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -24,19 +26,10 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
+    marginBottom: 36,
   },
   header: {
     fontSize: 25,
-  },
-  image: {
-    marginTop: 15,
-    width: 150,
-    height: 150,
-    borderColor: 'rgba(0,0,0,0.2)',
-    borderWidth: 3,
-    borderRadius: 150,
   },
 });
