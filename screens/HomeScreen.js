@@ -16,19 +16,14 @@ import LoginScreen from './LoginScreen';
 import LoggedInScreen from './LoggedInScreen';
 import Expo from 'expo';
 import * as Google from 'expo-google-app-auth';
+import { useStateValue } from '../state';
 
 export default function HomeScreen(props) {
-  const [user, setUser] = useState();
+  const [{ currentUser }, dispatch] = useStateValue();
 
-  // const checkIfLoggedIn = () => {
-  //   firebase.auth().onAuthStateChanged(user => {
-  //     if (user) {
-  //       props.navigation.navigate('LoggedInScreen');
-  //     } else {
-  //       props.navigation.navigate('LoginScreen');
-  //     }
-  //   });
-  // };
+  const setUser = user => {
+    dispatch({ type: 'setUser', user });
+  };
 
   const signIn = async () => {
     try {
@@ -72,8 +67,8 @@ export default function HomeScreen(props) {
           />
           <Text style={styles.header}>splice</Text>
           <View>
-            {user ? (
-              <LoggedInScreen user={user} />
+            {currentUser && currentUser.length ? (
+              <LoggedInScreen user={currentUser} />
             ) : (
               <View style={styles.loginContainer}>
                 <LoginScreen signIn={signIn} />
