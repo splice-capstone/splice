@@ -176,7 +176,7 @@ export default class ReceiptScreen extends React.Component {
         subtotal: '',
         tax: '',
         total: '',
-        owner: this.context.currentUser.email,
+        owner: this.context[0].currentUser.email,
       };
       const receiptItems = [];
       for (let i = 0; i < response.data.amounts.length; i++) {
