@@ -1,29 +1,14 @@
-import * as WebBrowser from 'expo-web-browser';
-import React, { useState, useEffect } from 'react';
-import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { MonoText } from '../components/StyledText';
-import db, {
-  userInit,
-  findOrCreateUser,
-  getMyReceipts,
-} from '../src/tools/firebase';
+import React from 'react';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { findOrCreateUser, getMyReceipts } from '../src/tools/firebase';
 import Constants from 'expo-constants';
 import LoginScreen from './LoginScreen';
 import LoggedInScreen from './LoggedInScreen';
-import Expo from 'expo';
 import * as Google from 'expo-google-app-auth';
 import { useStateValue } from '../state';
 
-export default function HomeScreen(props) {
-  const [{ currentUser, myReceipts }, dispatch] = useStateValue();
+export default function HomeScreen() {
+  const [{ currentUser }, dispatch] = useStateValue();
 
   const setUser = (user, receipts) => {
     dispatch({ type: 'SET_USER', user, receipts });
@@ -81,9 +66,7 @@ export default function HomeScreen(props) {
                 <LoginScreen signIn={signIn} />
               </View>
             ) : (
-              <View style={styles.loginContainer}>
-                <LoggedInScreen user={currentUser} />
-              </View>
+              <LoggedInScreen user={currentUser} />
             )}
           </View>
         </View>
@@ -125,25 +108,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 200,
     marginBottom: 20,
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
   },
 });

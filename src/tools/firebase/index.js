@@ -73,14 +73,3 @@ export async function getMyReceipts(email) {
     return `error: ${err}`;
   }
 }
-
-//reference -
-// await db
-//   .collection('receipts')
-//   .where('users', 'array-contains', email)
-//   .get()
-//   .then(function(querySnapshot) {
-//     querySnapshot.forEach(function(doc) {
-//       receipts.push(doc.data());
-//     });
-//   });
