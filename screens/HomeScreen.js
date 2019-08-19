@@ -22,7 +22,6 @@ export default function HomeScreen() {
       .collection('users')
       .doc('vera.krutsina@gmail.com')
       .get();
-    console.log('user2', userDoc.data().name);
     setUser(userDoc.data());
   };
 
@@ -48,7 +47,7 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.getStartedContainer}>
-          <Text style={styles.welcome}>user's name: {user.name}</Text>
+          <Text style={styles.welcome}>user's name:</Text>
         </View>
       </ScrollView>
 

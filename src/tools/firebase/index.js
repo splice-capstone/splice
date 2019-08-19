@@ -22,12 +22,21 @@ export async function userInit() {
 export async function createReceipt(data, itemData) {
   try {
     const newReceipt = await db.collection('receipts').add(data);
-    const newItems = await db
-      .collection('receipts')
-      .doc(newReceipt)
-      .collection('items')
-      .add(itemData);
-    return { newReceipt, newItems };
+    newReceipt.get().then(async function(docum) {
+      if (docum.exists) {
+        const newItems = await db
+          .collection('receipts')
+          .doc(docum.id)
+          .collection('items');
+        itemData.forEach(item => {
+          newItems.add(item);
+        });
+        return newItems;
+      } else {
+        console.log('no such document!');
+      }
+    });
+    return newReceipt;
   } catch (err) {
     return err;
   }

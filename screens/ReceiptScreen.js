@@ -18,7 +18,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Permissions from 'expo-permissions';
 import { Camera } from 'expo-camera';
 import axios from 'axios';
-import { createReceipt, createItems } from '../src/tools/firebase';
+import { createReceipt } from '../src/tools/firebase';
 
 import {
   Ionicons,
@@ -146,6 +146,7 @@ export default class ReceiptScreen extends React.Component {
 
   sendToTaggun = async photo => {
     console.log('sending to taggun...');
+
     const body = {
       image: photo.base64,
       filename: 'example.jpg',
@@ -163,43 +164,49 @@ export default class ReceiptScreen extends React.Component {
           },
         }
       );
-      let theDate = response.data.date.text;
-      let theIndex = theDate.indexOf('2');
-      let newDate = theDate.slice(theIndex);
-      theDate = await newDate;
+      let theDate = response.data.date.data;
+      // let theIndex = theDate.indexOf('2');
+      // let newDate = theDate.slice(theIndex);
+      // theDate = await newDate;
 
       const receipt = {
         date: theDate,
-        restaurant: response.data.merchantName.text,
+        restaurant: response.data.merchantName.data,
         subtotal: '',
         tax: '',
         total: '',
+        owner: 'email',
       };
-      // const receiptItems = {
-      //   amount: '',
-      //   name: response.data.amounts.text
-      // }
       const receiptItems = [];
       for (let i = 0; i < response.data.amounts.length; i++) {
-        let data = response.data.amounts[i].text.toLowerCase();
-        if (data.includes('ax')) {
-          let theIdx = data.indexOf('$');
-          receipt.tax = Number(data.slice(theIdx + 1)) * 100;
+        let data = response.data.amounts[i].text;
+
+        console.log('THE-DATA', data);
+        if (data.includes('Tax' || 'tax')) {
+          receipt.tax = Number(response.data.amounts[i].data) * 100;
         }
-        if (data.includes('ub')) {
-          let theIdx = data.indexOf('$');
-          receipt.subtotal = Number(data.slice(theIdx + 1)) * 100;
+        if (data[0] === 't' || 'T') {
+          receipt.total = Math.ceil(
+            Number(response.data.amounts[i].data) * 100
+          );
         }
-        if (data.includes('Total')) {
-          let theIdx = data.indexOf('$');
-          receipt.total = Number(data.slice(theIdx + 1)) * 100;
+        if (data.includes('Sub' || 'sub')) {
+          receipt.subtotal = Number(response.data.amounts[i].data) * 100;
         }
-        if (!data.includes('tax' || 'total')) {
-          receiptItems.push({ amount: data, name: data });
+        if (
+          !data.includes('Tax') &&
+          !data.includes('Sub') &&
+          !data.includes('TOTAL')
+        ) {
+          let theIdx = await data.indexOf('@');
+          receiptItems.push({
+            amount: data.slice(data.length - 5, data.length),
+            name: data.slice(2, theIdx - 1),
+          });
         }
       }
-      createReceipt(receipt);
-      createItems(receiptItems);
+      createReceipt(receipt, receiptItems);
+      console.log('receiptItems', receiptItems);
       return;
     } catch (error) {
       console.log('hit an error');
