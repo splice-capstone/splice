@@ -8,7 +8,7 @@ import {
 } from "react-navigation";
 import { DrawerActions } from 'react-navigation-drawer'
 import HomeScreen from "../screens/HomeScreen";
-import SettingsScreen from "../screens/SettingsScreen";
+import MyReceipts from "../screens/MyReceipts";
 import ReceiptScreen from "../screens/ReceiptScreen";
 import { Ionicons } from '@expo/vector-icons'
 
@@ -42,8 +42,8 @@ const styles = StyleSheet.create({
 const DrawerNavigator = createDrawerNavigator(
   {
     Home: { screen: HomeScreen },
-    Settings: { screen: SettingsScreen },
-    Receipt: { screen: ReceiptScreen }
+    Receipts: { screen: MyReceipts },
+    New_Receipt: { screen: ReceiptScreen }
   },
   {
     hideStatusBar: true,

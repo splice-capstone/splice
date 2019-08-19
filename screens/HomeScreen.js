@@ -16,6 +16,8 @@ import LoginScreen from './LoginScreen';
 import LoggedInScreen from './LoggedInScreen';
 import Expo from 'expo';
 import * as Google from 'expo-google-app-auth';
+// import console = require('console');
+// // import console = require('console');
 
 export default function HomeScreen(props) {
   const [user, setUser] = useState();
@@ -32,6 +34,7 @@ export default function HomeScreen(props) {
 
   const signIn = async () => {
     try {
+      console.log('yoyoyoyoyo')
       const result = await Google.logInAsync({
         androidClientId: Constants.manifest.extra.androidClientId,
         iosClientId: Constants.manifest.extra.iosClientId,
@@ -50,6 +53,9 @@ export default function HomeScreen(props) {
           email: result.user.email,
           photoUrl: result.user.photoUrl,
         });
+        const what = await db.collection('users').doc('tom.sinovich@gmail.com').get()
+        const hehe = await what.data().receipts[0].get()
+        console.log( hehe.data())
         return 'logged in';
       } else {
         return { cancelled: true };
