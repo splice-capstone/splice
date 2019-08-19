@@ -10,7 +10,11 @@ import {
   View,
 } from 'react-native';
 import { MonoText } from '../components/StyledText';
-import db, { userInit, findOrCreateUser } from '../src/tools/firebase';
+import db, {
+  userInit,
+  findOrCreateUser,
+  getMyReceipts,
+} from '../src/tools/firebase';
 import Constants from 'expo-constants';
 import LoginScreen from './LoginScreen';
 import LoggedInScreen from './LoggedInScreen';
@@ -19,10 +23,10 @@ import * as Google from 'expo-google-app-auth';
 import { useStateValue } from '../state';
 
 export default function HomeScreen(props) {
-  const [{ currentUser }, dispatch] = useStateValue();
+  const [{ currentUser, myReceipts }, dispatch] = useStateValue();
 
-  const setUser = user => {
-    dispatch({ type: 'setUser', user });
+  const setUser = (user, receipts) => {
+    dispatch({ type: 'SET_USER', user, receipts });
   };
 
   const signIn = async () => {
@@ -40,11 +44,16 @@ export default function HomeScreen(props) {
           }
         );
         await findOrCreateUser(result.user);
-        await setUser({
-          name: result.user.name,
-          email: result.user.email,
-          photoUrl: result.user.photoUrl,
-        });
+        const receipts = await getMyReceipts(result.user.email);
+        await setUser(
+          {
+            name: result.user.name,
+            email: result.user.email,
+            photoUrl: result.user.photoUrl,
+          },
+          receipts
+        );
+        console.log('receipts', receipts);
         return 'logged in';
       } else {
         return { cancelled: true };
