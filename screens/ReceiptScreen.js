@@ -1,15 +1,12 @@
 import * as WebBrowser from 'expo-web-browser';
 import React, { useState, useEffect } from 'react';
 
-import { MonoText } from '../components/StyledText';
 import Constants from 'expo-constants';
 import {
-  Alert,
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
-  Slider,
   Platform,
 } from 'react-native';
 import GalleryScreen from './GalleryScreen';
@@ -20,16 +17,8 @@ import { Camera } from 'expo-camera';
 import axios from 'axios';
 import { createReceipt } from '../src/tools/firebase';
 
-import {
-  Ionicons,
-  MaterialIcons,
-  Foundation,
-  MaterialCommunityIcons,
-  Octicons,
-} from '@expo/vector-icons';
+import { Ionicons, MaterialIcons, Foundation } from '@expo/vector-icons';
 import { StateContext } from '../state';
-
-const landmarkSize = 2;
 
 const flashModeOrder = {
   off: 'on',
@@ -45,24 +34,6 @@ const flashIcons = {
   torch: 'highlight',
 };
 
-const wbOrder = {
-  auto: 'sunny',
-  sunny: 'cloudy',
-  cloudy: 'shadow',
-  shadow: 'fluorescent',
-  fluorescent: 'incandescent',
-  incandescent: 'auto',
-};
-
-const wbIcons = {
-  auto: 'wb-auto',
-  sunny: 'wb-sunny',
-  cloudy: 'wb-cloudy',
-  shadow: 'beach-access',
-  fluorescent: 'wb-iridescent',
-  incandescent: 'wb-incandescent',
-};
-
 export default class ReceiptScreen extends React.Component {
   static contextType = StateContext;
   state = {
@@ -72,9 +43,6 @@ export default class ReceiptScreen extends React.Component {
     type: 'back',
     whiteBalance: 'auto',
     ratio: '16:9',
-    ratios: [],
-    barcodeScanning: false,
-    faceDetecting: false,
     newPhotos: false,
     permissionsGranted: false,
     pictureSize: undefined,
@@ -108,29 +76,13 @@ export default class ReceiptScreen extends React.Component {
   toggleMoreOptions = () =>
     this.setState({ showMoreOptions: !this.state.showMoreOptions });
 
-  toggleFacing = () =>
-    this.setState({ type: this.state.type === 'back' ? 'front' : 'back' });
-
   toggleFlash = () =>
     this.setState({ flash: flashModeOrder[this.state.flash] });
 
   setRatio = ratio => this.setState({ ratio });
 
-  toggleWB = () =>
-    this.setState({ whiteBalance: wbOrder[this.state.whiteBalance] });
-
   toggleFocus = () =>
     this.setState({ autoFocus: this.state.autoFocus === 'on' ? 'off' : 'on' });
-
-  zoomOut = () =>
-    this.setState({
-      zoom: this.state.zoom - 0.1 < 0 ? 0 : this.state.zoom - 0.1,
-    });
-
-  zoomIn = () =>
-    this.setState({
-      zoom: this.state.zoom + 0.1 > 1 ? 1 : this.state.zoom + 0.1,
-    });
 
   setFocusDepth = depth => this.setState({ depth });
 
@@ -216,6 +168,7 @@ export default class ReceiptScreen extends React.Component {
 
   onPictureSaved = async photo => {
     this.sendToTaggun(photo);
+
     await FileSystem.moveAsync({
       from: photo.uri,
       to: `${FileSystem.documentDirectory}photos/${Date.now()}.jpg`,
@@ -232,7 +185,6 @@ export default class ReceiptScreen extends React.Component {
       if (Platform.OS === 'ios') {
         pictureSizeId = pictureSizes.indexOf('High');
       } else {
-        // returned array is sorted in ascending order - default size is the largest one
         pictureSizeId = pictureSizes.length - 1;
       }
       this.setState({
@@ -272,45 +224,16 @@ export default class ReceiptScreen extends React.Component {
     </View>
   );
 
-  renderTopBar = () => (
-    <View style={styles.topBar}>
-      <TouchableOpacity style={styles.toggleButton} onPress={this.toggleFacing}>
-        <Ionicons name="ios-reverse-camera" size={32} color="white" />
-      </TouchableOpacity>
+  renderTopBar = () => <View style={styles.topBar} />;
+
+  renderBottomBar = () => (
+    <View style={styles.bottomBar}>
       <TouchableOpacity style={styles.toggleButton} onPress={this.toggleFlash}>
         <MaterialIcons
           name={flashIcons[this.state.flash]}
           size={32}
           color="white"
         />
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.toggleButton} onPress={this.toggleWB}>
-        <MaterialIcons
-          name={wbIcons[this.state.whiteBalance]}
-          size={32}
-          color="white"
-        />
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.toggleButton} onPress={this.toggleFocus}>
-        <Text
-          style={[
-            styles.autoFocusLabel,
-            { color: this.state.autoFocus === 'on' ? 'white' : '#6b6b6b' },
-          ]}
-        >
-          AF
-        </Text>
-      </TouchableOpacity>
-    </View>
-  );
-
-  renderBottomBar = () => (
-    <View style={styles.bottomBar}>
-      <TouchableOpacity
-        style={styles.bottomButton}
-        onPress={this.toggleMoreOptions}
-      >
-        <Octicons name="kebab-horizontal" size={30} color="white" />
       </TouchableOpacity>
       <View style={{ flex: 0.4 }}>
         <TouchableOpacity
@@ -364,8 +287,6 @@ export default class ReceiptScreen extends React.Component {
         onCameraReady={this.collectPictureSizes}
         type={this.state.type}
         flashMode={this.state.flash}
-        autoFocus={this.state.autoFocus}
-        zoom={this.state.zoom}
         whiteBalance={this.state.whiteBalance}
         ratio={this.state.ratio}
         pictureSize={this.state.pictureSize}
@@ -399,13 +320,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
   },
-  topBar: {
-    flex: 0.2,
-    backgroundColor: 'transparent',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingTop: 5 / 2,
-  },
+
   bottomBar: {
     paddingBottom: ifIphoneX ? 25 : 5,
     backgroundColor: 'transparent',
@@ -435,10 +350,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  autoFocusLabel: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
   bottomButton: {
     flex: 0.3,
     height: 58,
@@ -449,8 +360,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     right: -5,
-    width: 8,
-    height: 8,
+    width: 15,
+    height: 15,
     borderRadius: 4,
     backgroundColor: '#4630EB',
   },
@@ -470,11 +381,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
   },
-  pictureQualityLabel: {
-    fontSize: 10,
-    marginVertical: 3,
-    color: 'white',
-  },
   pictureSizeContainer: {
     flex: 0.5,
     alignItems: 'center',
@@ -484,11 +390,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row',
-  },
-  pictureSizeLabel: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 
   row: {
