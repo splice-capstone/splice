@@ -27,6 +27,7 @@ import {
   MaterialCommunityIcons,
   Octicons,
 } from '@expo/vector-icons';
+import { StateContext } from '../state';
 
 const landmarkSize = 2;
 
@@ -63,6 +64,7 @@ const wbIcons = {
 };
 
 export default class ReceiptScreen extends React.Component {
+  static contextType = StateContext;
   state = {
     flash: 'off',
     zoom: 0,
@@ -146,7 +148,6 @@ export default class ReceiptScreen extends React.Component {
 
   sendToTaggun = async photo => {
     console.log('sending to taggun...');
-
     const body = {
       image: photo.base64,
       filename: 'example.jpg',
@@ -175,7 +176,7 @@ export default class ReceiptScreen extends React.Component {
         subtotal: '',
         tax: '',
         total: '',
-        owner: 'email',
+        owner: this.context.currentUser.email,
       };
       const receiptItems = [];
       for (let i = 0; i < response.data.amounts.length; i++) {
@@ -206,7 +207,6 @@ export default class ReceiptScreen extends React.Component {
         }
       }
       createReceipt(receipt, receiptItems);
-      console.log('receiptItems', receiptItems);
       return;
     } catch (error) {
       console.log('hit an error');
