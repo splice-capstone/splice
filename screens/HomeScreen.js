@@ -67,11 +67,13 @@ export default function HomeScreen(props) {
           />
           <Text style={styles.header}>splice</Text>
           <View>
-            {currentUser && currentUser.length ? (
-              <LoggedInScreen user={currentUser} />
-            ) : (
+            {!currentUser.name ? (
               <View style={styles.loginContainer}>
                 <LoginScreen signIn={signIn} />
+              </View>
+            ) : (
+              <View style={styles.loginContainer}>
+                <LoggedInScreen user={currentUser} />
               </View>
             )}
           </View>

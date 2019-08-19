@@ -19,6 +19,7 @@ export const initialState = {
   currentUser: {},
   currentReceipt: {},
   currentPage: 'home',
+  mode: 'view',
   myReceipts: [],
 };
 
@@ -29,6 +30,7 @@ export const reducer = (state, action) => {
       return {
         ...state,
         currentUser: action.user,
+        myReceipts: action.receipts,
       };
     default:
       return state;
