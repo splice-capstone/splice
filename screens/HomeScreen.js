@@ -9,26 +9,55 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
 import { MonoText } from '../components/StyledText';
-import db, { userInit } from '../src/tools/firebase';
+import db, { userInit, findOrCreateUser } from '../src/tools/firebase';
+import Constants from 'expo-constants';
+import LoginScreen from './LoginScreen';
+import LoggedInScreen from './LoggedInScreen';
+import Expo from 'expo';
+import * as Google from 'expo-google-app-auth';
 
-export default function HomeScreen() {
-  const [user, setUser] = useState({});
+export default function HomeScreen(props) {
+  const [user, setUser] = useState();
 
-  const initStuff = async () => {
-    await userInit();
-    const userDoc = await db
-      .collection('users')
-      .doc('tomsinovich@gmail.com')
-      .get();
-    console.log('user2', userDoc.data().name);
-    setUser(userDoc.data());
+  // const checkIfLoggedIn = () => {
+  //   firebase.auth().onAuthStateChanged(user => {
+  //     if (user) {
+  //       props.navigation.navigate('LoggedInScreen');
+  //     } else {
+  //       props.navigation.navigate('LoginScreen');
+  //     }
+  //   });
+  // };
+
+  const signIn = async () => {
+    try {
+      const result = await Google.logInAsync({
+        androidClientId: Constants.manifest.extra.androidClientId,
+        iosClientId: Constants.manifest.extra.iosClientId,
+        scopes: ['profile', 'email'],
+      });
+      if (result.type === 'success') {
+        let userInfoResponse = await fetch(
+          'https://www.googleapis.com/userinfo/v2/me',
+          {
+            headers: { Authorization: `Bearer ${result.accessToken}` },
+          }
+        );
+        await findOrCreateUser(result.user);
+        await setUser({
+          name: result.user.name,
+          email: result.user.email,
+          photoUrl: result.user.photoUrl,
+        });
+        return 'logged in';
+      } else {
+        return { cancelled: true };
+      }
+    } catch (err) {
+      return { error: err };
+    }
   };
-
-  useEffect(() => {
-    initStuff();
-  }, []);
 
   return (
     <View style={styles.container}>
@@ -38,17 +67,19 @@ export default function HomeScreen() {
       >
         <View style={styles.welcomeContainer}>
           <Image
-            source={
-              __DEV__
-                ? require('../assets/images/robot-dev.png')
-                : require('../assets/images/robot-prod.png')
-            }
+            source={require('../assets/images/splice.png')}
             style={styles.welcomeImage}
           />
-        </View>
-
-        <View style={styles.getStartedContainer}>
-          <Text style={styles.welcome}>user's name: {user.name}</Text>
+          <Text style={styles.header}>splice</Text>
+          <View>
+            {user ? (
+              <LoggedInScreen user={user} />
+            ) : (
+              <View style={styles.loginContainer}>
+                <LoginScreen signIn={signIn} />
+              </View>
+            )}
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -59,55 +90,17 @@ HomeScreen.navigationOptions = {
   header: null,
 };
 
-function DevelopmentModeNotice() {
-  if (__DEV__) {
-    const learnMoreButton = (
-      <Text onPress={handleLearnMorePress} style={styles.helpLinkText}>
-        Learn more
-      </Text>
-    );
-
-    return (
-      <Text style={styles.developmentModeText}>
-        Development mode is enabled: your app will be slower but you can use
-        useful development tools. {learnMoreButton}
-      </Text>
-    );
-  } else {
-    return (
-      <Text style={styles.developmentModeText}>
-        You are not in development mode: your app will run at full speed.
-      </Text>
-    );
-  }
-}
-
-function handleLearnMorePress() {
-  WebBrowser.openBrowserAsync(
-    'https://docs.expo.io/versions/latest/workflow/development-mode/'
-  );
-}
-
-function handleHelpPress() {
-  WebBrowser.openBrowserAsync(
-    'https://docs.expo.io/versions/latest/workflow/up-and-running/#cant-see-your-changes'
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
   },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
-  },
   contentContainer: {
     paddingTop: 30,
+  },
+  header: {
+    marginTop: 10,
+    fontSize: 18,
   },
   welcomeContainer: {
     alignItems: 'center',
@@ -121,26 +114,11 @@ const styles = StyleSheet.create({
     marginTop: 3,
     marginLeft: -10,
   },
-  getStartedContainer: {
+  loginContainer: {
     alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
+    justifyContent: 'center',
+    marginTop: 200,
+    marginBottom: 20,
   },
   tabBarInfoContainer: {
     position: 'absolute',
@@ -161,24 +139,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fbfbfb',
     paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
   },
 });
