@@ -22,11 +22,11 @@ export async function userInit() {
 export async function createReceipt(data, itemData) {
   try {
     const newReceipt = await db.collection('receipts').add(data);
-    newReceipt.get().then(async function(docum) {
-      if (docum.exists) {
+    newReceipt.get().then(async function(querySnapshot) {
+      if (querySnapshot.exists) {
         const newItems = await db
           .collection('receipts')
-          .doc(docum.id)
+          .doc(querySnapshot.id)
           .collection('items');
         itemData.forEach(item => {
           newItems.add(item);
@@ -39,5 +39,19 @@ export async function createReceipt(data, itemData) {
     return newReceipt;
   } catch (err) {
     return err;
+  }
+}
+export async function findOrCreateUser(user) {
+  try {
+    const newUser = await db
+      .collection('users')
+      .doc(user.email)
+      .set(
+        { email: user.email, name: user.name, photoUrl: user.photoUrl },
+        { merge: true }
+      );
+    return newUser;
+  } catch (err) {
+    return 'error';
   }
 }
