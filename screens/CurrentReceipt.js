@@ -9,10 +9,20 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useStateValue } from '../state';
+import { useStateValue, StateContext } from '../state';
 
 export default function CurrentReceipt(props) {
-  return <View style={styles.container} />;
+  const [{ currentUser, currentReceipt }, dispatch] = useStateValue();
+
+  useEffect(() => {
+    receipt = await getReceipt(props.receiptId);
+
+  });
+  return (
+    <View style={styles.container}>
+      <Text>Hello receipt {props.receiptId}</Text>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

@@ -74,7 +74,6 @@ export default function HomeScreen(props) {
           },
           receipts
         );
-        console.log('receipts', receipts);
         return 'logged in';
       } else {
         return { cancelled: true };
@@ -90,7 +89,6 @@ export default function HomeScreen(props) {
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
       >
-        {console.log('comp contacts', contacts)}
         <View style={styles.welcomeContainer}>
           <Image
             source={require('../assets/images/splice.png')}

@@ -160,6 +160,7 @@ export async function getMyReceipts(email) {
 
     const myReceipts = await Promise.all(
       user.data().receipts.map(async receipt => {
+        //get user's receipt_users doc from all the receipts they're on
         let receipt_users = await db
           .collection('receipts')
           .doc(receipt.id)
@@ -167,24 +168,32 @@ export async function getMyReceipts(email) {
           .doc(email)
           .get();
 
-        receipt_users = receipt_users.data();
+        if (receipt_users.data()) {
+          const receiptData = receipt_users.data();
+          //create object for user details you want accessible on my receipt
+          const myDetails = {
+            name: receiptData.name,
+            isOwner: receiptData.isOwner,
+            userSubtotal: receiptData.userSubtotal,
+            userTax: receiptData.userTax,
+            userTip: receiptData.userTip,
+            userTotal: receiptData.userTotal,
+          };
 
-        let receiptDetails = await receipt.get();
-        let receiptSnapshot = {
-          ...receiptDetails.data(),
-          id: receiptDetails.id,
-          receipt_users: {
-            name: receipt_users.name,
-            isOwner: receipt_users.isOwner,
-            userSubtotal: receipt_users.userSubtotal,
-            userTax: receipt_users.userTax,
-            userTip: receipt_users.userTip,
-            userTotal: receipt_users.userTotal,
-          },
-        };
-        return receiptSnapshot;
+          //get receipt doc
+          let receiptDetails = await receipt.get();
+
+          //create object for receipt id, receipt details and users details
+          let receiptSnapshot = {
+            ...receiptDetails.data(),
+            id: receiptDetails.id,
+            myDetails,
+          };
+          return receiptSnapshot;
+        }
       })
     );
+    console.log('my receipts here', myReceipts);
     return myReceipts;
   } catch (err) {
     return `error: ${err}`;

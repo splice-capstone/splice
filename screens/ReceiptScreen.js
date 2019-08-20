@@ -9,6 +9,8 @@ import {
   View,
   TouchableOpacity,
   Platform,
+  Animated,
+  Image,
 } from 'react-native';
 import GalleryScreen from './GalleryScreen';
 import { ifIphoneX } from 'react-native-iphone-x-helper';
@@ -16,10 +18,11 @@ import * as FileSystem from 'expo-file-system';
 import * as Permissions from 'expo-permissions';
 import { Camera } from 'expo-camera';
 import axios from 'axios';
-import { createReceipt, getReceipt } from '../src/tools/firebase';
+import { createReceipt } from '../src/tools/firebase';
 
 import { Ionicons, MaterialIcons, Foundation } from '@expo/vector-icons';
 import { StateContext } from '../state';
+import CurrentReceipt from './CurrentReceipt';
 
 const flashModeOrder = {
   off: 'on',
@@ -52,6 +55,8 @@ export default class ReceiptScreen extends React.Component {
     pictureSizeId: 0,
     showGallery: false,
     showMoreOptions: false,
+    loading: false,
+    receiptId: '',
   };
 
   async componentWillMount() {
@@ -102,6 +107,7 @@ export default class ReceiptScreen extends React.Component {
 
   sendToTaggun = async photo => {
     console.log('sending to taggun...');
+    this.setState({ loading: true });
     const body = {
       image: photo.base64,
       filename: 'example.jpg',
@@ -119,14 +125,14 @@ export default class ReceiptScreen extends React.Component {
           },
         }
       );
-      console.log('taggun', response.data.amounts);
-      // if (response.data.date) {
-      //   const theDate = response.data.date.data;
-      // } else {
-      //   theDate = '';
-      // }
+      let theDate = response.data.date.data;
+
+      // let theIndex = theDate.indexOf('2');
+      // let newDate = theDate.slice(theIndex);
+      // theDate = await newDate;
+
       const receipt = {
-        date: 'theDate',
+        date: theDate,
         restaurant: response.data.merchantName.data,
         subtotal: '',
         tax: '',
@@ -137,8 +143,7 @@ export default class ReceiptScreen extends React.Component {
       for (let i = 0; i < response.data.amounts.length; i++) {
         let data = response.data.amounts[i].text;
 
-        console.log('THE-DATA', data);
-        if (data.includes('Tax' || 'tax')) {
+        if (data.includes('Tax') || data.includes('tax')) {
           receipt.tax = Number(response.data.amounts[i].data) * 100;
         }
         if (data[0] === 't' || 'T') {
@@ -146,7 +151,7 @@ export default class ReceiptScreen extends React.Component {
             Number(response.data.amounts[i].data) * 100
           );
         }
-        if (data.includes('Sub' || 'sub')) {
+        if (data.includes('Sub') || data.includes('sub')) {
           receipt.subtotal = Number(response.data.amounts[i].data) * 100;
         }
         if (
@@ -166,12 +171,7 @@ export default class ReceiptScreen extends React.Component {
         receiptItems,
         this.context[0].currentUser
       );
-      console.log(
-        'after create receipt, before set context******************',
-        receiptId
-      );
-      this.context[0].currentReceipt = await getReceipt(receiptId);
-      console.log('contextType', this.context);
+      this.setState({ loading: false, receiptId: receiptId });
       return;
     } catch (error) {
       console.log('hit an error');
@@ -320,7 +320,25 @@ export default class ReceiptScreen extends React.Component {
     const content = this.state.showGallery
       ? this.renderGallery()
       : cameraScreenContent;
-    return <View style={styles.container}>{content}</View>;
+    if (!this.state.loading && !this.state.receiptId) return content;
+    else if (this.state.loading) return <Text>Loading</Text>;
+    // if (this.state.loading) {
+    //   return (
+    //     <View>
+    //       <Animated.View style={{ ...styles.splash }}>
+    //         <Image
+    //           source={require('../assets/images/splash.gif')}
+    //           style={styles.image}
+    //         />
+    //       </Animated.View>
+    //     </View>
+    //   );
+    // }
+    else if (this.state.receiptId) {
+      return <CurrentReceipt receiptId={this.state.receiptId} />;
+    } else {
+      return <Text>error</Text>;
+    }
   }
 }
 
@@ -333,6 +351,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
   },
+
   bottomBar: {
     paddingBottom: ifIphoneX ? 25 : 5,
     backgroundColor: 'transparent',
@@ -403,7 +422,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
   },
+
   row: {
     flexDirection: 'row',
+  },
+  splash: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
+    marginTop: 15,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
   },
 });
