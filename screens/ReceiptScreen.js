@@ -119,9 +119,14 @@ export default class ReceiptScreen extends React.Component {
           },
         }
       );
-      let theDate = response.data.date.data;
+      console.log('taggun', response.data.amounts);
+      // if (response.data.date) {
+      //   const theDate = response.data.date.data;
+      // } else {
+      //   theDate = '';
+      // }
       const receipt = {
-        date: theDate,
+        date: 'theDate',
         restaurant: response.data.merchantName.data,
         subtotal: '',
         tax: '',
@@ -328,7 +333,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
   },
-
   bottomBar: {
     paddingBottom: ifIphoneX ? 25 : 5,
     backgroundColor: 'transparent',
@@ -399,7 +403,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
   },
-
   row: {
     flexDirection: 'row',
   },
