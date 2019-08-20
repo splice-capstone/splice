@@ -22,7 +22,6 @@ export async function userInit() {
 export async function createReceipt(data, itemData) {
   try {
     const newReceipt = await db.collection('receipts').add(data);
-    console.log('data', data);
     newReceipt.get().then(async function(querySnapshot) {
       if (querySnapshot.exists) {
         const newItems = await db
@@ -39,11 +38,13 @@ export async function createReceipt(data, itemData) {
     });
     return newReceipt.id;
   } catch (err) {
+    console.error(err)
     return err;
   }
 }
 
 export async function getReceipt(receiptId) {
+  const contextItems = []
   try {
     //this is getting us receipt document
     let receiptInfo = await db
@@ -54,35 +55,27 @@ export async function getReceipt(receiptId) {
     //this = items from that receipt document
     let receiptItems = await db
       .collection('receipts')
-      .doc(receiptId)
+      .doc(receiptInfo.id)
       .collection('items')
-      .get();
-    console.log('receptItems', receiptItems.data());
+      .get().then(function(querySnapshot) {
+        querySnapshot.forEach(doc => {
+          console.log('****items*****', doc.id, doc.data())
+          contextItems.push({
+                      name: doc.data().name,
+          amount: doc.data().amount,
+          id: doc.id,
+          payees: doc.data().payees,
 
-    let allReceiptItems = Promise.all(
-      receiptItems.map(async item => {
-        console.log('ITEMID', item.id);
-        item = await db
-          .collection('receipts')
-          .doc(receiptId)
-          .collection('items')
-          .doc(item.id)
-          .get();
-        return {
-          name: item.data().name,
-          amount: item.data().amount,
-          id: item.id,
-          payees: item.data().payees,
-        };
+          })
+        })
       })
-    );
-    let receiptSnapshot = {
+    console.log('receptItems', receiptItems);
+
+    return {
       ...receiptInfo.data(),
       id: receiptId,
-      items: allReceiptItems,
+      items: contextItems,
     };
-    console.log('receiptSnap', receiptSnapshot);
-    return receiptSnapshot;
   } catch (err) {
     return err;
   }

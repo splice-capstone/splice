@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import * as WebBrowser from 'expo-web-browser';
 import React, { useState, useEffect } from 'react';
 
@@ -160,6 +161,7 @@ export default class ReceiptScreen extends React.Component {
         }
       }
       let receiptId = await createReceipt(receipt, receiptItems);
+      console.log('after create receipt, before set context******************', receiptId)
       this.context[0].currentReceipt = await getReceipt(receiptId);
       console.log('contextType', this.context);
       return;
