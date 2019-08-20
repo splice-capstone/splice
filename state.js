@@ -17,10 +17,20 @@ export const useStateValue = () => useContext(StateContext);
 
 export const initialState = {
   currentUser: {},
-  currentReceipt: {},
-  currentPage: 'home',
+  currentReceipt: {
+    items: [],
+    receipt_users: [],
+    date: '',
+    owner: '',
+    paid: false,
+    restaurant: '',
+    subtotal: 0,
+    tax: 0,
+    total: 0,
+  },
   mode: 'view',
   myReceipts: [],
+  myContacts: [],
 };
 
 export const reducer = (state, action) => {
@@ -30,6 +40,11 @@ export const reducer = (state, action) => {
         ...state,
         currentUser: action.user,
         myReceipts: action.receipts,
+      };
+    case 'SET_CONTACTS':
+      return {
+        ...state,
+        myContacts: action.contacts,
       };
     default:
       return state;

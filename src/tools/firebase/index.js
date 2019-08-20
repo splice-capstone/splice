@@ -54,6 +54,29 @@ export async function findUser(email) {
   }
 }
 
+export async function createReceipt(data, itemData) {
+  try {
+    const newReceipt = await db.collection('receipts').add(data);
+    newReceipt.get().then(async function(querySnapshot) {
+      if (querySnapshot.exists) {
+        const newItems = await db
+          .collection('receipts')
+          .doc(querySnapshot.id)
+          .collection('items');
+        itemData.forEach(item => {
+          newItems.add(item);
+        });
+        return newItems;
+      } else {
+        console.log('no such document!');
+      }
+    });
+    return newReceipt.id;
+  } catch (err) {
+    return err;
+  }
+}
+
 export async function getMyReceipts(email) {
   try {
     const user = await db
@@ -89,6 +112,35 @@ export async function getMyReceipts(email) {
       })
     );
     return myReceipts;
+  } catch (err) {
+    return `error: ${err}`;
+  }
+}
+
+export async function addUserToReceipt(receipt, user) {
+  try {
+    //   add receipt_users subcollection doc (default to false on host field)
+    //   add other users to the friends item on Users doc
+    //   add receipt to Users doc
+    //   add users to every item doc to payees map (default to false)- email as key
+
+    // const receipt = await db.collection('receipts').doc(receipt.id);
+
+    // receipt.get().then(async function(querySnapshot) {
+    //   if (querySnapshot.exists) {
+    //     const newItems = await db
+    //       .collection('receipts')
+    //       .doc(querySnapshot.id)
+    //       .collection('items');
+    //     itemData.forEach(item => {
+    //       newItems.add(item);
+    //     });
+    //     return newItems;
+    //   } else {
+    //     console.log('no such document!');
+    //   }
+    // });
+    return receipt.id;
   } catch (err) {
     return `error: ${err}`;
   }

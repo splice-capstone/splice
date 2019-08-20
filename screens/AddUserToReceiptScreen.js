@@ -13,6 +13,7 @@ export default function AddUserToReceiptScreen() {
 
   return (
     <View style={styles.container}>
+      {console.log('current receipt', currentReceipt)}
       <Text>add user to receipt</Text>
       <TextInput
         style={{ height: 40 }}
@@ -28,13 +29,22 @@ export default function AddUserToReceiptScreen() {
       >
         Search
       </Button>
+      <Button
+        title="Add"
+        onPress={() => {
+          addUserToReceipt();
+        }}
+      >
+        Add
+      </Button>
     </View>
   );
 }
+
 //  Rendered from click on single receipt
 //   see people already on it
 //   invite people - search by email
-//   add receipt_users subcollection docs (default to false on host field)
+//   add receipt_users subcollection doc (default to false on host field)
 //   add other users to the friends item on Users doc
 //   add receipt to Users doc
 //   add users to every item doc to payees map (default to false)

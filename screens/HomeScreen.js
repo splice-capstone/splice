@@ -6,13 +6,49 @@ import LoginScreen from './LoginScreen';
 import LoggedInScreen from './LoggedInScreen';
 import * as Google from 'expo-google-app-auth';
 import { useStateValue } from '../state';
+import * as Contacts from 'expo-contacts';
+import * as Permissions from 'expo-permissions';
 
 export default function HomeScreen(props) {
-  const [{ currentUser }, dispatch] = useStateValue();
+  const [{ currentUser, contacts }, dispatch] = useStateValue();
 
   const setUser = (user, receipts) => {
     dispatch({ type: 'SET_USER', user, receipts });
   };
+
+  const setContacts = contacts => {
+    dispatch({ type: 'SET_CONTACTS', contacts });
+  };
+
+  async function checkMultiPermissions() {
+    const { status, expires } = await Permissions.askAsync(
+      Permissions.CONTACTS
+    );
+    if (status !== 'granted') {
+      alert('Hey! You have not enabled selected permissions');
+    } else {
+      const { data } = await Contacts.getContactsAsync({
+        fields: [Contacts.Fields.Emails],
+      });
+      if (data.length > 0) {
+        const contacts = data.map(item => {
+          if (item.emails && item.emails.length) {
+            email = item.emails[0].email;
+          }
+          return {
+            name: item.name,
+            email,
+          };
+        });
+        return contacts;
+      }
+    }
+  }
+
+  // if (!contacts) {
+  //   const newContacts = checkMultiPermissions();
+  //   setContacts(newContacts);
+  // }
 
   const signIn = async () => {
     try {
@@ -54,6 +90,7 @@ export default function HomeScreen(props) {
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
       >
+        {console.log('comp contacts', contacts)}
         <View style={styles.welcomeContainer}>
           <Image
             source={require('../assets/images/splice.png')}
