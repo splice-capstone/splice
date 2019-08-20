@@ -12,7 +12,14 @@ import {
 import { useStateValue } from '../state';
 
 export default function CurrentReceipt(props) {
-  return <View style={styles.container} />;
+  const [{ currentUser, currentReceipt }, dispatch] = useStateValue();
+
+  console.log('*******CURRENTRECIEPT******', currentReceipt);
+  return (
+    <View style={styles.container}>
+      <Text>Hello</Text>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

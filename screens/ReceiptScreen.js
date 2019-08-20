@@ -132,8 +132,7 @@ export default class ReceiptScreen extends React.Component {
       for (let i = 0; i < response.data.amounts.length; i++) {
         let data = response.data.amounts[i].text;
 
-        console.log('THE-DATA', data);
-        if (data.includes('Tax' || 'tax')) {
+        if (data.includes('Tax') || data.includes('tax')) {
           receipt.tax = Number(response.data.amounts[i].data) * 100;
         }
         if (data[0] === 't' || 'T') {
@@ -141,7 +140,7 @@ export default class ReceiptScreen extends React.Component {
             Number(response.data.amounts[i].data) * 100
           );
         }
-        if (data.includes('Sub' || 'sub')) {
+        if (data.includes('Sub') || data.includes('sub')) {
           receipt.subtotal = Number(response.data.amounts[i].data) * 100;
         }
         if (
@@ -161,12 +160,8 @@ export default class ReceiptScreen extends React.Component {
         receiptItems,
         this.context[0].currentUser
       );
-      console.log(
-        'after create receipt, before set context******************',
-        receiptId
-      );
       this.context[0].currentReceipt = await getReceipt(receiptId);
-      console.log('contextType', this.context);
+      // console.log('contextType', this.context);
       return;
     } catch (error) {
       console.log('hit an error');
