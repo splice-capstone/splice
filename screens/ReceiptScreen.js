@@ -120,7 +120,7 @@ export default class ReceiptScreen extends React.Component {
         }
       );
       let theDate = response.data.date.data;
-      console.log(response.data)
+      console.log(JSON.stringify(response.data.amounts))
 
       // let theIndex = theDate.indexOf('2');
       // let newDate = theDate.slice(theIndex);
@@ -162,8 +162,15 @@ export default class ReceiptScreen extends React.Component {
           });
         }
       }
-      let receiptId = await createReceipt(receipt, receiptItems, this.context[0].currentUser);
-      console.log('after create receipt, before set context******************', receiptId)
+      let receiptId = await createReceipt(
+        receipt,
+        receiptItems,
+        this.context[0].currentUser
+      );
+      console.log(
+        'after create receipt, before set context******************',
+        receiptId
+      );
       this.context[0].currentReceipt = await getReceipt(receiptId);
       console.log('contextType', this.context);
       return;

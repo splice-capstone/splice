@@ -27,7 +27,6 @@ export async function createReceipt(data, itemData, currentUser) {
 
           //get user doc
         const userDoc = await db.collection('users').doc(currentUser.email)
-        console.log('this is the userDoc ********', userDoc)
         await db
           .collection("receipts")
           .doc(querySnapshot.id)
@@ -76,7 +75,7 @@ export async function getReceipt(receiptId) {
       .get()
       .then(function(querySnapshot) {
         querySnapshot.forEach(doc => {
-          console.log("****items*****", doc.id, doc.data());
+          // console.log("****items*****", doc.id, doc.data());
           contextItems.push({
             name: doc.data().name,
             amount: doc.data().amount,
@@ -93,7 +92,7 @@ export async function getReceipt(receiptId) {
       .get()
       .then(function(querySnapshot) {
         querySnapshot.forEach(doc => {
-          console.log("****items*****", doc.id, doc.data());
+          // console.log("****items*****", doc.id, doc.data());
           contextItems.push({
             name: doc.data().name,
             amount: doc.data().amount,
@@ -103,7 +102,7 @@ export async function getReceipt(receiptId) {
         });
       });
 
-    console.log("receptItems", receiptItems);
+    // console.log("receptItems", receiptItems);
 
     return {
       ...receiptInfo.data(),
@@ -169,14 +168,3 @@ export async function getMyReceipts(email) {
     return `error: ${err}`;
   }
 }
-
-//reference -
-// await db
-//   .collection('receipts')
-//   .where('users', 'array-contains', email)
-//   .get()
-//   .then(function(querySnapshot) {
-//     querySnapshot.forEach(function(doc) {
-//       receipts.push(doc.data());
-//     });
-//   });
