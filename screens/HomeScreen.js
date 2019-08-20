@@ -1,34 +1,18 @@
-import * as WebBrowser from 'expo-web-browser';
-import React, { useState, useEffect } from 'react';
-import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { MonoText } from '../components/StyledText';
-import db, { userInit, findOrCreateUser } from '../src/tools/firebase';
+import React from 'react';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { findOrCreateUser, getMyReceipts } from '../src/tools/firebase';
 import Constants from 'expo-constants';
 import LoginScreen from './LoginScreen';
 import LoggedInScreen from './LoggedInScreen';
-import Expo from 'expo';
 import * as Google from 'expo-google-app-auth';
+import { useStateValue } from '../state';
 
-export default function HomeScreen(props) {
-  const [user, setUser] = useState();
+export default function HomeScreen() {
+  const [{ currentUser }, dispatch] = useStateValue();
 
-  // const checkIfLoggedIn = () => {
-  //   firebase.auth().onAuthStateChanged(user => {
-  //     if (user) {
-  //       props.navigation.navigate('LoggedInScreen');
-  //     } else {
-  //       props.navigation.navigate('LoginScreen');
-  //     }
-  //   });
-  // };
+  const setUser = (user, receipts) => {
+    dispatch({ type: 'SET_USER', user, receipts });
+  };
 
   const signIn = async () => {
     try {
@@ -45,11 +29,16 @@ export default function HomeScreen(props) {
           }
         );
         await findOrCreateUser(result.user);
-        await setUser({
-          name: result.user.name,
-          email: result.user.email,
-          photoUrl: result.user.photoUrl,
-        });
+        const receipts = await getMyReceipts(result.user.email);
+        await setUser(
+          {
+            name: result.user.name,
+            email: result.user.email,
+            photoUrl: result.user.photoUrl,
+          },
+          receipts
+        );
+        console.log('receipts', receipts);
         return 'logged in';
       } else {
         return { cancelled: true };
@@ -72,12 +61,12 @@ export default function HomeScreen(props) {
           />
           <Text style={styles.header}>splice</Text>
           <View>
-            {user ? (
-              <LoggedInScreen user={user} />
-            ) : (
+            {!currentUser.name ? (
               <View style={styles.loginContainer}>
                 <LoginScreen signIn={signIn} />
               </View>
+            ) : (
+              <LoggedInScreen user={currentUser} />
             )}
           </View>
         </View>
@@ -119,25 +108,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 200,
     marginBottom: 20,
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
   },
 });
