@@ -1,6 +1,5 @@
 import * as firebase from 'firebase';
 import 'firebase/firestore';
-
 import Constants from 'expo-constants';
 
 firebase.initializeApp(Constants.manifest.extra.firebaseConfig);
@@ -29,6 +28,27 @@ export async function findOrCreateUser(user) {
         { merge: true }
       );
     return newUser;
+  } catch (err) {
+    return `error: ${err}`;
+  }
+}
+
+export async function findUser(email) {
+  try {
+    email.toLowerCase();
+    let user = await db
+      .collection('users')
+      .orderBy('email')
+      .where('email', '==', email)
+      .get();
+    user = await user.data();
+    const userDetails = {
+      email: user.email,
+      name: user.name,
+      photoUrl: user.photoUrl,
+    };
+    console.log('user', userDetails);
+    return userDetails;
   } catch (err) {
     return `error: ${err}`;
   }
