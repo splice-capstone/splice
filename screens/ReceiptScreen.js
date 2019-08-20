@@ -120,6 +120,12 @@ export default class ReceiptScreen extends React.Component {
         }
       );
       let theDate = response.data.date.data;
+      console.log(JSON.stringify(response.data.amounts))
+
+      // let theIndex = theDate.indexOf('2');
+      // let newDate = theDate.slice(theIndex);
+      // theDate = await newDate;
+
       const receipt = {
         date: theDate,
         restaurant: response.data.merchantName.data,
