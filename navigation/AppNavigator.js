@@ -11,6 +11,7 @@ import HomeScreen from '../screens/HomeScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import ReceiptScreen from '../screens/ReceiptScreen';
 import AddUserToReceiptScreen from '../screens/AddUserToReceiptScreen';
+import CurrentReceipt from '../screens/CurrentReceipt';
 import { Ionicons } from '@expo/vector-icons';
 
 // import MainTabNavigator from './MainTabNavigator';
@@ -43,9 +44,11 @@ const styles = StyleSheet.create({
 const DrawerNavigator = createDrawerNavigator(
   {
     Home: { screen: HomeScreen },
+    CurrentReceipt: { screen: CurrentReceipt },
     Settings: { screen: SettingsScreen },
     AddReceipt: { screen: ReceiptScreen },
     AddUser: { screen: AddUserToReceiptScreen },
+    Receipt: { screen: ReceiptScreen },
   },
   {
     hideStatusBar: true,

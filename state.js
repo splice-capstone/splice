@@ -13,6 +13,7 @@ export const StateProvider = ({ reducer, initialState, children }) => (
     {children}
   </StateContext.Provider>
 );
+
 export const useStateValue = () => useContext(StateContext);
 
 export const initialState = {
@@ -45,6 +46,12 @@ export const reducer = (state, action) => {
       return {
         ...state,
         myContacts: action.contacts,
+      };
+    case 'SET_RECEIPT':
+      return {
+        ...state,
+        currentReceipt: action.receipt,
+        mode: 'view',
       };
     default:
       return state;
