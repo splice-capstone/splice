@@ -160,7 +160,7 @@ export default class ReceiptScreen extends React.Component {
           });
         }
       }
-      let receiptId = await createReceipt(receipt, receiptItems);
+      let receiptId = await createReceipt(receipt, receiptItems, this.context[0].currentUser);
       console.log('after create receipt, before set context******************', receiptId)
       this.context[0].currentReceipt = await getReceipt(receiptId);
       console.log('contextType', this.context);
