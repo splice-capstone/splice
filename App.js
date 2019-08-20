@@ -70,7 +70,8 @@ async function _cacheResourcesAsync(setAppReady) {
     Asset.loadAsync([require('./assets/images/splice.png')]),
     Asset.loadAsync([require('./assets/images/google_signin.png')]),
     Font.loadAsync({
-      // This is the font that we are using for our tab bar
+      Roboto: require('native-base/Fonts/Roboto.ttf'),
+      Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
       ...Ionicons.font,
       // We include SpaceMono because we use it in HomeScreen.js. Feel free to
       // remove this if you are not using it in your app

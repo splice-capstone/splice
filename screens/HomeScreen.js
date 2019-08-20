@@ -7,7 +7,7 @@ import LoggedInScreen from './LoggedInScreen';
 import * as Google from 'expo-google-app-auth';
 import { useStateValue } from '../state';
 
-export default function HomeScreen() {
+export default function HomeScreen(props) {
   const [{ currentUser }, dispatch] = useStateValue();
 
   const setUser = (user, receipts) => {
@@ -62,11 +62,12 @@ export default function HomeScreen() {
           <Text style={styles.header}>splice</Text>
           <View>
             {!currentUser.name ? (
-              <View style={styles.loginContainer}>
-                <LoginScreen signIn={signIn} />
-              </View>
+              <LoginScreen signIn={signIn} />
             ) : (
-              <LoggedInScreen user={currentUser} />
+              <LoggedInScreen
+                user={currentUser}
+                navigation={props.navigation}
+              />
             )}
           </View>
         </View>
