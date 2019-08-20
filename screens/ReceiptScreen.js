@@ -1,16 +1,16 @@
+/* eslint-disable complexity */
 import * as WebBrowser from 'expo-web-browser';
 import React, { useState, useEffect } from 'react';
 
-import { MonoText } from '../components/StyledText';
 import Constants from 'expo-constants';
 import {
-  Alert,
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
-  Slider,
   Platform,
+  Animated,
+  Image,
 } from 'react-native';
 import GalleryScreen from './GalleryScreen';
 import { ifIphoneX } from 'react-native-iphone-x-helper';
@@ -18,16 +18,11 @@ import * as FileSystem from 'expo-file-system';
 import * as Permissions from 'expo-permissions';
 import { Camera } from 'expo-camera';
 import axios from 'axios';
+import { createReceipt } from '../src/tools/firebase';
 
-import {
-  Ionicons,
-  MaterialIcons,
-  Foundation,
-  MaterialCommunityIcons,
-  Octicons,
-} from '@expo/vector-icons';
-
-const landmarkSize = 2;
+import { Ionicons, MaterialIcons, Foundation } from '@expo/vector-icons';
+import { StateContext } from '../state';
+import CurrentReceipt from './CurrentReceipt';
 
 const flashModeOrder = {
   off: 'on',
@@ -43,25 +38,9 @@ const flashIcons = {
   torch: 'highlight',
 };
 
-const wbOrder = {
-  auto: 'sunny',
-  sunny: 'cloudy',
-  cloudy: 'shadow',
-  shadow: 'fluorescent',
-  fluorescent: 'incandescent',
-  incandescent: 'auto',
-};
-
-const wbIcons = {
-  auto: 'wb-auto',
-  sunny: 'wb-sunny',
-  cloudy: 'wb-cloudy',
-  shadow: 'beach-access',
-  fluorescent: 'wb-iridescent',
-  incandescent: 'wb-incandescent',
-};
-
 export default class ReceiptScreen extends React.Component {
+  static contextType = StateContext;
+
   state = {
     flash: 'off',
     zoom: 0,
@@ -69,9 +48,6 @@ export default class ReceiptScreen extends React.Component {
     type: 'back',
     whiteBalance: 'auto',
     ratio: '16:9',
-    ratios: [],
-    barcodeScanning: false,
-    faceDetecting: false,
     newPhotos: false,
     permissionsGranted: false,
     pictureSize: undefined,
@@ -79,6 +55,8 @@ export default class ReceiptScreen extends React.Component {
     pictureSizeId: 0,
     showGallery: false,
     showMoreOptions: false,
+    loading: false,
+    receiptId: '',
   };
 
   async componentWillMount() {
@@ -105,29 +83,13 @@ export default class ReceiptScreen extends React.Component {
   toggleMoreOptions = () =>
     this.setState({ showMoreOptions: !this.state.showMoreOptions });
 
-  toggleFacing = () =>
-    this.setState({ type: this.state.type === 'back' ? 'front' : 'back' });
-
   toggleFlash = () =>
     this.setState({ flash: flashModeOrder[this.state.flash] });
 
   setRatio = ratio => this.setState({ ratio });
 
-  toggleWB = () =>
-    this.setState({ whiteBalance: wbOrder[this.state.whiteBalance] });
-
   toggleFocus = () =>
     this.setState({ autoFocus: this.state.autoFocus === 'on' ? 'off' : 'on' });
-
-  zoomOut = () =>
-    this.setState({
-      zoom: this.state.zoom - 0.1 < 0 ? 0 : this.state.zoom - 0.1,
-    });
-
-  zoomIn = () =>
-    this.setState({
-      zoom: this.state.zoom + 0.1 > 1 ? 1 : this.state.zoom + 0.1,
-    });
 
   setFocusDepth = depth => this.setState({ depth });
 
@@ -144,33 +106,75 @@ export default class ReceiptScreen extends React.Component {
   handleMountError = ({ message }) => console.error(message);
 
   sendToTaggun = async photo => {
+    console.log('sending to taggun...');
+    this.setState({ loading: true });
     const body = {
       image: photo.base64,
-      filename: 'receipt.jpg',
+      filename: 'example.jpg',
       contentType: 'image/jpeg',
-      refresh: false,
-      incognito: false,
-      ipAddress: '32.4.2.223',
-      near: 'Kalamazoo, MI, USA',
-      ignoreMerchantName: 'string',
-      language: 'en',
     };
-    const headers = {
-      apikey: Constants.manifest.extra.taggunApiKey,
-      'content-type': 'application/json',
-      accept: 'application/json',
-    };
-    console.log('headers', headers);
     try {
-      console.log('hellO!!!');
       const response = await axios.post(
         'https://api.taggun.io/api/receipt/v1/verbose/encoded',
         body,
-        headers
+        {
+          headers: {
+            apikey: Constants.manifest.extra.taggunApiKey,
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+        }
       );
-      console.log('response', response);
+      let theDate = response.data.date.data;
+
+      // let theIndex = theDate.indexOf('2');
+      // let newDate = theDate.slice(theIndex);
+      // theDate = await newDate;
+
+      const receipt = {
+        date: theDate,
+        restaurant: response.data.merchantName.data,
+        subtotal: '',
+        tax: '',
+        total: '',
+        owner: this.context[0].currentUser.email,
+      };
+      const receiptItems = [];
+      for (let i = 0; i < response.data.amounts.length; i++) {
+        let data = response.data.amounts[i].text;
+
+        if (data.includes('Tax') || data.includes('tax')) {
+          receipt.tax = Number(response.data.amounts[i].data) * 100;
+        }
+        if (data[0] === 't' || 'T') {
+          receipt.total = Math.ceil(
+            Number(response.data.amounts[i].data) * 100
+          );
+        }
+        if (data.includes('Sub') || data.includes('sub')) {
+          receipt.subtotal = Number(response.data.amounts[i].data) * 100;
+        }
+        if (
+          !data.includes('Tax') &&
+          !data.includes('Sub') &&
+          !data.includes('TOTAL')
+        ) {
+          let theIdx = await data.indexOf('@');
+          receiptItems.push({
+            amount: data.slice(data.length - 5, data.length),
+            name: data.slice(2, theIdx - 1),
+          });
+        }
+      }
+      let receiptId = await createReceipt(
+        receipt,
+        receiptItems,
+        this.context[0].currentUser
+      );
+      this.setState({ loading: false, receiptId: receiptId });
+      return;
     } catch (error) {
-      console.log('**********');
+      console.log('hit an error');
       console.error(error);
     }
   };
@@ -178,13 +182,11 @@ export default class ReceiptScreen extends React.Component {
   onPictureSaved = async photo => {
     this.sendToTaggun(photo);
 
-    console.log('here');
     await FileSystem.moveAsync({
       from: photo.uri,
       to: `${FileSystem.documentDirectory}photos/${Date.now()}.jpg`,
     });
     this.setState({ newPhotos: true });
-    console.log('NOW**HERE');
   };
 
   collectPictureSizes = async () => {
@@ -196,7 +198,6 @@ export default class ReceiptScreen extends React.Component {
       if (Platform.OS === 'ios') {
         pictureSizeId = pictureSizes.indexOf('High');
       } else {
-        // returned array is sorted in ascending order - default size is the largest one
         pictureSizeId = pictureSizes.length - 1;
       }
       this.setState({
@@ -236,45 +237,16 @@ export default class ReceiptScreen extends React.Component {
     </View>
   );
 
-  renderTopBar = () => (
-    <View style={styles.topBar}>
-      <TouchableOpacity style={styles.toggleButton} onPress={this.toggleFacing}>
-        <Ionicons name="ios-reverse-camera" size={32} color="white" />
-      </TouchableOpacity>
+  renderTopBar = () => <View style={styles.topBar} />;
+
+  renderBottomBar = () => (
+    <View style={styles.bottomBar}>
       <TouchableOpacity style={styles.toggleButton} onPress={this.toggleFlash}>
         <MaterialIcons
           name={flashIcons[this.state.flash]}
           size={32}
           color="white"
         />
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.toggleButton} onPress={this.toggleWB}>
-        <MaterialIcons
-          name={wbIcons[this.state.whiteBalance]}
-          size={32}
-          color="white"
-        />
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.toggleButton} onPress={this.toggleFocus}>
-        <Text
-          style={[
-            styles.autoFocusLabel,
-            { color: this.state.autoFocus === 'on' ? 'white' : '#6b6b6b' },
-          ]}
-        >
-          AF
-        </Text>
-      </TouchableOpacity>
-    </View>
-  );
-
-  renderBottomBar = () => (
-    <View style={styles.bottomBar}>
-      <TouchableOpacity
-        style={styles.bottomButton}
-        onPress={this.toggleMoreOptions}
-      >
-        <Octicons name="kebab-horizontal" size={30} color="white" />
       </TouchableOpacity>
       <View style={{ flex: 0.4 }}>
         <TouchableOpacity
@@ -328,8 +300,6 @@ export default class ReceiptScreen extends React.Component {
         onCameraReady={this.collectPictureSizes}
         type={this.state.type}
         flashMode={this.state.flash}
-        autoFocus={this.state.autoFocus}
-        zoom={this.state.zoom}
         whiteBalance={this.state.whiteBalance}
         ratio={this.state.ratio}
         pictureSize={this.state.pictureSize}
@@ -350,7 +320,25 @@ export default class ReceiptScreen extends React.Component {
     const content = this.state.showGallery
       ? this.renderGallery()
       : cameraScreenContent;
-    return <View style={styles.container}>{content}</View>;
+    if (!this.state.loading && !this.state.receiptId) return content;
+    else if (this.state.loading) return <Text>Loading</Text>;
+    // if (this.state.loading) {
+    //   return (
+    //     <View>
+    //       <Animated.View style={{ ...styles.splash }}>
+    //         <Image
+    //           source={require('../assets/images/splash.gif')}
+    //           style={styles.image}
+    //         />
+    //       </Animated.View>
+    //     </View>
+    //   );
+    // }
+    else if (this.state.receiptId) {
+      return <CurrentReceipt receiptId={this.state.receiptId} />;
+    } else {
+      return <Text>error</Text>;
+    }
   }
 }
 
@@ -363,13 +351,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
   },
-  topBar: {
-    flex: 0.2,
-    backgroundColor: 'transparent',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingTop: 5 / 2,
-  },
+
   bottomBar: {
     paddingBottom: ifIphoneX ? 25 : 5,
     backgroundColor: 'transparent',
@@ -399,10 +381,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  autoFocusLabel: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
   bottomButton: {
     flex: 0.3,
     height: 58,
@@ -413,8 +391,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     right: -5,
-    width: 8,
-    height: 8,
+    width: 15,
+    height: 15,
     borderRadius: 4,
     backgroundColor: '#4630EB',
   },
@@ -434,11 +412,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
   },
-  pictureQualityLabel: {
-    fontSize: 10,
-    marginVertical: 3,
-    color: 'white',
-  },
   pictureSizeContainer: {
     flex: 0.5,
     alignItems: 'center',
@@ -449,13 +422,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
   },
-  pictureSizeLabel: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
 
   row: {
     flexDirection: 'row',
+  },
+  splash: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
+    marginTop: 15,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
   },
 });

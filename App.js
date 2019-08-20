@@ -13,8 +13,9 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AppNavigator from './navigation/AppNavigator';
+import { StateProvider, initialState, reducer } from './state';
 
-export default function App(props) {
+export default function App() {
   const [isAppReady, setAppReady] = useState(false);
   const [isSplashReady, setSplashReady] = useState(false);
   const [value] = useState(new Animated.Value(1));
@@ -22,7 +23,7 @@ export default function App(props) {
   useEffect(() => {
     Animated.timing(value, {
       toValue: 0,
-      duration: 3000,
+      duration: 1000,
     }).start();
   });
 
@@ -43,15 +44,18 @@ export default function App(props) {
         <Image
           source={require('./assets/images/splash.gif')}
           onLoad={() => _cacheResourcesAsync(setAppReady)}
+          style={styles.image}
         />
       </Animated.View>
     );
   }
   return (
-    <Animated.View style={{ ...styles.container }}>
-      {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-      <AppNavigator />
-    </Animated.View>
+    <StateProvider initialState={initialState} reducer={reducer}>
+      <Animated.View style={{ ...styles.container }}>
+        {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+        <AppNavigator />
+      </Animated.View>
+    </StateProvider>
   );
 }
 
@@ -66,7 +70,8 @@ async function _cacheResourcesAsync(setAppReady) {
     Asset.loadAsync([require('./assets/images/splice.png')]),
     Asset.loadAsync([require('./assets/images/google_signin.png')]),
     Font.loadAsync({
-      // This is the font that we are using for our tab bar
+      Roboto: require('native-base/Fonts/Roboto.ttf'),
+      Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
       ...Ionicons.font,
       // We include SpaceMono because we use it in HomeScreen.js. Feel free to
       // remove this if you are not using it in your app
@@ -89,5 +94,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  image: {
+    marginTop: 15,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
   },
 });

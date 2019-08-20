@@ -1,16 +1,19 @@
-import React from "react";
+import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import {
   createAppContainer,
   createSwitchNavigator,
   createDrawerNavigator,
-  createStackNavigator
-} from "react-navigation";
-import { DrawerActions } from 'react-navigation-drawer'
-import HomeScreen from "../screens/HomeScreen";
+  createStackNavigator,
+} from 'react-navigation';
 import MyReceipts from "../screens/MyReceipts";
-import ReceiptScreen from "../screens/ReceiptScreen";
-import { Ionicons } from '@expo/vector-icons'
+import { DrawerActions } from 'react-navigation-drawer';
+import HomeScreen from '../screens/HomeScreen';
+import SettingsScreen from '../screens/SettingsScreen';
+import ReceiptScreen from '../screens/ReceiptScreen';
+import AddUserToReceiptScreen from '../screens/AddUserToReceiptScreen';
+import CurrentReceipt from '../screens/CurrentReceipt';
+import { Ionicons } from '@expo/vector-icons';
 
 // import MainTabNavigator from './MainTabNavigator';
 
@@ -31,28 +34,31 @@ const styles = StyleSheet.create({
   },
   menuOpen: {
     marginLeft: 10,
-    marginTop: 10
+    marginTop: 10,
   },
   menuClose: {
     marginLeft: 14,
-    marginTop: 10
-  }
+    marginTop: 10,
+  },
 });
 
 const DrawerNavigator = createDrawerNavigator(
   {
     Home: { screen: HomeScreen },
-    Receipts: { screen: MyReceipts },
-    New_Receipt: { screen: ReceiptScreen }
+    CurrentReceipt: { screen: CurrentReceipt },
+    Settings: { screen: SettingsScreen },
+    AddReceipt: { screen: ReceiptScreen },
+    AddUser: { screen: AddUserToReceiptScreen },
+    Receipts: { screen: MyReceipts }
   },
   {
     hideStatusBar: true,
-    drawerBackgroundColor: "rgba(255,255,255,.9)",
-    overlayColor: "#6b52ae",
+    drawerBackgroundColor: 'rgba(255,255,255,.9)',
+    overlayColor: '#6b52ae',
     contentOptions: {
-      activeTintColor: "#fff",
-      activeBackgroundColor: "#6b52ae"
-    }
+      activeTintColor: '#fff',
+      activeBackgroundColor: '#6b52ae',
+    },
   }
 );
 
@@ -62,26 +68,43 @@ const StackNavigator = createStackNavigator({
     navigationOptions: ({ navigation }) => {
       const { state } = navigation;
 
-      if(state.isDrawerOpen) {
+      if (state.isDrawerOpen) {
         return {
-          headerLeft: ({titleStyle}) => (
-            <TouchableOpacity onPress={() => {navigation.dispatch(DrawerActions.toggleDrawer())}}>
-              <Ionicons name="ios-close" style={styles.menuClose} size={36} color={titleStyle} />
+          headerLeft: ({ titleStyle }) => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.dispatch(DrawerActions.toggleDrawer());
+              }}
+            >
+              <Ionicons
+                name="ios-close"
+                style={styles.menuClose}
+                size={36}
+                color={titleStyle}
+              />
             </TouchableOpacity>
-          )
-        }
-      }
-      else {
+          ),
+        };
+      } else {
         return {
-          headerLeft: ({titleStyle}) => (
-            <TouchableOpacity onPress={() => {navigation.dispatch(DrawerActions.toggleDrawer())}}>
-              <Ionicons name="ios-menu" style={styles.menuOpen} size={32} color={titleStyle} />
+          headerLeft: ({ titleStyle }) => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.dispatch(DrawerActions.toggleDrawer());
+              }}
+            >
+              <Ionicons
+                name="ios-menu"
+                style={styles.menuOpen}
+                size={32}
+                color={titleStyle}
+              />
             </TouchableOpacity>
-          )
-        }
+          ),
+        };
       }
-    }
-  }
-})
+    },
+  },
+});
 
 export default createAppContainer(StackNavigator);

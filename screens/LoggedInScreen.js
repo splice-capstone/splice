@@ -1,28 +1,28 @@
 import * as WebBrowser from 'expo-web-browser';
-import React, { useState, useEffect } from 'react';
-import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Button,
-} from 'react-native';
+import React from 'react';
+import { Image, StyleSheet, View } from 'react-native';
+import { Container, Header, Content, Button, Text } from 'native-base';
 
 const LoggedInScreen = props => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Welcome {props.user.name}</Text>
       <Image style={styles.image} source={{ uri: props.user.photoUrl }} />
-
       <View style={styles.bottom}>
-        <Button title="TAKE A SNAPSHOT" style={styles.buttonDark}>
-          TAKE A SNAPSHOT
+        <Button
+          title="TAKE A SNAPSHOT"
+          style={styles.buttonDark}
+          onPress={() => props.navigation.navigate('AddReceipt')}
+        >
+          <Text>TAKE A SNAPSHOT</Text>
         </Button>
-        <Button title="BY HAND" style={styles.buttonLight} color="#3D9970">
-          BY HAND
+        <Button
+          style={styles.buttonLight}
+          onPress={() => props.navigation.navigate('AddReceipt')}
+        >
+          <Text style={{ color: 'black', alignContent: 'center' }}>
+            BY HAND
+          </Text>
         </Button>
       </View>
     </View>
@@ -50,12 +50,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1,
     borderColor: '#c4f5df',
+    margin: 2,
   },
   buttonLight: {
     backgroundColor: '#c4f5df',
     borderRadius: 5,
     borderWidth: 1,
     borderColor: '#c4f5df',
+    color: '#050d09',
+    margin: 2,
   },
   bottom: {
     flex: 1,

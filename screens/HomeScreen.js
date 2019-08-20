@@ -1,36 +1,59 @@
-import * as WebBrowser from 'expo-web-browser';
-import React, { useState, useEffect } from 'react';
-import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { MonoText } from '../components/StyledText';
-import db, { userInit, findOrCreateUser } from '../src/tools/firebase';
+import React from 'react';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { findOrCreateUser, getMyReceipts } from '../src/tools/firebase';
 import Constants from 'expo-constants';
 import LoginScreen from './LoginScreen';
 import LoggedInScreen from './LoggedInScreen';
-import Expo from 'expo';
 import * as Google from 'expo-google-app-auth';
+<<<<<<< HEAD
 // import console = require('console');
 // // import console = require('console');
+=======
+import { useStateValue } from '../state';
+import * as Contacts from 'expo-contacts';
+import * as Permissions from 'expo-permissions';
+>>>>>>> 9b2f9dc2f2054c5b174347911d1b160447f014c1
 
 export default function HomeScreen(props) {
-  const [user, setUser] = useState();
+  const [{ currentUser, contacts }, dispatch] = useStateValue();
 
-  // const checkIfLoggedIn = () => {
-  //   firebase.auth().onAuthStateChanged(user => {
-  //     if (user) {
-  //       props.navigation.navigate('LoggedInScreen');
-  //     } else {
-  //       props.navigation.navigate('LoginScreen');
-  //     }
-  //   });
-  // };
+  const setUser = (user, receipts) => {
+    dispatch({ type: 'SET_USER', user, receipts });
+  };
+
+  const setContacts = contacts => {
+    dispatch({ type: 'SET_CONTACTS', contacts });
+  };
+
+  async function checkMultiPermissions() {
+    const { status, expires } = await Permissions.askAsync(
+      Permissions.CONTACTS
+    );
+    if (status !== 'granted') {
+      alert('Hey! You have not enabled selected permissions');
+    } else {
+      const { data } = await Contacts.getContactsAsync({
+        fields: [Contacts.Fields.Emails],
+      });
+      if (data.length > 0) {
+        const contacts = data.map(item => {
+          if (item.emails && item.emails.length) {
+            email = item.emails[0].email;
+          }
+          return {
+            name: item.name,
+            email,
+          };
+        });
+        return contacts;
+      }
+    }
+  }
+
+  // if (!contacts) {
+  //   const newContacts = checkMultiPermissions();
+  //   setContacts(newContacts);
+  // }
 
   const signIn = async () => {
     try {
@@ -48,14 +71,15 @@ export default function HomeScreen(props) {
           }
         );
         await findOrCreateUser(result.user);
-        await setUser({
-          name: result.user.name,
-          email: result.user.email,
-          photoUrl: result.user.photoUrl,
-        });
-        const what = await db.collection('users').doc('tom.sinovich@gmail.com').get()
-        const hehe = await what.data().receipts[0].get()
-        console.log( hehe.data())
+        const receipts = await getMyReceipts(result.user.email);
+        await setUser(
+          {
+            name: result.user.name,
+            email: result.user.email,
+            photoUrl: result.user.photoUrl,
+          },
+          receipts
+        );
         return 'logged in';
       } else {
         return { cancelled: true };
@@ -78,12 +102,13 @@ export default function HomeScreen(props) {
           />
           <Text style={styles.header}>splice</Text>
           <View>
-            {user ? (
-              <LoggedInScreen user={user} />
+            {!currentUser.name ? (
+              <LoginScreen signIn={signIn} />
             ) : (
-              <View style={styles.loginContainer}>
-                <LoginScreen signIn={signIn} />
-              </View>
+              <LoggedInScreen
+                user={currentUser}
+                navigation={props.navigation}
+              />
             )}
           </View>
         </View>
@@ -125,25 +150,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 200,
     marginBottom: 20,
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
   },
 });
