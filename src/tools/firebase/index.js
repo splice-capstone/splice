@@ -22,6 +22,7 @@ export async function userInit() {
 export async function createReceipt(data, itemData) {
   try {
     const newReceipt = await db.collection('receipts').add(data);
+    console.log('data', data);
     newReceipt.get().then(async function(querySnapshot) {
       if (querySnapshot.exists) {
         const newItems = await db
@@ -36,11 +37,57 @@ export async function createReceipt(data, itemData) {
         console.log('no such document!');
       }
     });
-    return newReceipt;
+    return newReceipt.id;
   } catch (err) {
     return err;
   }
 }
+
+export async function getReceipt(receiptId) {
+  try {
+    //this is getting us receipt document
+    let receiptInfo = await db
+      .collection('receipts')
+      .doc(receiptId)
+      .get();
+
+    //this = items from that receipt document
+    let receiptItems = await db
+      .collection('receipts')
+      .doc(receiptId)
+      .collection('items')
+      .get();
+    console.log('receptItems', receiptItems.data());
+
+    let allReceiptItems = Promise.all(
+      receiptItems.map(async item => {
+        console.log('ITEMID', item.id);
+        item = await db
+          .collection('receipts')
+          .doc(receiptId)
+          .collection('items')
+          .doc(item.id)
+          .get();
+        return {
+          name: item.data().name,
+          amount: item.data().amount,
+          id: item.id,
+          payees: item.data().payees,
+        };
+      })
+    );
+    let receiptSnapshot = {
+      ...receiptInfo.data(),
+      id: receiptId,
+      items: allReceiptItems,
+    };
+    console.log('receiptSnap', receiptSnapshot);
+    return receiptSnapshot;
+  } catch (err) {
+    return err;
+  }
+}
+
 export async function findOrCreateUser(user) {
   try {
     const newUser = await db

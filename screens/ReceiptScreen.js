@@ -15,7 +15,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Permissions from 'expo-permissions';
 import { Camera } from 'expo-camera';
 import axios from 'axios';
-import { createReceipt } from '../src/tools/firebase';
+import { createReceipt, getReceipt } from '../src/tools/firebase';
 
 import { Ionicons, MaterialIcons, Foundation } from '@expo/vector-icons';
 import { StateContext } from '../state';
@@ -36,6 +36,7 @@ const flashIcons = {
 
 export default class ReceiptScreen extends React.Component {
   static contextType = StateContext;
+
   state = {
     flash: 'off',
     zoom: 0,
@@ -158,7 +159,9 @@ export default class ReceiptScreen extends React.Component {
           });
         }
       }
-      createReceipt(receipt, receiptItems);
+      let receiptId = await createReceipt(receipt, receiptItems);
+      this.context[0].currentReceipt = await getReceipt(receiptId);
+      console.log('contextType', this.context);
       return;
     } catch (error) {
       console.log('hit an error');

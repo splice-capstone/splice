@@ -32,6 +32,12 @@ export const reducer = (state, action) => {
         currentUser: action.user,
         myReceipts: action.receipts,
       };
+    case 'SET_RECEIPT':
+      return {
+        ...state,
+        currentReceipt: action.receipt,
+        mode: 'view',
+      };
     default:
       return state;
   }
