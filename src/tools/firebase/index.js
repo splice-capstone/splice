@@ -27,7 +27,6 @@ export async function createReceipt(data, itemData, currentUser) {
 
 
           //get user doc
-        const userDoc = await db.collection('users').doc(currentUser.email)
         await db
           .collection('receipts')
           .doc(querySnapshot.id)
