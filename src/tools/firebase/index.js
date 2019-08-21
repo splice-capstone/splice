@@ -25,9 +25,9 @@ export async function createReceipt(data, itemData, currentUser) {
         });
         //add receipt owner
 
-        //get user doc
-        const userDoc = await db.collection('users').doc(currentUser.email);
-        console.log('this is the userDoc ********', userDoc);
+
+          //get user doc
+        const userDoc = await db.collection('users').doc(currentUser.email)
         await db
           .collection('receipts')
           .doc(querySnapshot.id)
@@ -76,7 +76,7 @@ export async function getReceipt(receiptId) {
       .get()
       .then(function(querySnapshot) {
         querySnapshot.forEach(doc => {
-          console.log('****items*****', doc.id, doc.data());
+          // console.log("****items*****", doc.id, doc.data());
           contextItems.push({
             name: doc.data().name,
             amount: doc.data().amount,
@@ -93,7 +93,7 @@ export async function getReceipt(receiptId) {
       .get()
       .then(function(querySnapshot) {
         querySnapshot.forEach(doc => {
-          console.log('****items*****', doc.id, doc.data());
+          // console.log("****items*****", doc.id, doc.data());
           contextItems.push({
             name: doc.data().name,
             amount: doc.data().amount,
@@ -103,7 +103,7 @@ export async function getReceipt(receiptId) {
         });
       });
 
-    console.log('receptItems', receiptItems);
+    // console.log("receptItems", receiptItems);
 
     return {
       ...receiptInfo.data(),
