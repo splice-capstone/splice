@@ -26,7 +26,7 @@ export default function CurrentReceipt(props) {
   useEffect(() => {
     const receiptId = props.navigation.getParam(
       'receiptId',
-      '7AfNCXWaZT9amAf0L0Rm'
+      'jbIXS3uNWk0VGEZWqcdP'
     );
     if (!currentReceipt.id) {
       getReceipt(receiptId).then(receipt => {
