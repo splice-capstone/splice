@@ -29,7 +29,6 @@ export async function createReceipt(data, itemData, currentUser) {
         //get user doc
 
         //add receipt_user doc for owner
-        const userDoc = await db.collection('users').doc(currentUser.email);
         await db
           .collection('receipts')
           .doc(querySnapshot.id)
@@ -37,12 +36,12 @@ export async function createReceipt(data, itemData, currentUser) {
           .add({
             isOwner: true,
             name: currentUser.name,
-            email: user.email,
+            email: currentUser.email,
             userSubtotal: data.subtotal,
             userTax: data.tax,
             userTip: 0,
             userTotal: data.total,
-            paid: false,
+            paid: true,
           });
 
         //add new recp to users -> user -> receipts
@@ -50,15 +49,10 @@ export async function createReceipt(data, itemData, currentUser) {
           receipts: firebase.firestore.FieldValue.arrayUnion(newReceipt),
         });
 
-        //add user to receipt payees array - false signifies whether the user has paid their share
-        // const receiptData = await newReceipt.get();
+        //add user to receipt payees array - false signifies whether the user has paid their share, owner defaults to true
         let payees = {};
         payees[user.email] = true;
         newReceipt.update(payees);
-
-        // const payees = receiptData.data().set({payees: {user.email: true}});
-        // payees[user.email] = true;
-        // receiptDoc.set({ payees }, { merge: true });
         return newItems;
       } else {
         console.log('no such document!');
