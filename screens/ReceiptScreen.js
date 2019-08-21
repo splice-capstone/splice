@@ -127,14 +127,15 @@ export default class ReceiptScreen extends React.Component {
         }
       );
       let theDate = response.data.date.data;
+      console.log(JSON.stringify(response.data.amounts));
 
       // let theIndex = theDate.indexOf('2');
       // let newDate = theDate.slice(theIndex);
       // theDate = await newDate;
       const email = this.context[0].currentUser.email;
-      const payees = {
-        email: true,
-      };
+
+      let payees = {};
+      payees[email] = true;
 
       const receipt = {
         date: theDate,
@@ -143,6 +144,7 @@ export default class ReceiptScreen extends React.Component {
         tax: '',
         total: '',
         owner: email,
+        payees,
       };
       const receiptItems = [];
       for (let i = 0; i < response.data.amounts.length; i++) {

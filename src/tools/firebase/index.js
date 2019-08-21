@@ -30,6 +30,7 @@ export async function createReceipt(data, itemData, currentUser) {
         const userDoc = await db.collection('users').doc(currentUser.email);
 
         //add receipt_user doc for owner
+        const userDoc = await db.collection('users').doc(currentUser.email);
         await db
           .collection('receipts')
           .doc(querySnapshot.id)
