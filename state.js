@@ -16,12 +16,24 @@ export const StateProvider = ({ reducer, initialState, children }) => (
 
 export const useStateValue = () => useContext(StateContext);
 
+//set error on context if func returns error then render error page
 export const initialState = {
   currentUser: {},
-  currentReceipt: {},
-  currentPage: 'home',
+  currentReceipt: {
+    items: [],
+    receipt_users: [],
+    date: '',
+    owner: '',
+    paid: false,
+    restaurant: '',
+    subtotal: 0,
+    tax: 0,
+    total: 0,
+  },
   mode: 'view',
   myReceipts: [],
+  myContacts: [],
+  error: '',
 };
 
 export const reducer = (state, action) => {
@@ -32,11 +44,21 @@ export const reducer = (state, action) => {
         currentUser: action.user,
         myReceipts: action.receipts,
       };
+    case 'SET_CONTACTS':
+      return {
+        ...state,
+        myContacts: action.contacts,
+      };
     case 'SET_RECEIPT':
       return {
         ...state,
         currentReceipt: action.receipt,
         mode: 'view',
+      };
+    case 'SET_MODE':
+      return {
+        ...state,
+        mode: action.mode,
       };
     default:
       return state;

@@ -8,10 +8,12 @@ import {
 } from 'react-navigation';
 import { DrawerActions } from 'react-navigation-drawer';
 import HomeScreen from '../screens/HomeScreen';
-import CurrentReceipt from '../screens/CurrentReceipt';
 import SettingsScreen from '../screens/SettingsScreen';
 import ReceiptScreen from '../screens/ReceiptScreen';
+import AddUserToReceiptScreen from '../screens/AddUserToReceiptScreen';
+import CurrentReceipt from '../screens/CurrentReceipt';
 import { Ionicons } from '@expo/vector-icons';
+import ReceiptForm from '../screens/ReceiptForm';
 
 // import MainTabNavigator from './MainTabNavigator';
 
@@ -45,7 +47,9 @@ const DrawerNavigator = createDrawerNavigator(
     Home: { screen: HomeScreen },
     CurrentReceipt: { screen: CurrentReceipt },
     Settings: { screen: SettingsScreen },
-    Receipt: { screen: ReceiptScreen },
+    AddReceipt: { screen: ReceiptScreen },
+    AddUser: { screen: AddUserToReceiptScreen },
+    ReceiptForm: { screen: ReceiptForm },
   },
   {
     hideStatusBar: true,
