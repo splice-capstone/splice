@@ -1,0 +1,604 @@
+{
+  "location": {
+    "city": {
+      "geoname_id": 4887398,
+      "names": {
+        "de": "Chicago",
+        "en": "Chicago",
+        "es": "Chicago",
+        "fr": "Chicago",
+        "ja": "シカゴ",
+        "pt-BR": "Chicago",
+        "ru": "Чикаго",
+        "zh-CN": "芝加哥"
+      }
+    },
+    "continent": {
+      "code": "NA",
+      "geoname_id": 6255149,
+      "names": {
+        "de": "Nordamerika",
+        "en": "North America",
+        "es": "Norteamérica",
+        "fr": "Amérique du Nord",
+        "ja": "北アメリカ",
+        "pt-BR": "América do Norte",
+        "ru": "Северная Америка",
+        "zh-CN": "北美洲"
+      }
+    },
+    "country": {
+      "geoname_id": 6252001,
+      "iso_code": "US",
+      "names": {
+        "de": "USA",
+        "en": "United States",
+        "es": "Estados Unidos",
+        "fr": "États-Unis",
+        "ja": "アメリカ合衆国",
+        "pt-BR": "Estados Unidos",
+        "ru": "США",
+        "zh-CN": "美国"
+      }
+    },
+    "location": {
+      "accuracy_radius": 5,
+      "latitude": 41.9033,
+      "longitude": -87.6336,
+      "metro_code": 602,
+      "time_zone": "America/Chicago"
+    },
+    "postal": {
+      "code": "60610"
+    },
+    "registered_country": {
+      "geoname_id": 6252001,
+      "iso_code": "US",
+      "names": {
+        "de": "USA",
+        "en": "United States",
+        "es": "Estados Unidos",
+        "fr": "États-Unis",
+        "ja": "アメリカ合衆国",
+        "pt-BR": "Estados Unidos",
+        "ru": "США",
+        "zh-CN": "美国"
+      }
+    },
+    "subdivisions": [
+      {
+        "geoname_id": 4896861,
+        "iso_code": "IL",
+        "names": {
+          "en": "Illinois",
+          "es": "Illinois",
+          "fr": "Illinois",
+          "ja": "イリノイ州",
+          "pt-BR": "Ilinóis",
+          "ru": "Иллинойс",
+          "zh-CN": "伊利诺伊州"
+        }
+      }
+    ]
+  },
+  "totalAmount": {
+    "confidenceLevel": 0.9,
+    "index": 8,
+    "data": 16.48,
+    "text": "Total  $16.48",
+    "regions": [
+      [
+        {
+          "x": 185,
+          "y": 2356
+        },
+        {
+          "x": 375,
+          "y": 2364
+        },
+        {
+          "x": 371,
+          "y": 2445
+        },
+        {
+          "x": 182,
+          "y": 2437
+        }
+      ],
+      [
+        {
+          "x": 1736,
+          "y": 2339
+        },
+        {
+          "x": 1759,
+          "y": 2339
+        },
+        {
+          "x": 1950,
+          "y": 2419
+        },
+        {
+          "x": 1890,
+          "y": 2419
+        }
+      ]
+    ],
+    "currencyCode": "USD",
+    "keyword": "Total  $16.48"
+  },
+  "taxAmount": {
+    "index": 7,
+    "data": 1.7,
+    "text": "Tax  $1.70",
+    "regions": [
+      [
+        {
+          "x": 183,
+          "y": 2267
+        },
+        {
+          "x": 293,
+          "y": 2274
+        },
+        {
+          "x": 288,
+          "y": 2351
+        },
+        {
+          "x": 178,
+          "y": 2344
+        }
+      ],
+      [
+        {
+          "x": 1776,
+          "y": 2248
+        },
+        {
+          "x": 1801,
+          "y": 2248
+        },
+        {
+          "x": 1944,
+          "y": 2335
+        },
+        {
+          "x": 1880,
+          "y": 2335
+        }
+      ]
+    ],
+    "currencyCode": "USD",
+    "confidenceLevel": 0.68,
+    "keyword": "Tax  $1.70"
+  },
+  "confidenceLevel": 0.8809999999999999,
+  "date": {
+    "data": "2019-08-19T12:00:00.000Z",
+    "text": "August 19, 2019",
+    "regions": [
+      [
+        {
+          "x": 801,
+          "y": 3003
+        },
+        {
+          "x": 1018,
+          "y": 2994
+        },
+        {
+          "x": 1141,
+          "y": 3107
+        },
+        {
+          "x": 1077,
+          "y": 3110
+        }
+      ]
+    ],
+    "index": 11,
+    "confidenceLevel": 0.9
+  },
+  "text": {
+    "text": "ORDERED with RTL\nTom S\nReady by 12:13pm\nShrimp Classic Po'Boy\n+ Add Bacon\n+ Cajun Fries\n$8.99\n$1.79\n$4.00\nSubtotal\nTax\nTotal\n$14.78\n$1.70\n$16.48\nNeed help?\nContact RITUAL at support@ritual.co\nAugust 19, 2019\n",
+    "regions": [
+      {
+        "x": 178,
+        "y": 928
+      },
+      {
+        "x": 1950,
+        "y": 928
+      },
+      {
+        "x": 1950,
+        "y": 3121
+      },
+      {
+        "x": 178,
+        "y": 3121
+      }
+    ]
+  },
+  "amounts": [
+    {
+      "data": 8.99,
+      "index": 3,
+      "regions": [
+        [
+          {
+            "x": 190,
+            "y": 1717
+          },
+          {
+            "x": 394,
+            "y": 1717
+          },
+          {
+            "x": 955,
+            "y": 1805
+          },
+          {
+            "x": 842,
+            "y": 1805
+          }
+        ],
+        [
+          {
+            "x": 1765,
+            "y": 1699
+          },
+          {
+            "x": 1789,
+            "y": 1699
+          },
+          {
+            "x": 1938,
+            "y": 1783
+          },
+          {
+            "x": 1874,
+            "y": 1783
+          }
+        ]
+      ],
+      "text": "Shrimp Classic Po'Boy  $8.99",
+      "currencyCode": "USD"
+    },
+    {
+      "data": 1.79,
+      "index": 4,
+      "regions": [
+        [
+          {
+            "x": 227,
+            "y": 1811
+          },
+          {
+            "x": 251,
+            "y": 1811
+          },
+          {
+            "x": 624,
+            "y": 1895
+          },
+          {
+            "x": 437,
+            "y": 1895
+          }
+        ],
+        [
+          {
+            "x": 1768,
+            "y": 1791
+          },
+          {
+            "x": 1791,
+            "y": 1791
+          },
+          {
+            "x": 1944,
+            "y": 1871
+          },
+          {
+            "x": 1870,
+            "y": 1871
+          }
+        ]
+      ],
+      "text": "+ Add Bacon  $1.79",
+      "currencyCode": "USD"
+    },
+    {
+      "data": 4,
+      "index": 5,
+      "regions": [
+        [
+          {
+            "x": 223,
+            "y": 1904
+          },
+          {
+            "x": 248,
+            "y": 1904
+          },
+          {
+            "x": 699,
+            "y": 1991
+          },
+          {
+            "x": 517,
+            "y": 1991
+          }
+        ],
+        [
+          {
+            "x": 1769,
+            "y": 1879
+          },
+          {
+            "x": 1792,
+            "y": 1879
+          },
+          {
+            "x": 1942,
+            "y": 1959
+          },
+          {
+            "x": 1882,
+            "y": 1959
+          }
+        ]
+      ],
+      "text": "+ Cajun Fries  $4.00",
+      "currencyCode": "USD"
+    },
+    {
+      "data": 14.78,
+      "index": 6,
+      "regions": [
+        [
+          {
+            "x": 180,
+            "y": 2171
+          },
+          {
+            "x": 487,
+            "y": 2171
+          },
+          {
+            "x": 487,
+            "y": 2255
+          },
+          {
+            "x": 180,
+            "y": 2255
+          }
+        ],
+        [
+          {
+            "x": 1737,
+            "y": 2153
+          },
+          {
+            "x": 1762,
+            "y": 2153
+          },
+          {
+            "x": 1942,
+            "y": 2241
+          },
+          {
+            "x": 1878,
+            "y": 2241
+          }
+        ]
+      ],
+      "text": "Subtotal  $14.78",
+      "currencyCode": "USD"
+    },
+    {
+      "data": 1.7,
+      "index": 7,
+      "regions": [
+        [
+          {
+            "x": 183,
+            "y": 2267
+          },
+          {
+            "x": 293,
+            "y": 2274
+          },
+          {
+            "x": 288,
+            "y": 2351
+          },
+          {
+            "x": 178,
+            "y": 2344
+          }
+        ],
+        [
+          {
+            "x": 1776,
+            "y": 2248
+          },
+          {
+            "x": 1801,
+            "y": 2248
+          },
+          {
+            "x": 1944,
+            "y": 2335
+          },
+          {
+            "x": 1880,
+            "y": 2335
+          }
+        ]
+      ],
+      "text": "Tax  $1.70",
+      "currencyCode": "USD"
+    },
+    {
+      "data": 16.48,
+      "index": 8,
+      "regions": [
+        [
+          {
+            "x": 185,
+            "y": 2356
+          },
+          {
+            "x": 375,
+            "y": 2364
+          },
+          {
+            "x": 371,
+            "y": 2445
+          },
+          {
+            "x": 182,
+            "y": 2437
+          }
+        ],
+        [
+          {
+            "x": 1736,
+            "y": 2339
+          },
+          {
+            "x": 1759,
+            "y": 2339
+          },
+          {
+            "x": 1950,
+            "y": 2419
+          },
+          {
+            "x": 1890,
+            "y": 2419
+          }
+        ]
+      ],
+      "text": "Total  $16.48",
+      "currencyCode": "USD"
+    }
+  ],
+  "numbers": [],
+  "lineAmounts": [],
+  "entities": {},
+  "merchantName": {
+    "data": "Tom S",
+    "confidenceLevel": 0.41,
+    "text": "Tom S",
+    "index": 1,
+    "regions": [
+      [
+        {
+          "x": 904,
+          "y": 1118
+        },
+        {
+          "x": 1067,
+          "y": 1118
+        },
+        {
+          "x": 1234,
+          "y": 1281
+        },
+        {
+          "x": 1186,
+          "y": 1281
+        }
+      ]
+    ]
+  },
+  "merchantAddress": {
+    "confidenceLevel": 0
+  },
+  "merchantCity": {
+    "data": "Chicago",
+    "confidenceLevel": 0.41,
+    "text": "Tom S",
+    "index": 1,
+    "regions": [
+      [
+        {
+          "x": 904,
+          "y": 1118
+        },
+        {
+          "x": 1067,
+          "y": 1118
+        },
+        {
+          "x": 1234,
+          "y": 1281
+        },
+        {
+          "x": 1186,
+          "y": 1281
+        }
+      ]
+    ]
+  },
+  "merchantState": {
+    "data": "IL",
+    "confidenceLevel": 0.41,
+    "text": "Tom S",
+    "index": 1,
+    "regions": [
+      [
+        {
+          "x": 904,
+          "y": 1118
+        },
+        {
+          "x": 1067,
+          "y": 1118
+        },
+        {
+          "x": 1234,
+          "y": 1281
+        },
+        {
+          "x": 1186,
+          "y": 1281
+        }
+      ]
+    ]
+  },
+  "merchantCountryCode": {
+    "data": "US",
+    "confidenceLevel": 0.41,
+    "text": "Tom S",
+    "index": 1,
+    "regions": [
+      [
+        {
+          "x": 904,
+          "y": 1118
+        },
+        {
+          "x": 1067,
+          "y": 1118
+        },
+        {
+          "x": 1234,
+          "y": 1281
+        },
+        {
+          "x": 1186,
+          "y": 1281
+        }
+      ]
+    ]
+  },
+  "merchantTypes": {
+    "confidenceLevel": 0
+  },
+  "elapsed": 5212.133480001241
+}

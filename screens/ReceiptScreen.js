@@ -1,28 +1,19 @@
 /* eslint-disable complexity */
-import * as WebBrowser from 'expo-web-browser';
-import React, { useState, useEffect } from 'react';
-
-import Constants from 'expo-constants';
+import React from 'react';
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
   Platform,
-  Animated,
-  Image,
 } from 'react-native';
 import GalleryScreen from './GalleryScreen';
 import { ifIphoneX } from 'react-native-iphone-x-helper';
 import * as FileSystem from 'expo-file-system';
 import * as Permissions from 'expo-permissions';
 import { Camera } from 'expo-camera';
-import axios from 'axios';
-import { createReceipt } from '../src/tools/firebase';
-
 import { Ionicons, MaterialIcons, Foundation } from '@expo/vector-icons';
 import { StateContext } from '../state';
-import CurrentReceipt from './CurrentReceipt';
 import LoadingScreen from './LoadingScreen';
 import sendToTaggun from '../src/utils/taggun';
 
@@ -56,7 +47,6 @@ export default class ReceiptScreen extends React.Component {
     pictureSizes: [],
     pictureSizeId: 0,
     showGallery: false,
-    showMoreOptions: false,
     loading: false,
     receiptId: '',
   };
@@ -82,9 +72,6 @@ export default class ReceiptScreen extends React.Component {
   toggleView = () =>
     this.setState({ showGallery: !this.state.showGallery, newPhotos: false });
 
-  toggleMoreOptions = () =>
-    this.setState({ showMoreOptions: !this.state.showMoreOptions });
-
   toggleFlash = () =>
     this.setState({ flash: flashModeOrder[this.state.flash] });
 
@@ -107,8 +94,32 @@ export default class ReceiptScreen extends React.Component {
 
   handleMountError = ({ message }) => console.error(message);
 
+  renderLoading() {
+    console.log('inside render loading');
+    return <LoadingScreen />;
+  }
+
+  renderCurrentReceipt(receiptId, comments) {
+    console.log('render current', receiptId);
+    this.props.navigation.navigate('CurrentReceipt', {
+      receiptId: receiptId,
+      comments: comments,
+    });
+  }
+
   onPictureSaved = async photo => {
-    sendToTaggun(photo);
+    //render loading screen
+    this.setState({ loading: true });
+    console.log('picture saved');
+
+    //calls utils - taggun function
+    const results = await sendToTaggun(photo, this.context[0].currentUser);
+
+    if (results.receiptId) {
+      return this.renderCurrentReceipt(receiptId, comments);
+    }
+    //once complete, gets receipt id and renders current receipt screen
+    this.setState({ loading: false, receiptId: results.receiptId });
 
     await FileSystem.moveAsync({
       from: photo.uri,
@@ -193,31 +204,6 @@ export default class ReceiptScreen extends React.Component {
     </View>
   );
 
-  renderMoreOptions = () => (
-    <View style={styles.options}>
-      <View style={styles.pictureSizeContainer}>
-        <Text style={styles.pictureQualityLabel}>Picture quality</Text>
-        <View style={styles.pictureSizeChooser}>
-          <TouchableOpacity
-            onPress={this.previousPictureSize}
-            style={{ padding: 6 }}
-          >
-            <Ionicons name="md-arrow-dropleft" size={14} color="white" />
-          </TouchableOpacity>
-          <View style={styles.pictureSizeLabel}>
-            <Text style={{ color: 'white' }}>{this.state.pictureSize}</Text>
-          </View>
-          <TouchableOpacity
-            onPress={this.nextPictureSize}
-            style={{ padding: 6 }}
-          >
-            <Ionicons name="md-arrow-dropright" size={14} color="white" />
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
-  );
-
   renderCamera = () => (
     <View style={{ flex: 1 }}>
       <Camera
@@ -236,8 +222,6 @@ export default class ReceiptScreen extends React.Component {
         {this.renderTopBar()}
         {this.renderBottomBar()}
       </Camera>
-
-      {this.state.showMoreOptions && this.renderMoreOptions()}
     </View>
   );
 
@@ -248,18 +232,9 @@ export default class ReceiptScreen extends React.Component {
     const content = this.state.showGallery
       ? this.renderGallery()
       : cameraScreenContent;
+
     if (!this.state.loading && !this.state.receiptId) return content;
-    else if (this.state.loading) return <LoadingScreen />;
-    // else if (this.state.receiptId) {
-    //   this.props.navigation.navigate('CurrentReceipt', {
-    //     receiptId: this.state.receiptId,
-    //   });
-    // return (
-    //   <CurrentReceipt
-    //     receiptId={this.state.receiptId}
-    //     navigation={this.props.navigation}
-    //   />
-    // );
+    else if (this.state.loading) return this.renderLoading();
     else {
       return <Text>error</Text>;
     }

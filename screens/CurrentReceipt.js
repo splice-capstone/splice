@@ -18,6 +18,7 @@ import ItemCard from './ItemCard';
 
 export default function CurrentReceipt(props) {
   const [{ currentUser, currentReceipt }, dispatch] = useStateValue();
+  const [comments, setComments] = useState('');
 
   const setCurrentReceipt = receipt => {
     dispatch({ type: 'SET_RECEIPT', receipt });
@@ -28,6 +29,10 @@ export default function CurrentReceipt(props) {
       'receiptId',
       'jbIXS3uNWk0VGEZWqcdP'
     );
+    const newComments = props.navigation.getParam('comments', '');
+    if (newComments) {
+      setComments(newComments);
+    }
     if (!currentReceipt.id) {
       getReceipt(receiptId).then(receipt => {
         setCurrentReceipt(receipt);
@@ -39,6 +44,10 @@ export default function CurrentReceipt(props) {
     <Container>
       <Content>
         <Button>
+          <Text>{comments.restaurant}</Text>
+          <Text>{comments.misc}</Text>
+          <Text>{comments.date}</Text>
+
           <Text onPress={() => props.navigation.navigate('ReceiptForm')}>
             Edit
           </Text>
