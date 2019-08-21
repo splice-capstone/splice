@@ -14,6 +14,7 @@ import ReceiptScreen from '../screens/ReceiptScreen';
 import AddUserToReceiptScreen from '../screens/AddUserToReceiptScreen';
 import CurrentReceipt from '../screens/CurrentReceipt';
 import { Ionicons } from '@expo/vector-icons';
+import ReceiptForm from '../screens/ReceiptForm';
 
 // import MainTabNavigator from './MainTabNavigator';
 
@@ -49,7 +50,8 @@ const DrawerNavigator = createDrawerNavigator(
     Settings: { screen: SettingsScreen },
     AddReceipt: { screen: ReceiptScreen },
     AddUser: { screen: AddUserToReceiptScreen },
-    Receipts: { screen: MyReceipts }
+    Receipts: { screen: MyReceipts },
+    ReceiptForm: { screen: ReceiptForm },
   },
   {
     hideStatusBar: true,

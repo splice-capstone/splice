@@ -23,6 +23,7 @@ import { createReceipt } from '../src/tools/firebase';
 import { Ionicons, MaterialIcons, Foundation } from '@expo/vector-icons';
 import { StateContext } from '../state';
 import CurrentReceipt from './CurrentReceipt';
+import LoadingScreen from './LoadingScreen';
 
 const flashModeOrder = {
   off: 'on',
@@ -126,11 +127,15 @@ export default class ReceiptScreen extends React.Component {
         }
       );
       let theDate = response.data.date.data;
-      // console.log(JSON.stringify(response.data.amounts))
+      console.log(JSON.stringify(response.data.amounts));
 
       // let theIndex = theDate.indexOf('2');
       // let newDate = theDate.slice(theIndex);
       // theDate = await newDate;
+      const email = this.context[0].currentUser.email;
+
+      let payees = {};
+      payees[email] = true;
 
       const receipt = {
         date: theDate,
@@ -138,7 +143,8 @@ export default class ReceiptScreen extends React.Component {
         subtotal: '',
         tax: '',
         total: '',
-        owner: this.context[0].currentUser.email,
+        owner: email,
+        payees,
       };
       const receiptItems = [];
       for (let i = 0; i < response.data.amounts.length; i++) {
@@ -164,6 +170,7 @@ export default class ReceiptScreen extends React.Component {
           receiptItems.push({
             amount: data.slice(data.length - 5, data.length),
             name: data.slice(2, theIdx - 1),
+            payees,
           });
         }
       }
@@ -173,6 +180,9 @@ export default class ReceiptScreen extends React.Component {
         this.context[0].currentUser
       );
       this.setState({ loading: false, receiptId: receiptId });
+      this.props.navigation.navigate('CurrentReceipt', {
+        receiptId: this.state.receiptId,
+      });
       return;
     } catch (error) {
       console.log('hit an error');
@@ -322,22 +332,18 @@ export default class ReceiptScreen extends React.Component {
       ? this.renderGallery()
       : cameraScreenContent;
     if (!this.state.loading && !this.state.receiptId) return content;
-    else if (this.state.loading) return <Text>Loading</Text>;
-    // if (this.state.loading) {
-    //   return (
-    //     <View>
-    //       <Animated.View style={{ ...styles.splash }}>
-    //         <Image
-    //           source={require('../assets/images/splash.gif')}
-    //           style={styles.image}
-    //         />
-    //       </Animated.View>
-    //     </View>
-    //   );
-    // }
-    else if (this.state.receiptId) {
-      return <CurrentReceipt receiptId={this.state.receiptId} />;
-    } else {
+    else if (this.state.loading) return <LoadingScreen />;
+    // else if (this.state.receiptId) {
+    //   this.props.navigation.navigate('CurrentReceipt', {
+    //     receiptId: this.state.receiptId,
+    //   });
+    // return (
+    //   <CurrentReceipt
+    //     receiptId={this.state.receiptId}
+    //     navigation={this.props.navigation}
+    //   />
+    // );
+    else {
       return <Text>error</Text>;
     }
   }

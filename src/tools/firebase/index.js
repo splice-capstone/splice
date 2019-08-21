@@ -8,7 +8,7 @@ const db = firebase.firestore();
 
 export default db;
 
-//wrap all parts in try/catches and handle each catch if could still recover
+//TODO: wrap all parts in try/catches and handle each catch if could still recover
 
 export async function createReceipt(data, itemData, currentUser) {
   try {
@@ -23,10 +23,14 @@ export async function createReceipt(data, itemData, currentUser) {
         itemData.forEach(item => {
           newItems.add(item);
         });
-        //add receipt owner
 
+        //multi-step add receipt owner -
 
-          //get user doc
+        //get user doc
+        const userDoc = await db.collection('users').doc(currentUser.email);
+
+        //add receipt_user doc for owner
+        const userDoc = await db.collection('users').doc(currentUser.email);
         await db
           .collection('receipts')
           .doc(querySnapshot.id)
@@ -34,23 +38,33 @@ export async function createReceipt(data, itemData, currentUser) {
           .add({
             isOwner: true,
             name: currentUser.name,
-            userDoc: userDoc,
+            email: user.email,
             userSubtotal: data.subtotal,
             userTax: data.tax,
             userTip: 0,
             userTotal: data.total,
+            paid: false,
           });
-        //add new recp to users -> user -> receipts
 
+        //add new recp to users -> user -> receipts
         userDoc.update({
           receipts: firebase.firestore.FieldValue.arrayUnion(newReceipt),
         });
+
+        //add user to receipt payees array - false signifies whether the user has paid their share
+        // const receiptData = await newReceipt.get();
+        let payees = {};
+        payees[user.email] = true;
+        newReceipt.update(payees);
+
+        // const payees = receiptData.data().set({payees: {user.email: true}});
+        // payees[user.email] = true;
+        // receiptDoc.set({ payees }, { merge: true });
         return newItems;
       } else {
         console.log('no such document!');
       }
     });
-
     return newReceipt.id;
   } catch (err) {
     console.error(err);
@@ -75,7 +89,6 @@ export async function getReceipt(receiptId) {
       .get()
       .then(function(querySnapshot) {
         querySnapshot.forEach(doc => {
-          // console.log("****items*****", doc.id, doc.data());
           contextItems.push({
             name: doc.data().name,
             amount: doc.data().amount,
@@ -92,7 +105,6 @@ export async function getReceipt(receiptId) {
       .get()
       .then(function(querySnapshot) {
         querySnapshot.forEach(doc => {
-          // console.log("****items*****", doc.id, doc.data());
           contextItems.push({
             name: doc.data().name,
             amount: doc.data().amount,
@@ -101,8 +113,6 @@ export async function getReceipt(receiptId) {
           });
         });
       });
-
-    // console.log("receptItems", receiptItems);
 
     return {
       ...receiptInfo.data(),
@@ -143,7 +153,6 @@ export async function findUser(email) {
       name: user.name,
       photoUrl: user.photoUrl,
     };
-    console.log('user', userDetails);
     return userDetails;
   } catch (err) {
     return `error: ${err}`;
@@ -164,7 +173,7 @@ export async function getMyReceipts(email) {
           .collection('receipts')
           .doc(receipt.id)
           .collection('receipt_users')
-          .doc(email)
+          .where('email', '==', email)
           .get();
 
           console.log('recp users doc*******', receipt_users.data())
@@ -179,6 +188,7 @@ export async function getMyReceipts(email) {
             userTax: receiptData.userTax,
             userTip: receiptData.userTip,
             userTotal: receiptData.userTotal,
+            paid: receiptData.paid,
           };
 
           //get receipt doc
@@ -194,7 +204,6 @@ export async function getMyReceipts(email) {
         }
       })
     );
-    console.log('my receipts here', myReceipts);
     return myReceipts;
   } catch (err) {
     return `error: ${err}`;
@@ -203,27 +212,64 @@ export async function getMyReceipts(email) {
 
 export async function addUserToReceipt(receipt, user) {
   try {
-    //   add receipt_users subcollection doc (default to false on host field)
+    //get user doc
+    const userDoc = await db.collection('users').doc(currentUser.email);
+
+    //get receipt doc
+    const receiptDoc = await db.collection('receipts').doc(receipt.id);
+
+    //add receipt to user doc receipts reference array
+    userDoc.update({
+      receipts: firebase.firestore.FieldValue.arrayUnion(receiptDoc),
+    });
+
+    //add receipt_users doc for user on current receipt
+    await db
+      .collection('receipts')
+      .doc(receipt.id)
+      .collection('receipt_users')
+      .add({
+        isOwner: false,
+        name: user.name,
+        email: user.email,
+        userSubtotal: 0,
+        userTax: 0,
+        userTip: 0,
+        userTotal: 0,
+        paid: false,
+      });
+
+    //add user to receipt payees array - false signifies whether the user has paid their share
+    const receiptData = await receiptDoc.get();
+    const payees = receiptData.data().payees;
+    payees[user.email] = false;
+
+    receiptDoc.set({ payees }, { merge: true });
+
+    //add users to every item doc to payees map (default to false)- email as key
+    await receiptDoc
+      .collection('items')
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(doc => {
+          doc.set(
+            {
+              payees,
+            },
+            { merge: true }
+          );
+        });
+      });
+
+    return receipt.id;
+  } catch (err) {
+    return `error: ${err}`;
+  }
+}
+
+export async function completeReceipt(receipt, user) {
+  try {
     //   add other users to the friends item on Users doc
-    //   add receipt to Users doc
-    //   add users to every item doc to payees map (default to false)- email as key
-
-    // const receipt = await db.collection('receipts').doc(receipt.id);
-
-    // receipt.get().then(async function(querySnapshot) {
-    //   if (querySnapshot.exists) {
-    //     const newItems = await db
-    //       .collection('receipts')
-    //       .doc(querySnapshot.id)
-    //       .collection('items');
-    //     itemData.forEach(item => {
-    //       newItems.add(item);
-    //     });
-    //     return newItems;
-    //   } else {
-    //     console.log('no such document!');
-    //   }
-    // });
     return receipt.id;
   } catch (err) {
     return `error: ${err}`;
