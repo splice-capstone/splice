@@ -14,6 +14,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import AppNavigator from './navigation/AppNavigator';
 import { StateProvider, initialState, reducer } from './state';
+import LoadingScreen from './screens/LoadingScreen';
 
 export default function App() {
   const [isAppReady, setAppReady] = useState(false);
@@ -40,13 +41,16 @@ export default function App() {
 
   if (!isAppReady) {
     return (
-      <Animated.View style={{ ...styles.splash, opacity: value }}>
-        <Image
-          source={require('./assets/images/splash.gif')}
-          onLoad={() => _cacheResourcesAsync(setAppReady)}
-          style={styles.image}
-        />
-      </Animated.View>
+      <LoadingScreen
+        _cacheResourcesAsync={() => _cacheResourcesAsync(setAppReady)}
+      />
+      // <Animated.View style={{ ...styles.splash, opacity: value }}>
+      //   <Image
+      //     source={require('./assets/images/splash.gif')}
+      //     onLoad={() => _cacheResourcesAsync(setAppReady)}
+      //     style={styles.image}
+      //   />
+      // </Animated.View>
     );
   }
   return (

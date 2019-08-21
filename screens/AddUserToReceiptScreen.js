@@ -13,7 +13,6 @@ export default function AddUserToReceiptScreen() {
 
   return (
     <View style={styles.container}>
-      {console.log('current receipt', currentReceipt)}
       <Text>add user to receipt</Text>
       <TextInput
         style={{ height: 40 }}
