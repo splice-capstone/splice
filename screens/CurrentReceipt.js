@@ -1,18 +1,67 @@
 import * as WebBrowser from 'expo-web-browser';
 import React, { useState, useEffect } from 'react';
+import { StyleSheet } from 'react-native';
 import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
+  Container,
+  Header,
+  Content,
+  Button,
+  Icon,
   Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+  Form,
+  Item,
+  Input,
+} from 'native-base';
 import { useStateValue } from '../state';
+import { getReceipt } from '../src/tools/firebase';
+import ItemCard from './ItemCard';
 
 export default function CurrentReceipt(props) {
-  return <View style={styles.container} />;
+  const [{ currentUser, currentReceipt }, dispatch] = useStateValue();
+
+  const setCurrentReceipt = receipt => {
+    dispatch({ type: 'SET_RECEIPT', receipt });
+  };
+
+  useEffect(() => {
+    const receiptId = props.navigation.getParam(
+      'receiptId',
+      '7AfNCXWaZT9amAf0L0Rm'
+    );
+
+    if (!currentReceipt.id) {
+      getReceipt(receiptId).then(receipt => {
+        setCurrentReceipt(receipt);
+      });
+    }
+  });
+
+  return (
+    <Container>
+      <Content>
+        <Button>
+          <Text onPress={() => props.navigation.navigate('ReceiptForm')}>
+            Edit
+          </Text>
+          <Text>{currentReceipt.restaurant}</Text>
+          <Icon
+            name="md-person-add"
+            onPress={() => props.navigation.navigate('AddUser')}
+          />
+        </Button>
+        <Text>Id: {currentReceipt.id}</Text>
+
+        <Text>Date: {currentReceipt.date}</Text>
+        <Text>Owner: {currentReceipt.owner}</Text>
+        <Text>Subtotal: ${currentReceipt.subtotal}</Text>
+        <Text>Tax: ${currentReceipt.tax}</Text>
+        <Text>Total: ${currentReceipt.total}</Text>
+        {currentReceipt.items.map(item => (
+          <ItemCard item={item} key={item.id} />
+        ))}
+      </Content>
+    </Container>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -26,43 +75,5 @@ const styles = StyleSheet.create({
   header: {
     marginTop: 10,
     fontSize: 18,
-  },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  loginContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 200,
-    marginBottom: 20,
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
   },
 });

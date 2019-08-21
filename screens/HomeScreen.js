@@ -6,13 +6,49 @@ import LoginScreen from './LoginScreen';
 import LoggedInScreen from './LoggedInScreen';
 import * as Google from 'expo-google-app-auth';
 import { useStateValue } from '../state';
+import * as Contacts from 'expo-contacts';
+import * as Permissions from 'expo-permissions';
 
-export default function HomeScreen() {
-  const [{ currentUser }, dispatch] = useStateValue();
+export default function HomeScreen(props) {
+  const [{ currentUser, contacts }, dispatch] = useStateValue();
 
   const setUser = (user, receipts) => {
     dispatch({ type: 'SET_USER', user, receipts });
   };
+
+  const setContacts = contacts => {
+    dispatch({ type: 'SET_CONTACTS', contacts });
+  };
+
+  async function checkMultiPermissions() {
+    const { status, expires } = await Permissions.askAsync(
+      Permissions.CONTACTS
+    );
+    if (status !== 'granted') {
+      alert('Hey! You have not enabled selected permissions');
+    } else {
+      const { data } = await Contacts.getContactsAsync({
+        fields: [Contacts.Fields.Emails],
+      });
+      if (data.length > 0) {
+        const contacts = data.map(item => {
+          if (item.emails && item.emails.length) {
+            email = item.emails[0].email;
+          }
+          return {
+            name: item.name,
+            email,
+          };
+        });
+        return contacts;
+      }
+    }
+  }
+
+  // if (!contacts) {
+  //   const newContacts = checkMultiPermissions();
+  //   setContacts(newContacts);
+  // }
 
   const signIn = async () => {
     try {
@@ -38,7 +74,6 @@ export default function HomeScreen() {
           },
           receipts
         );
-        console.log('receipts', receipts);
         return 'logged in';
       } else {
         return { cancelled: true };
@@ -62,11 +97,12 @@ export default function HomeScreen() {
           <Text style={styles.header}>splice</Text>
           <View>
             {!currentUser.name ? (
-              <View style={styles.loginContainer}>
-                <LoginScreen signIn={signIn} />
-              </View>
+              <LoginScreen signIn={signIn} />
             ) : (
-              <LoggedInScreen user={currentUser} />
+              <LoggedInScreen
+                user={currentUser}
+                navigation={props.navigation}
+              />
             )}
           </View>
         </View>
