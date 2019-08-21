@@ -5,14 +5,9 @@ import Constants from 'expo-constants';
 import LoginScreen from './LoginScreen';
 import LoggedInScreen from './LoggedInScreen';
 import * as Google from 'expo-google-app-auth';
-<<<<<<< HEAD
-// import console = require('console');
-// // import console = require('console');
-=======
 import { useStateValue } from '../state';
 import * as Contacts from 'expo-contacts';
 import * as Permissions from 'expo-permissions';
->>>>>>> 9b2f9dc2f2054c5b174347911d1b160447f014c1
 
 export default function HomeScreen(props) {
   const [{ currentUser, contacts }, dispatch] = useStateValue();
@@ -57,7 +52,6 @@ export default function HomeScreen(props) {
 
   const signIn = async () => {
     try {
-      console.log('yoyoyoyoyo')
       const result = await Google.logInAsync({
         androidClientId: Constants.manifest.extra.androidClientId,
         iosClientId: Constants.manifest.extra.iosClientId,

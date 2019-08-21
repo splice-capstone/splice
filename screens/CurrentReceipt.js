@@ -14,10 +14,10 @@ import { useStateValue, StateContext } from '../state';
 export default function CurrentReceipt(props) {
   const [{ currentUser, currentReceipt }, dispatch] = useStateValue();
 
-  useEffect(() => {
-    receipt = await getReceipt(props.receiptId);
+  // useEffect(() => {
+  //   receipt = await getReceipt(props.receiptId);
 
-  });
+  // });
   return (
     <View style={styles.container}>
       <Text>Hello receipt {props.receiptId}</Text>

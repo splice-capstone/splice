@@ -168,6 +168,8 @@ export async function getMyReceipts(email) {
           .doc(email)
           .get();
 
+          console.log('recp users doc*******', receipt_users.data())
+
         if (receipt_users.data()) {
           const receiptData = receipt_users.data();
           //create object for user details you want accessible on my receipt
