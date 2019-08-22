@@ -184,6 +184,7 @@ export async function getMyReceipts(email) {
           .where('email', '==', email);
 
         let myDetails = {};
+        console.log('receipt users%^&*(*&^%^&*&^%^&*&^%', receipt_users)
         receipt_users.forEach(receiptData => {
           receiptData = receiptData.data();
           myDetails = {
