@@ -1,17 +1,7 @@
 import * as WebBrowser from 'expo-web-browser';
 import React, { useState, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
-import {
-  Container,
-  Header,
-  Content,
-  Button,
-  Icon,
-  Text,
-  Form,
-  Item,
-  Input,
-} from 'native-base';
+import { Container, Content, Button, Icon, Text } from 'native-base';
 import { useStateValue } from '../state';
 import { getReceipt } from '../src/tools/firebase';
 import ItemCard from './ItemCard';
@@ -26,7 +16,7 @@ export default function CurrentReceipt(props) {
   useEffect(() => {
     const receiptId = props.navigation.getParam(
       'receiptId',
-      '7AfNCXWaZT9amAf0L0Rm'
+      '4siHeCfWsI6sTRShkPik'
     );
     if (!currentReceipt.id) {
       getReceipt(receiptId).then(receipt => {
@@ -39,7 +29,13 @@ export default function CurrentReceipt(props) {
     <Container>
       <Content>
         <Button>
-          <Text onPress={() => props.navigation.navigate('ReceiptForm')}>
+          <Text
+            onPress={() =>
+              props.navigation.navigate('ReceiptForm', {
+                current: currentReceipt,
+              })
+            }
+          >
             Edit
           </Text>
           <Text>{currentReceipt.restaurant}</Text>
@@ -48,16 +44,14 @@ export default function CurrentReceipt(props) {
             onPress={() => props.navigation.navigate('AddUser')}
           />
         </Button>
-        <Text>Id: {currentReceipt.id}</Text>
-
+        {currentReceipt.items.map(item => (
+          <ItemCard item={item} key={item.id} />
+        ))}
         <Text>Date: {currentReceipt.date}</Text>
         <Text>Owner: {currentReceipt.owner}</Text>
         <Text>Subtotal: ${currentReceipt.subtotal}</Text>
         <Text>Tax: ${currentReceipt.tax}</Text>
         <Text>Total: ${currentReceipt.total}</Text>
-        {currentReceipt.items.map(item => (
-          <ItemCard item={item} key={item.id} />
-        ))}
       </Content>
     </Container>
   );

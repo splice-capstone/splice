@@ -11,12 +11,14 @@ const LoggedInScreen = props => {
       <View style={styles.bottom}>
         <Button
           title="TAKE A SNAPSHOT"
+          rounded
           style={styles.buttonDark}
           onPress={() => props.navigation.navigate('AddReceipt')}
         >
           <Text>TAKE A SNAPSHOT</Text>
         </Button>
         <Button
+          rounded
           style={styles.buttonLight}
           onPress={() => props.navigation.navigate('AddReceipt')}
         >

@@ -27,7 +27,7 @@ export async function createReceipt(data, itemData, currentUser) {
         //multi-step add receipt owner -
 
         //get user doc
-
+        const userDoc = await db.collection('users').doc(currentUser.email);
         //add receipt_user doc for owner
         await db
           .collection('receipts')
@@ -265,4 +265,23 @@ export async function completeReceipt(receipt, user) {
   } catch (err) {
     return `error: ${err}`;
   }
+}
+
+//updating receipt
+export async function editReceipt(receiptId, tip, total) {
+  const receiptEditRef = await db.collection('receipts').doc(receiptId);
+  //use below to update the items
+  // const receiptItemEditRef = await db.collection('receipts').doc(receiptId).collection('items')
+  console.log('hellloooo');
+  return receiptEditRef
+    .update({
+      tip: tip,
+      total: total,
+    })
+    .then(function() {
+      console.log('receipt successfully updated!');
+    })
+    .catch(function(error) {
+      console.error('error updated the document:', error);
+    });
 }

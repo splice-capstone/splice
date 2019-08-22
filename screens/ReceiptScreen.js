@@ -24,6 +24,7 @@ import { Ionicons, MaterialIcons, Foundation } from '@expo/vector-icons';
 import { StateContext } from '../state';
 import CurrentReceipt from './CurrentReceipt';
 import LoadingScreen from './LoadingScreen';
+import LoadScreen from './LoadScreen';
 
 const flashModeOrder = {
   off: 'on',
@@ -141,6 +142,7 @@ export default class ReceiptScreen extends React.Component {
         date: theDate,
         restaurant: response.data.merchantName.data,
         subtotal: '',
+        tip: 0,
         tax: '',
         total: '',
         owner: email,
@@ -180,10 +182,14 @@ export default class ReceiptScreen extends React.Component {
         receiptItems,
         this.context[0].currentUser
       );
-      this.setState({ loading: false, receiptId: receiptId });
+      this.setState({ receiptId: receiptId });
       this.props.navigation.navigate('CurrentReceipt', {
         receiptId: this.state.receiptId,
       });
+      // this.props.navigation.navigate('ReceiptForm', {
+      //   receiptId: this.state.receiptId,
+      // });
+      this.setState({ loading: false });
       return;
     } catch (error) {
       console.log('hit an error');
@@ -333,7 +339,7 @@ export default class ReceiptScreen extends React.Component {
       ? this.renderGallery()
       : cameraScreenContent;
     if (!this.state.loading && !this.state.receiptId) return content;
-    else if (this.state.loading) return <LoadingScreen />;
+    else if (this.state.loading) return <LoadScreen />;
     // else if (this.state.receiptId) {
     //   this.props.navigation.navigate('CurrentReceipt', {
     //     receiptId: this.state.receiptId,
