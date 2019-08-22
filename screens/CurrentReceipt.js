@@ -1,6 +1,6 @@
-import * as WebBrowser from 'expo-web-browser';
-import React, { useState, useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import * as WebBrowser from "expo-web-browser";
+import React, { useState, useEffect } from "react";
+import { StyleSheet } from "react-native";
 import {
   Container,
   Header,
@@ -11,24 +11,36 @@ import {
   Form,
   Item,
   Input,
-} from 'native-base';
-import { useStateValue } from '../state';
-import { getReceipt } from '../src/tools/firebase';
-import ItemCard from './ItemCard';
+  List,
+  ListItem,
+  Left,
+  Body,
+  Right,
+  Thumbnail
+} from "native-base";
+
+import { useStateValue } from "../state";
+import { getReceipt } from "../src/tools/firebase";
+import ItemCard from "./ItemCard";
 
 export default function CurrentReceipt(props) {
   const [{ currentUser, currentReceipt }, dispatch] = useStateValue();
+  const [comments, setComments] = useState("");
 
   const setCurrentReceipt = receipt => {
-    dispatch({ type: 'SET_RECEIPT', receipt });
+    dispatch({ type: "SET_RECEIPT", receipt });
   };
 
   useEffect(() => {
     const receiptId = props.navigation.getParam(
-      'receiptId',
-      '7AfNCXWaZT9amAf0L0Rm'
+      "receiptId",
+      "jbIXS3uNWk0VGEZWqcdP"
     );
-    if (!currentReceipt.id) {
+    const newComments = props.navigation.getParam("comments", "");
+    if (newComments) {
+      setComments(newComments);
+    }
+    if (currentReceipt.id !== receiptId) {
       getReceipt(receiptId).then(receipt => {
         setCurrentReceipt(receipt);
       });
@@ -39,13 +51,20 @@ export default function CurrentReceipt(props) {
     <Container>
       <Content>
         <Button>
-          <Text onPress={() => props.navigation.navigate('ReceiptForm')}>
+          <Text>
+            {comments.restaurant}
+            {console.log("inside currReceipt ********", currentReceipt)}
+          </Text>
+          <Text>{comments.misc}</Text>
+          <Text>{comments.date}</Text>
+
+          <Text onPress={() => props.navigation.navigate("Receipt Form")}>
             Edit
           </Text>
           <Text>{currentReceipt.restaurant}</Text>
           <Icon
             name="md-person-add"
-            onPress={() => props.navigation.navigate('AddUser')}
+            onPress={() => props.navigation.navigate("Add User")}
           />
         </Button>
         <Text>Id: {currentReceipt.id}</Text>
@@ -58,6 +77,21 @@ export default function CurrentReceipt(props) {
         {currentReceipt.items.map(item => (
           <ItemCard item={item} key={item.id} />
         ))}
+        {currentReceipt.users.map(user => {
+          return (
+            <List key={user.email}>
+              <ListItem avatar>
+                <Left>
+                  <Thumbnail source={{ uri: user.photoUrl }} />
+                </Left>
+                <Body>
+                  <Text>{user.name}</Text>
+                  <Text note>{user.email}</Text>
+                </Body>
+              </ListItem>
+            </List>
+          );
+        })}
       </Content>
     </Container>
   );
@@ -66,13 +100,13 @@ export default function CurrentReceipt(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff"
   },
   contentContainer: {
-    paddingTop: 30,
+    paddingTop: 30
   },
   header: {
     marginTop: 10,
-    fontSize: 18,
-  },
+    fontSize: 18
+  }
 });

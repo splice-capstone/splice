@@ -70,7 +70,7 @@ const MyReceiptsCard = props => {
                     transparent
                     textStyle={{ color: "#87838B" }}
                     onPress={() => {
-                      props.navigation.navigate("CurrentReceipt", {
+                      props.navigation.navigate("Current Receipt", {
                         receiptId: id
                       });
                     }}
@@ -97,7 +97,7 @@ const MyReceiptsCard = props => {
                     transparent
                     textStyle={{ color: "#87838B" }}
                     onPress={() => {
-                      props.navigation.navigate("CurrentReceipt", {
+                      props.navigation.navigate("Current Receipt", {
                         receiptId: id
                       });
                     }}

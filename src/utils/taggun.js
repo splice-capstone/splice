@@ -1,4 +1,16 @@
-var _ = require('lodash');
+import axios from 'axios';
+import Constants from 'expo-constants';
+import _ from 'lodash';
+import { createReceipt } from '../tools/firebase';
+
+const create = async (receipt, receiptItems, currentUser) => {
+  try {
+    const receiptId = await createReceipt(receipt, receiptItems, currentUser);
+    return receiptId;
+  } catch (error) {
+    console.log('hit an error while creating receipt', error);
+  }
+};
 
 const parseReceipt = async (response, currentUser) => {
   try {
@@ -10,6 +22,7 @@ const parseReceipt = async (response, currentUser) => {
       date = new Date();
       comments['date'] = 'No date detected - defaulted to today';
     }
+
     let restaurant = response.merchantName.data;
     if (!restaurant) {
       restaurant = '';
@@ -101,32 +114,46 @@ const parseReceipt = async (response, currentUser) => {
       receipt.tax = receipt.total - receipt.subtotal;
       comments['tax'] = 'Auto calculated tax';
     }
-
-    //now you have all the info to create receipt, receipt_items, and receipt_user in the database
-    // try {
-    //   const receiptId = await createReceipt(receipt, receiptItems, currentUser);
-    //   return receiptId;
-    // } catch (err) {
-    //   console.log('hit an error while creating receipt');
-    //   return err;
-    // }
-  } catch (err) {
+    return { receipt, receiptItems, comments };
+  } catch (error) {
     console.log('hit an error while parsing receipt');
-    console.error(err);
-    return err;
+    console.error(error);
+    return { error };
   }
 };
 
-const testReceipt = () => {
-  const fs = require('fs');
-  const fileRead = fs.readFileSync(__dirname + `/recp3.json`);
-  const rawReceipt = JSON.parse(fileRead);
-  parseReceipt(rawReceipt, {
-    email: 'amandamarienelson2@gmail.com',
-    name: 'Amanda Nelson',
-    photoUrl:
-      'https://lh3.googleusercontent.com/a-/AAuE7mDzK9pomGGFxLRgyCqf_jCXF4jhsNkQWre9W_pU8A',
-  });
+const sendToTaggun = async (photo, currentUser) => {
+  console.log('sending to taggun...');
+  const body = {
+    image: photo.base64,
+    filename: 'example.jpg',
+    contentType: 'image/jpeg',
+  };
+  try {
+    const response = await axios.post(
+      'https://api.taggun.io/api/receipt/v1/verbose/encoded',
+      body,
+      {
+        headers: {
+          apikey: Constants.manifest.extra.taggunApiKey,
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      }
+    );
+    const { receipt, receiptItems, comments } = await parseReceipt(
+      response.data,
+      currentUser
+    );
+
+    //now you have all the info to create receipt, receipt_items, and receipt_user in the database
+    const receiptId = await create(receipt, receiptItems, currentUser);
+    return { receiptId, comments };
+  } catch (err) {
+    console.log('hit an error while sending to taggun');
+    console.error(error);
+    return error;
+  }
 };
 
-testReceipt();
+export default sendToTaggun;

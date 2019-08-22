@@ -12,7 +12,11 @@ export default db;
 
 export async function createReceipt(data, itemData, currentUser) {
   try {
-    const newReceipt = await db.collection("receipts").add(data);
+    console.log('inside create receipt in index - data', data);
+    console.log('inside create receipt in index - itemData', itemData);
+    console.log('inside create receipt in index - currentUser', currentUser);
+
+    const newReceipt = await db.collection('receipts').add(data);
     //get receipt doc, adding items
     newReceipt.get().then(async function(querySnapshot) {
       if (querySnapshot.exists) {
@@ -42,7 +46,8 @@ export async function createReceipt(data, itemData, currentUser) {
             userTax: data.tax,
             userTip: 0,
             userTotal: data.total,
-            paid: true
+            paid: true,
+            photoUrl: currentUser.photoUrl,
           });
 
         //add new recp to users -> user -> receipts
@@ -68,6 +73,8 @@ export async function createReceipt(data, itemData, currentUser) {
 
 export async function getReceipt(receiptId) {
   const contextItems = [];
+  const contextUsers = [];
+
   try {
     //this is getting us receipt document
     let receiptInfo = await db
@@ -99,11 +106,15 @@ export async function getReceipt(receiptId) {
       .get()
       .then(function(querySnapshot) {
         querySnapshot.forEach(doc => {
-          contextItems.push({
+          contextUsers.push({
             name: doc.data().name,
-            amount: doc.data().amount,
-            id: doc.id,
-            payees: doc.data().payees
+            isOwner: doc.data().isOwner,
+            userSubtotal: doc.data().userSubtotal,
+            userTax: doc.data().userTax,
+            userTip: doc.data().userTip,
+            userTotal: doc.data().userTotal,
+            paid: doc.data().paid,
+            photoUrl: doc.data().photoUrl,
           });
         });
       });
@@ -111,7 +122,8 @@ export async function getReceipt(receiptId) {
     return {
       ...receiptInfo.data(),
       id: receiptId,
-      items: contextItems
+      items: contextItems,
+      users: contextUsers
     };
   } catch (err) {
     return err;
@@ -135,19 +147,25 @@ export async function findOrCreateUser(user) {
 
 export async function findUser(email) {
   try {
-    email.toLowerCase();
-    let user = await db
-      .collection("users")
-      .orderBy("email")
-      .where("email", "==", email)
-      .get();
-    user = await user.data();
-    const userDetails = {
-      email: user.email,
-      name: user.name,
-      photoUrl: user.photoUrl
-    };
-    return userDetails;
+    const results = [];
+
+    const user = await db
+      .collection('users')
+      .where('email', '==', email.toLowerCase())
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(doc => {
+          let userDetails = {
+            email: doc.data().email,
+            name: doc.data().name,
+            photoUrl: doc.data().photoUrl,
+          };
+          results.push(userDetails);
+        });
+      });
+
+    console.log('user', results);
+    return results;
   } catch (err) {
     return `error: ${err}`;
   }
@@ -180,7 +198,8 @@ export async function getMyReceipts(email) {
             userTax: receiptData.userTax,
             userTip: receiptData.userTip,
             userTotal: receiptData.userTotal,
-            paid: receiptData.paid
+            paid: receiptData.paid,
+            photoUrl: receiptData.photoUrl,
           };
         });
 
@@ -206,10 +225,10 @@ export async function getMyReceipts(email) {
   }
 }
 
-export async function addUserToReceipt(receipt, user) {
+export async function addUserToReceipt(receipt, email) {
   try {
     //get user doc
-    const userDoc = await db.collection("users").doc(currentUser.email);
+    const userDoc = await db.collection('users').doc(email);
 
     //get receipt doc
     const receiptDoc = await db.collection("receipts").doc(receipt.id);
@@ -226,19 +245,20 @@ export async function addUserToReceipt(receipt, user) {
       .collection("receipt_users")
       .add({
         isOwner: false,
-        name: user.name,
-        email: user.email,
+        name: userDoc.data().name,
+        email: userDoc.data().email,
         userSubtotal: 0,
         userTax: 0,
         userTip: 0,
         userTotal: 0,
-        paid: false
+        paid: false,
+        photoUrl: userDoc.data().photoUrl,
       });
 
     //add user to receipt payees array - false signifies whether the user has paid their share
     const receiptData = await receiptDoc.get();
     const payees = receiptData.data().payees;
-    payees[user.email] = false;
+    payees[userDoc.data().email] = false;
 
     receiptDoc.set({ payees }, { merge: true });
 
