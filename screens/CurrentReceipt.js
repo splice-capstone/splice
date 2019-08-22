@@ -1,6 +1,6 @@
-import * as WebBrowser from "expo-web-browser";
-import React, { useState, useEffect } from "react";
-import { StyleSheet } from "react-native";
+import * as WebBrowser from 'expo-web-browser';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet } from 'react-native';
 import {
   Container,
   Header,
@@ -16,83 +16,98 @@ import {
   Left,
   Body,
   Right,
-  Thumbnail
-} from "native-base";
+  Thumbnail,
+} from 'native-base';
 
-import { useStateValue } from "../state";
-import { getReceipt } from "../src/tools/firebase";
-import ItemCard from "./ItemCard";
+import { useStateValue } from '../state';
+import { getReceipt } from '../src/tools/firebase';
+import ItemCard from './ItemCard';
+import { useDocumentData } from 'react-firebase-hooks/firestore';
+import db from '../src/tools/firebase';
 
 export default function CurrentReceipt(props) {
-  const [{ currentUser, currentReceipt }, dispatch] = useStateValue();
-  const [comments, setComments] = useState("");
+  const [{ currentUser }, dispatch] = useStateValue();
+  const [comments, setComments] = useState('');
 
-  const setCurrentReceipt = receipt => {
-    dispatch({ type: "SET_RECEIPT", receipt });
-  };
-
+  const receiptId = props.navigation.getParam(
+    'receiptId',
+    'jbIXS3uNWk0VGEZWqcdP'
+  );
   useEffect(() => {
-    const receiptId = props.navigation.getParam(
-      "receiptId",
-      "jbIXS3uNWk0VGEZWqcdP"
-    );
-    const newComments = props.navigation.getParam("comments", "");
+    const newComments = props.navigation.getParam('comments', '');
     if (newComments) {
       setComments(newComments);
     }
-    if (currentReceipt.id !== receiptId) {
-      getReceipt(receiptId).then(receipt => {
-        setCurrentReceipt(receipt);
-      });
-    }
-  });
+  }, []);
+
+  const watchReceipt = () => {
+    console.log('inside watch');
+    const [value, loading, error] = useDocumentData(
+      db.collection('receipts').doc(receiptId),
+      {
+        snapshotListenOptions: { includeMetadataChanges: true },
+        idField: 'id',
+      }
+    );
+    const receipts = {
+      receiptValue: value,
+      receiptLoading: loading,
+      receiptError: error,
+    };
+    return receipts;
+  };
+
+  // const { receiptValue, receiptLoading, receiptError } = watchReceipt();
+
+  // const watchUserReceipt = () => {
+  //   //listen on receipt_users doc that emails current user email
+  //   const [value, loading, error] = useCollectionData(
+  //     db
+  //       .collection('receipts')
+  //       .doc(props.receiptId)
+  //       .collection('items'),
+  //     {
+  //       snapshotListenOptions: { includeMetadataChanges: true },
+  //       idField: 'id',
+  //     }
+  //   );
+  //   const receipt+
+  // };
 
   return (
     <Container>
-      <Content>
-        <Button>
-          <Text>
-            {comments.restaurant}
-            {console.log("inside currReceipt ********", currentReceipt)}
-          </Text>
-          <Text>{comments.misc}</Text>
-          <Text>{comments.date}</Text>
+      {receiptError && <Text>Error: {JSON.stringify(receiptError)}</Text>}
+      {receiptLoading && <Text>Collection: Loading...</Text>}
+      {receiptValue && (
+        <Content>
+          <Button>
+            <Text>{comments.restaurant}</Text>
+            <Text>{comments.misc}</Text>
+            <Text>{comments.date}</Text>
 
-          <Text onPress={() => props.navigation.navigate("Receipt Form")}>
-            Edit
-          </Text>
-          <Text>{currentReceipt.restaurant}</Text>
-          <Icon
-            name="md-person-add"
-            onPress={() => props.navigation.navigate("Add User")}
+            <Text onPress={() => props.navigation.navigate('Receipt Form')}>
+              Edit
+            </Text>
+            <Text>{receiptValue.restaurant}</Text>
+            <Icon
+              name="md-person-add"
+              onPress={() => props.navigation.navigate('Add User')}
+            />
+          </Button>
+          <Text>Id: {receiptValue.id}</Text>
+          <Text>Date: {receiptValue.date}</Text>
+          <Text>Owner: {receiptValue.owner}</Text>
+          <Text>Subtotal: ${receiptValue.subtotal}</Text>
+          <Text>Tax: ${receiptValue.tax}</Text>
+          <Text>Total: ${receiptValue.total}</Text>
+          <ItemCard
+            receiptId={props.navigation.getParam(
+              'receiptId',
+              'jbIXS3uNWk0VGEZWqcdP'
+            )}
           />
-        </Button>
-        <Text>Id: {currentReceipt.id}</Text>
-
-        <Text>Date: {currentReceipt.date}</Text>
-        <Text>Owner: {currentReceipt.owner}</Text>
-        <Text>Subtotal: ${currentReceipt.subtotal}</Text>
-        <Text>Tax: ${currentReceipt.tax}</Text>
-        <Text>Total: ${currentReceipt.total}</Text>
-        {currentReceipt.items.map(item => (
-          <ItemCard item={item} key={item.id} />
-        ))}
-        {currentReceipt.users.map(user => {
-          return (
-            <List key={user.email}>
-              <ListItem avatar>
-                <Left>
-                  <Thumbnail source={{ uri: user.photoUrl }} />
-                </Left>
-                <Body>
-                  <Text>{user.name}</Text>
-                  <Text note>{user.email}</Text>
-                </Body>
-              </ListItem>
-            </List>
-          );
-        })}
-      </Content>
+        </Content>
+      )}
     </Container>
   );
 }
@@ -100,13 +115,13 @@ export default function CurrentReceipt(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: '#fff',
   },
   contentContainer: {
-    paddingTop: 30
+    paddingTop: 30,
   },
   header: {
     marginTop: 10,
-    fontSize: 18
-  }
+    fontSize: 18,
+  },
 });

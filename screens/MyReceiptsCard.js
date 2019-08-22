@@ -1,5 +1,5 @@
-import React from "react";
-import { View } from "react-native";
+import React from 'react';
+import { View } from 'react-native';
 import {
   Header,
   Card,
@@ -10,14 +10,13 @@ import {
   Icon,
   Left,
   Body,
-  Right
-} from "native-base";
+  Right,
+} from 'native-base';
 
 const MyReceiptsCard = props => {
-  console.log("in my recp card", props);
   const { restaurant, date, id, total, owner } = props.recptsData;
   const {
-    myDetails: { isOwner, userTotal, paid }
+    myDetails: { isOwner, userTotal, paid },
   } = props.recptsData;
 
   const totalInDollars = total / 100;
@@ -36,14 +35,14 @@ const MyReceiptsCard = props => {
         <Left>
           <Body>
             {isOwner ? (
-              <Text style={paid ? { color: "green" } : { color: "red" }}>{`${
+              <Text style={paid ? { color: 'green' } : { color: 'red' }}>{`${
                 paid
                   ? `Received $${totalInDollars}`
                   : `Receiving $${totalInDollars}`
               }`}</Text>
             ) : (
-              <Text style={paid ? { color: "green" } : { color: "red" }}>{`${
-                paid ? "Paid" : "Need to pay"
+              <Text style={paid ? { color: 'green' } : { color: 'red' }}>{`${
+                paid ? 'Paid' : 'Need to pay'
               }: $${userTotalInDollars} to ${owner}`}</Text>
             )}
           </Body>
@@ -57,7 +56,7 @@ const MyReceiptsCard = props => {
                 <Left>
                   <Button
                     transparent
-                    textStyle={{ color: "#87838B" }}
+                    textStyle={{ color: '#87838B' }}
                     onPress={() => {
                       // placeholder to navigate to paypal
                     }}
@@ -68,10 +67,10 @@ const MyReceiptsCard = props => {
                 <Right>
                   <Button
                     transparent
-                    textStyle={{ color: "#87838B" }}
+                    textStyle={{ color: '#87838B' }}
                     onPress={() => {
-                      props.navigation.navigate("Current Receipt", {
-                        receiptId: id
+                      props.navigation.navigate('Current Receipt', {
+                        receiptId: id,
                       });
                     }}
                   >
@@ -84,7 +83,7 @@ const MyReceiptsCard = props => {
                 <Left>
                   <Button
                     transparent
-                    textStyle={{ color: "#87838B" }}
+                    textStyle={{ color: '#87838B' }}
                     onPress={() => {
                       // placeholder to navigate to paypal
                     }}
@@ -95,10 +94,10 @@ const MyReceiptsCard = props => {
                 <Right>
                   <Button
                     transparent
-                    textStyle={{ color: "#87838B" }}
+                    textStyle={{ color: '#87838B' }}
                     onPress={() => {
-                      props.navigation.navigate("Current Receipt", {
-                        receiptId: id
+                      props.navigation.navigate('Current Receipt', {
+                        receiptId: id,
                       });
                     }}
                   >
