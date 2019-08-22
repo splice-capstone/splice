@@ -22,7 +22,7 @@ import {
 import { useStateValue } from '../state';
 import { getReceipt } from '../src/tools/firebase';
 import ItemCard from './ItemCard';
-import { useDocumentData } from 'react-firebase-hooks/firestore';
+import { useDocumentData, useCollectionData } from 'react-firebase-hooks/firestore';
 import db from '../src/tools/firebase';
 
 export default function CurrentReceipt(props) {
@@ -50,7 +50,7 @@ export default function CurrentReceipt(props) {
 
 
   // listen on receipt_users doc that emails current user email
-  const [userValue, userLoading, userError] = useDocumentData(
+  const [userValues, userLoading, userError] = useCollectionData(
     db
       .collection('receipts')
       .doc(receiptId)
@@ -62,9 +62,13 @@ export default function CurrentReceipt(props) {
     }
   );
 
+
   return (
     <Container>
-      {console.log(userValue)}
+      {console.log('user email', currentUser.email)}
+      {console.log('user value', userValues)}
+      {console.log('user error', userError)}
+
       {receiptError && <Text>Error: {JSON.stringify(receiptError)}</Text>}
       {receiptLoading && <Text>Collection: Loading...</Text>}
       {receiptValue && (

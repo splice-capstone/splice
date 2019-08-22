@@ -181,10 +181,10 @@ export async function getMyReceipts(email) {
           .collection('receipts')
           .doc(receipt.id)
           .collection('receipt_users')
-          .where('email', '==', email);
+          .where('email', '==', email)
+          .get();
 
         let myDetails = {};
-        console.log('receipt users%^&*(*&^%^&*&^%^&*&^%', receipt_users)
         receipt_users.forEach(receiptData => {
           receiptData = receiptData.data();
           myDetails = {
