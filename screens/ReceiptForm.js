@@ -21,10 +21,10 @@ export default class ReceiptForm extends React.Component {
       items: this.props.navigation.getParam('current').items,
       name: '',
       amount: 0,
-      subtotal: this.props.navigation.getParam('current').subtotal,
-      tax: this.props.navigation.getParam('current').tax,
+      subtotal: this.props.navigation.getParam('current').subtotal / 100,
+      tax: this.props.navigation.getParam('current').tax / 100,
       tip: 0,
-      total: this.props.navigation.getParam('current').total,
+      total: this.props.navigation.getParam('current').total / 100,
     };
     this.handleCreateNewItem = this.handleCreateNewItem.bind(this);
     this.handleComplete = this.handleComplete.bind(this);
@@ -33,8 +33,10 @@ export default class ReceiptForm extends React.Component {
   }
 
   updateTotal(tip) {
-    this.setState({ tip: Number(tip) });
-    const total = this.state.tip + this.state.subtotal + this.state.tax;
+    let tipInput = Number(tip);
+    console.log('88888888', tipInput);
+    this.setState({ tip: tipInput });
+    const total = tipInput + this.state.subtotal + this.state.tax;
     this.setState({
       total: total,
     });
@@ -57,7 +59,7 @@ export default class ReceiptForm extends React.Component {
       total: this.state.total + Number(newItem.amount),
       subtotal: this.state.subtotal + Number(newItem.amount),
     });
-    let addItemsToReceipt = await addReceiptItems(receiptId, newItem);
+    await addReceiptItems(receiptId, newItem);
     this.setState({
       name: '',
       amount: 0,
@@ -68,18 +70,18 @@ export default class ReceiptForm extends React.Component {
     const receiptId = await this.props.navigation.state.params.current.id;
     let updatedReceipt = await editReceipt(
       receiptId,
-      this.state.tip,
-      this.state.total,
+      this.state.tip * 100,
+      this.state.total * 100,
       this.state.subtotal
     );
     this.props.navigation.navigate('CurrentReceipt', {
       current: receiptId,
-      // navigation: this.props.navigation,
     });
   }
 
   render() {
     let owner = this.props.navigation.getParam('current').owner;
+
     return (
       <Container>
         <Content>

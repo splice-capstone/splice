@@ -270,7 +270,6 @@ export async function completeReceipt(receipt, user) {
 //updating receipt
 export async function editReceipt(receiptId, tip, total, subtotal) {
   const receiptEditRef = await db.collection('receipts').doc(receiptId);
-  //use below to update the items
   receiptEditRef
     .update({
       subtotal: subtotal,
@@ -296,3 +295,16 @@ export async function addReceiptItems(receiptId, newItem) {
     return err;
   }
 }
+
+// export async function removeReceiptItem(receiptId, itemId) {
+//   try {
+//     const receiptItemEditRef = await db
+//       .collection('receipts')
+//       .doc(receiptId)
+//       .collection('items')
+//       .doc(itemId)
+//       .delete();
+//   } catch (err) {
+//     return err;
+//   }
+// }

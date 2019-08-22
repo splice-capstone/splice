@@ -16,7 +16,7 @@ export default function CurrentReceipt(props) {
   useEffect(() => {
     const receiptId = props.navigation.getParam(
       'receiptId',
-      '4siHeCfWsI6sTRShkPik'
+      'BPG1dyK2xu41UEahdMG6'
     );
     if (!currentReceipt.id) {
       getReceipt(receiptId).then(receipt => {
@@ -50,9 +50,10 @@ export default function CurrentReceipt(props) {
         ))}
         <Text>Date: {currentReceipt.date}</Text>
         <Text>Owner: {currentReceipt.owner}</Text>
-        <Text>Subtotal: ${currentReceipt.subtotal}</Text>
-        <Text>Tax: ${currentReceipt.tax}</Text>
-        <Text>Total: ${currentReceipt.total}</Text>
+        <Text>Subtotal: ${currentReceipt.subtotal / 100}</Text>
+        <Text>Tax: ${currentReceipt.tax / 100}</Text>
+        <Text>Tip: ${currentReceipt.tip / 100}</Text>
+        <Text>Total: ${currentReceipt.total / 100}</Text>
       </Content>
     </Container>
   );
