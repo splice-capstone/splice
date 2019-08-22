@@ -40,42 +40,31 @@ export default function CurrentReceipt(props) {
     }
   }, []);
 
-  const watchReceipt = () => {
-    console.log('inside watch');
-    const [value, loading, error] = useDocumentData(
-      db.collection('receipts').doc(receiptId),
-      {
-        snapshotListenOptions: { includeMetadataChanges: true },
-        idField: 'id',
-      }
-    );
-    const receipts = {
-      receiptValue: value,
-      receiptLoading: loading,
-      receiptError: error,
-    };
-    return receipts;
-  };
+  const [receiptValue, receiptLoading, receiptError] = useDocumentData(
+    db.collection('receipts').doc(receiptId),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+      idField: 'id',
+    }
+  );
 
-  // const { receiptValue, receiptLoading, receiptError } = watchReceipt();
 
-  // const watchUserReceipt = () => {
-  //   //listen on receipt_users doc that emails current user email
-  //   const [value, loading, error] = useCollectionData(
-  //     db
-  //       .collection('receipts')
-  //       .doc(props.receiptId)
-  //       .collection('items'),
-  //     {
-  //       snapshotListenOptions: { includeMetadataChanges: true },
-  //       idField: 'id',
-  //     }
-  //   );
-  //   const receipt+
-  // };
+  // listen on receipt_users doc that emails current user email
+  const [userValue, userLoading, userError] = useDocumentData(
+    db
+      .collection('receipts')
+      .doc(receiptId)
+      .collection('receipt_users')
+      .where('email', '==', currentUser.email),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+      idField: 'id',
+    }
+  );
 
   return (
     <Container>
+      {console.log(userValue)}
       {receiptError && <Text>Error: {JSON.stringify(receiptError)}</Text>}
       {receiptLoading && <Text>Collection: Loading...</Text>}
       {receiptValue && (
