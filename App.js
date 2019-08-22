@@ -11,7 +11,7 @@ import {
   Text,
   Animated,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Entypo } from '@expo/vector-icons';
 import AppNavigator from './navigation/AppNavigator';
 import { StateProvider, initialState, reducer } from './state';
 import LoadingScreen from './screens/LoadingScreen';
@@ -77,6 +77,7 @@ async function _cacheResourcesAsync(setAppReady) {
       Roboto: require('native-base/Fonts/Roboto.ttf'),
       Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
       ...Ionicons.font,
+      ...Entypo.font,
       // We include SpaceMono because we use it in HomeScreen.js. Feel free to
       // remove this if you are not using it in your app
       'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),

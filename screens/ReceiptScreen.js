@@ -127,7 +127,7 @@ export default class ReceiptScreen extends React.Component {
         }
       );
       let theDate = response.data.date.data;
-      console.log(JSON.stringify(response.data.amounts));
+      // console.log(JSON.stringify(response.data));
 
       // let theIndex = theDate.indexOf('2');
       // let newDate = theDate.slice(theIndex);
@@ -136,7 +136,7 @@ export default class ReceiptScreen extends React.Component {
 
       let payees = {};
       payees[email] = true;
-
+      console.log('payees in receipt screen', payees);
       const receipt = {
         date: theDate,
         restaurant: response.data.merchantName.data,
@@ -145,6 +145,7 @@ export default class ReceiptScreen extends React.Component {
         total: '',
         owner: email,
         payees,
+        open: true,
       };
       const receiptItems = [];
       for (let i = 0; i < response.data.amounts.length; i++) {

@@ -1,9 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import {
-  Container,
   Header,
-  Content,
   Card,
   CardItem,
   Thumbnail,
@@ -16,34 +14,101 @@ import {
 } from "native-base";
 
 const MyReceiptsCard = props => {
+  console.log("in my recp card", props);
+  const { restaurant, date, id, total, owner } = props.recptsData;
+  const {
+    myDetails: { isOwner, userTotal, paid }
+  } = props.recptsData;
+
+  const totalInDollars = total / 100;
+  const userTotalInDollars = userTotal / 100;
   return (
-    <Container>
-      <Content>
-        <Card style={{ flex: 0 }}>
-          <CardItem>
-            <Left>
-              <Body>
-                <Text>NativeBase</Text>
-                <Text note>April 15, 2016</Text>
-              </Body>
-            </Left>
-          </CardItem>
-          <CardItem>
-            <Body>
-              <Text>sexy receipt</Text>
-            </Body>
-          </CardItem>
-          <CardItem>
-            <Left>
-              <Button transparent textStyle={{ color: "#87838B" }}>
-                <Icon name="logo-github" />
-                <Text>1,926 stars</Text>
-              </Button>
-            </Left>
-          </CardItem>
-        </Card>
-      </Content>
-    </Container>
+    <Card style={{ flex: 0 }} onPress>
+      <CardItem>
+        <Left>
+          <Body>
+            <Text>{restaurant}</Text>
+            <Text note>{date}</Text>
+          </Body>
+        </Left>
+      </CardItem>
+      <CardItem>
+        <Left>
+          <Body>
+            {isOwner ? (
+              <Text style={paid ? { color: "green" } : { color: "red" }}>{`${
+                paid
+                  ? `Received $${totalInDollars}`
+                  : `Receiving $${totalInDollars}`
+              }`}</Text>
+            ) : (
+              <Text style={paid ? { color: "green" } : { color: "red" }}>{`${
+                paid ? "Paid" : "Need to pay"
+              }: $${userTotalInDollars} to ${owner}`}</Text>
+            )}
+          </Body>
+        </Left>
+      </CardItem>
+      <CardItem>
+        <Left>
+          <Body>
+            {isOwner ? (
+              <CardItem>
+                <Left>
+                  <Button
+                    transparent
+                    textStyle={{ color: "#87838B" }}
+                    onPress={() => {
+                      // placeholder to navigate to paypal
+                    }}
+                  >
+                    <Icon type="Entypo" name="user" />
+                  </Button>
+                </Left>
+                <Right>
+                  <Button
+                    transparent
+                    textStyle={{ color: "#87838B" }}
+                    onPress={() => {
+
+                      props.navigation.navigate('CurrentReceipt', {
+                        receiptId: id
+                      })
+                    }}
+                  >
+                    <Icon type="Entypo" name="arrow-bold-right" />
+                  </Button>
+                </Right>
+              </CardItem>
+            ) : (
+              <CardItem>
+                <Button
+                  transparent
+                  textStyle={{ color: "#87838B" }}
+                  onPress={() => {
+                    // placeholder to navigate to paypal
+                  }}
+                >
+                  <Icon type="Entypo" name="paypal" />
+                  <Text>1,926 stars</Text>
+                </Button>
+                <Button
+                  transparent
+                  textStyle={{ color: "#87838B" }}
+                  onPress={() => {
+                    props.navigation.navigate('CurrentReceipt', {
+                      receiptId: id
+                    })
+                  }}
+                >
+                  <Icon type="Entypo" name="arrow-bold-right" />
+                </Button>
+              </CardItem>
+            )}
+          </Body>
+        </Left>
+      </CardItem>
+    </Card>
   );
 };
 

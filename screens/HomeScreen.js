@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { findOrCreateUser, getMyReceipts } from '../src/tools/firebase';
+import { findOrCreateUser } from '../src/tools/firebase';
 import Constants from 'expo-constants';
 import LoginScreen from './LoginScreen';
 import LoggedInScreen from './LoggedInScreen';
@@ -65,14 +65,12 @@ export default function HomeScreen(props) {
           }
         );
         await findOrCreateUser(result.user);
-        const receipts = await getMyReceipts(result.user.email);
         await setUser(
           {
             name: result.user.name,
             email: result.user.email,
             photoUrl: result.user.photoUrl,
-          },
-          receipts
+          }
         );
         return 'logged in';
       } else {

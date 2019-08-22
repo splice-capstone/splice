@@ -28,7 +28,6 @@ export default function CurrentReceipt(props) {
       'receiptId',
       '7AfNCXWaZT9amAf0L0Rm'
     );
-
     if (!currentReceipt.id) {
       getReceipt(receiptId).then(receipt => {
         setCurrentReceipt(receipt);
