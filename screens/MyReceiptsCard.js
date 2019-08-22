@@ -70,10 +70,9 @@ const MyReceiptsCard = props => {
                     transparent
                     textStyle={{ color: "#87838B" }}
                     onPress={() => {
-
-                      props.navigation.navigate('CurrentReceipt', {
+                      props.navigation.navigate("CurrentReceipt", {
                         receiptId: id
-                      })
+                      });
                     }}
                   >
                     <Icon type="Entypo" name="arrow-bold-right" />
@@ -82,27 +81,30 @@ const MyReceiptsCard = props => {
               </CardItem>
             ) : (
               <CardItem>
-                <Button
-                  transparent
-                  textStyle={{ color: "#87838B" }}
-                  onPress={() => {
-                    // placeholder to navigate to paypal
-                  }}
-                >
-                  <Icon type="Entypo" name="paypal" />
-                  <Text>1,926 stars</Text>
-                </Button>
-                <Button
-                  transparent
-                  textStyle={{ color: "#87838B" }}
-                  onPress={() => {
-                    props.navigation.navigate('CurrentReceipt', {
-                      receiptId: id
-                    })
-                  }}
-                >
-                  <Icon type="Entypo" name="arrow-bold-right" />
-                </Button>
+                <Left>
+                  <Button
+                    transparent
+                    textStyle={{ color: "#87838B" }}
+                    onPress={() => {
+                      // placeholder to navigate to paypal
+                    }}
+                  >
+                    <Icon type="Entypo" name="paypal" />
+                  </Button>
+                </Left>
+                <Right>
+                  <Button
+                    transparent
+                    textStyle={{ color: "#87838B" }}
+                    onPress={() => {
+                      props.navigation.navigate("CurrentReceipt", {
+                        receiptId: id
+                      });
+                    }}
+                  >
+                    <Icon type="Entypo" name="arrow-bold-right" />
+                  </Button>
+                </Right>
               </CardItem>
             )}
           </Body>
