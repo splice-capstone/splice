@@ -1,5 +1,5 @@
 import * as WebBrowser from 'expo-web-browser';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { StyleSheet, TextInput } from 'react-native';
 import {
   Container,
@@ -11,123 +11,112 @@ import {
   Item,
   Input,
 } from 'native-base';
-import { useStateValue, StateContext } from '../state';
 import ItemCard from './ItemCard';
-import { editReceipt } from '../src/tools/firebase';
+import { editReceipt, addReceiptItems } from '../src/tools/firebase';
 
 export default class ReceiptForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       items: this.props.navigation.getParam('current').items,
-      newItem: {
-        name: '',
-        amount: 0,
-      },
-      owner: this.props.navigation.getParam('current').owner,
-      subtotal: this.props.navigation.getParam('current').subtotal / 100,
-      tax: this.props.navigation.getParam('current').tax / 100,
+      name: '',
+      amount: 0,
+      subtotal: this.props.navigation.getParam('current').subtotal,
+      tax: this.props.navigation.getParam('current').tax,
       tip: 0,
-      total: this.props.navigation.getParam('current').total / 100,
+      total: this.props.navigation.getParam('current').total,
     };
-    // this.handleChange = this.handleChange.bind(this);
-    // this.handleSubmit = this.handleSubmit.bind(this);
-    this.updateTotal = this.updateTotal.bind(this);
-    // this.updateItems = this.updateItems.bind(this);
+    this.handleCreateNewItem = this.handleCreateNewItem.bind(this);
     this.handleComplete = this.handleComplete.bind(this);
+    this.handleNameText = this.handleNameText.bind(this);
+    this.handleAmountText = this.handleAmountText.bind(this);
   }
 
-  async updateTotal(tip) {
+  updateTotal(tip) {
     this.setState({ tip: Number(tip) });
-    const total =
-      (await this.state.tip) * 10 + this.state.subtotal + this.state.tax;
+    const total = this.state.tip + this.state.subtotal + this.state.tax;
     this.setState({
       total: total,
     });
   }
 
-  handleChange(event) {
+  handleNameText(name) {
+    this.setState({ name });
+  }
+
+  handleAmountText(amount) {
+    this.setState({ amount });
+  }
+
+  async handleCreateNewItem(event) {
+    event.preventDefault();
+    const receiptId = await this.props.navigation.state.params.current.id;
+    let newItem = { name: this.state.name, amount: this.state.amount };
     this.setState({
-      [event.target.name]: event.target.value,
+      items: this.state.items.concat(newItem),
+      total: this.state.total + Number(newItem.amount),
+      subtotal: this.state.subtotal + Number(newItem.amount),
+    });
+    let addItemsToReceipt = await addReceiptItems(receiptId, newItem);
+    this.setState({
+      name: '',
+      amount: 0,
     });
   }
 
-  // updateItems(item) {
-  //   this.setState({
-  //     items: [...this.state.items, item],
-  //   });
-  // }
-
-  // handleClick(event, item) {
-  //   event.preventDefault();
-  //   const itemsAdded = this.state.items.concat(item);
-  //   this.setState({ items: itemsAdded });
-  // }
-
-  // handleChange(event) {
-  //   this.setState(prevState => ({
-  //     items: prevState.items.concat({ name: event.target.value }),
-  //   }));
-  // }
-  // handleSubmit(event, item) {
-  //   event.preventDefault();
-  //   this.updateItems(item);
-  // }
-
   async handleComplete() {
-    console.log('hi');
     const receiptId = await this.props.navigation.state.params.current.id;
-    console.log('8888', receiptId);
     let updatedReceipt = await editReceipt(
       receiptId,
       this.state.tip,
-      this.state.total
+      this.state.total,
+      this.state.subtotal
     );
-    console.log('updatedReceipt', updatedReceipt);
+    this.props.navigation.navigate('CurrentReceipt', {
+      current: receiptId,
+      // navigation: this.props.navigation,
+    });
   }
 
   render() {
-    // const receiptId = this.props.navigation.state.params.current.id;
+    let owner = this.props.navigation.getParam('current').owner;
     return (
       <Container>
         <Content>
           <Form>
             <Item>
-              <Input
+              <TextInput
+                type="text"
+                name="name"
                 placeholder="name"
-                onChange={tip => this.updateTotal(tip)}
+                onChangeText={name => this.handleNameText(name)}
+                value={this.state.name}
               />
             </Item>
             <Item>
-              <Input
+              <TextInput
+                type="newItem.amount"
+                name="amount"
                 placeholder="amount"
-                onChange={tip => this.updateTotal(tip)}
+                onChangeText={amount => this.handleAmountText(amount)}
+                value={this.state.amount}
               />
             </Item>
+
+            <Button small rounded success onPress={this.handleCreateNewItem}>
+              <Icon name="add" />
+            </Button>
             <Item>
               <Input
                 placeholder="tip"
                 onChangeText={tip => this.updateTotal(tip)}
               />
             </Item>
-            <Button small rounded success onPress={console.log('hey!')}>
-              <Icon name="add" />
-            </Button>
-            {/* <Item>
-              <Input
-                type="text"
-                placeholder="name"
-                onChangeText={name => this.updateItems({ name: name })}
-              />
-            </Item>
-            <Button small rounded success>
-              <Icon name="add" />
-            </Button> */}
           </Form>
           {this.state.items.map(item => (
             <ItemCard item={item} key={item.id} />
           ))}
-          <Text>Owner: {this.state.owner}</Text>
+          <Text>Owner: {owner}</Text>
           <Text>Subtotal: ${this.state.subtotal}</Text>
           <Text>Tax: ${this.state.tax}</Text>
           <Text>Tip: ${this.state.tip} </Text>
@@ -154,6 +143,3 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 });
-
-// let receiptId = await updateReceipt()
-// and redirect to current recept page

@@ -33,6 +33,7 @@ export default function CurrentReceipt(props) {
             onPress={() =>
               props.navigation.navigate('ReceiptForm', {
                 current: currentReceipt,
+                navigation: props.navigation,
               })
             }
           >
