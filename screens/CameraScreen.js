@@ -1,29 +1,21 @@
 /* eslint-disable complexity */
-import * as WebBrowser from 'expo-web-browser';
-import React, { useState, useEffect } from 'react';
-
-import Constants from 'expo-constants';
+import React from 'react';
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
   Platform,
-  Animated,
-  Image,
 } from 'react-native';
 import GalleryScreen from './GalleryScreen';
 import { ifIphoneX } from 'react-native-iphone-x-helper';
 import * as FileSystem from 'expo-file-system';
 import * as Permissions from 'expo-permissions';
 import { Camera } from 'expo-camera';
-import axios from 'axios';
-import { createReceipt } from '../src/tools/firebase';
-
 import { Ionicons, MaterialIcons, Foundation } from '@expo/vector-icons';
 import { StateContext } from '../state';
-import CurrentReceipt from './CurrentReceipt';
 import LoadingScreen from './LoadingScreen';
+import sendToTaggun from '../src/utils/taggun';
 
 const flashModeOrder = {
   off: 'on',
@@ -39,7 +31,7 @@ const flashIcons = {
   torch: 'highlight',
 };
 
-export default class ReceiptScreen extends React.Component {
+export default class CameraScreen extends React.Component {
   static contextType = StateContext;
 
   state = {
@@ -55,9 +47,7 @@ export default class ReceiptScreen extends React.Component {
     pictureSizes: [],
     pictureSizeId: 0,
     showGallery: false,
-    showMoreOptions: false,
     loading: false,
-    receiptId: '',
   };
 
   async componentWillMount() {
@@ -81,9 +71,6 @@ export default class ReceiptScreen extends React.Component {
   toggleView = () =>
     this.setState({ showGallery: !this.state.showGallery, newPhotos: false });
 
-  toggleMoreOptions = () =>
-    this.setState({ showMoreOptions: !this.state.showMoreOptions });
-
   toggleFlash = () =>
     this.setState({ flash: flashModeOrder[this.state.flash] });
 
@@ -106,99 +93,28 @@ export default class ReceiptScreen extends React.Component {
 
   handleMountError = ({ message }) => console.error(message);
 
-  sendToTaggun = async photo => {
-    console.log('sending to taggun...');
-    this.setState({ loading: true });
-    const body = {
-      image: photo.base64,
-      filename: 'example.jpg',
-      contentType: 'image/jpeg',
-    };
-    try {
-      const response = await axios.post(
-        'https://api.taggun.io/api/receipt/v1/verbose/encoded',
-        body,
-        {
-          headers: {
-            apikey: Constants.manifest.extra.taggunApiKey,
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-        }
-      );
-      let theDate = response.data.date.data;
-      console.log(JSON.stringify(response.data.amounts));
-
-      // let theIndex = theDate.indexOf('2');
-      // let newDate = theDate.slice(theIndex);
-      // theDate = await newDate;
-      const email = this.context[0].currentUser.email;
-
-      let payees = {};
-      payees[email] = true;
-      console.log('payees in receipt screen', payees);
-      const receipt = {
-        date: theDate,
-        restaurant: response.data.merchantName.data,
-        subtotal: '',
-        tax: '',
-        total: '',
-        owner: email,
-        payees,
-        open: true,
-      };
-      const receiptItems = [];
-      for (let i = 0; i < response.data.amounts.length; i++) {
-        let data = response.data.amounts[i].text;
-
-        if (data.includes('Tax') || data.includes('tax')) {
-          receipt.tax = Number(response.data.amounts[i].data) * 100;
-        }
-        if (data[0] === 't' || 'T') {
-          receipt.total = Math.ceil(
-            Number(response.data.amounts[i].data) * 100
-          );
-        }
-        if (data.includes('Sub') || data.includes('sub')) {
-          receipt.subtotal = Number(response.data.amounts[i].data) * 100;
-        }
-        if (
-          !data.includes('Tax') &&
-          !data.includes('Sub') &&
-          !data.includes('TOTAL')
-        ) {
-          let theIdx = await data.indexOf('@');
-          receiptItems.push({
-            amount: data.slice(data.length - 5, data.length),
-            name: data.slice(2, theIdx - 1),
-            payees,
-          });
-        }
-      }
-      let receiptId = await createReceipt(
-        receipt,
-        receiptItems,
-        this.context[0].currentUser
-      );
-      this.setState({ loading: false, receiptId: receiptId });
-      this.props.navigation.navigate('CurrentReceipt', {
-        receiptId: this.state.receiptId,
-      });
-      return;
-    } catch (error) {
-      console.log('hit an error');
-      console.error(error);
-    }
-  };
-
   onPictureSaved = async photo => {
-    this.sendToTaggun(photo);
-
+    //render loading screen
+    this.setState({ loading: true });
     await FileSystem.moveAsync({
       from: photo.uri,
       to: `${FileSystem.documentDirectory}photos/${Date.now()}.jpg`,
     });
     this.setState({ newPhotos: true });
+
+    //calls utils - taggun function
+    const { receiptId, comments } = await sendToTaggun(
+      photo,
+      this.context[0].currentUser
+    );
+
+    //once complete, gets receipt id and renders current receipt screen
+    if (receiptId) {
+      this.props.navigation.navigate('Current Receipt', {
+        receiptId,
+        comments,
+      });
+    }
   };
 
   collectPictureSizes = async () => {
@@ -277,31 +193,6 @@ export default class ReceiptScreen extends React.Component {
     </View>
   );
 
-  renderMoreOptions = () => (
-    <View style={styles.options}>
-      <View style={styles.pictureSizeContainer}>
-        <Text style={styles.pictureQualityLabel}>Picture quality</Text>
-        <View style={styles.pictureSizeChooser}>
-          <TouchableOpacity
-            onPress={this.previousPictureSize}
-            style={{ padding: 6 }}
-          >
-            <Ionicons name="md-arrow-dropleft" size={14} color="white" />
-          </TouchableOpacity>
-          <View style={styles.pictureSizeLabel}>
-            <Text style={{ color: 'white' }}>{this.state.pictureSize}</Text>
-          </View>
-          <TouchableOpacity
-            onPress={this.nextPictureSize}
-            style={{ padding: 6 }}
-          >
-            <Ionicons name="md-arrow-dropright" size={14} color="white" />
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
-  );
-
   renderCamera = () => (
     <View style={{ flex: 1 }}>
       <Camera
@@ -320,8 +211,6 @@ export default class ReceiptScreen extends React.Component {
         {this.renderTopBar()}
         {this.renderBottomBar()}
       </Camera>
-
-      {this.state.showMoreOptions && this.renderMoreOptions()}
     </View>
   );
 
@@ -332,20 +221,11 @@ export default class ReceiptScreen extends React.Component {
     const content = this.state.showGallery
       ? this.renderGallery()
       : cameraScreenContent;
-    if (!this.state.loading && !this.state.receiptId) return content;
+
+    if (!this.state.loading) return content;
     else if (this.state.loading) return <LoadingScreen />;
-    // else if (this.state.receiptId) {
-    //   this.props.navigation.navigate('CurrentReceipt', {
-    //     receiptId: this.state.receiptId,
-    //   });
-    // return (
-    //   <CurrentReceipt
-    //     receiptId={this.state.receiptId}
-    //     navigation={this.props.navigation}
-    //   />
-    // );
     else {
-      return <Text>error</Text>;
+      return <Text>Error</Text>;
     }
   }
 }

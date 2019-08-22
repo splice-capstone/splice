@@ -12,13 +12,13 @@ const LoggedInScreen = props => {
         <Button
           title="TAKE A SNAPSHOT"
           style={styles.buttonDark}
-          onPress={() => props.navigation.navigate('AddReceipt')}
+          onPress={() => props.navigation.navigate('Add Receipt')}
         >
           <Text>TAKE A SNAPSHOT</Text>
         </Button>
         <Button
           style={styles.buttonLight}
-          onPress={() => props.navigation.navigate('AddReceipt')}
+          onPress={() => props.navigation.navigate('Add Receipt')}
         >
           <Text style={{ color: 'black', alignContent: 'center' }}>
             BY HAND

@@ -7,7 +7,7 @@ export default function LoadingScreen(props) {
   useEffect(() => {
     Animated.timing(value, {
       toValue: 0,
-      duration: 1000,
+      duration: 3000,
     }).start();
   });
 

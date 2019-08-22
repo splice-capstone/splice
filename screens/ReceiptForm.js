@@ -38,7 +38,7 @@ export default function ReceiptForm(props) {
             <Text>Edit</Text>
           </Button>
           <Button
-            onPress={() => props.navigation.navigate('AddUserToReceiptScreen')}
+            onPress={() => props.navigation.navigate('Add User')}
           >
             <Icon name="md-person-add" />
             <Text>Add Person</Text>
