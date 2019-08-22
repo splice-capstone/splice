@@ -8,12 +8,12 @@ import {
 } from 'react-navigation';
 import { DrawerActions } from 'react-navigation-drawer';
 import HomeScreen from '../screens/HomeScreen';
-import SettingsScreen from '../screens/SettingsScreen';
-import ReceiptScreen from '../screens/ReceiptScreen';
+import CameraScreen from '../screens/CameraScreen';
 import AddUserToReceiptScreen from '../screens/AddUserToReceiptScreen';
 import CurrentReceipt from '../screens/CurrentReceipt';
 import { Ionicons } from '@expo/vector-icons';
 import ReceiptForm from '../screens/ReceiptForm';
+import AccountScreen from '../screens/AccountScreen';
 
 // import MainTabNavigator from './MainTabNavigator';
 
@@ -45,11 +45,11 @@ const styles = StyleSheet.create({
 const DrawerNavigator = createDrawerNavigator(
   {
     Home: { screen: HomeScreen },
-    CurrentReceipt: { screen: CurrentReceipt },
-    Settings: { screen: SettingsScreen },
-    AddReceipt: { screen: ReceiptScreen },
-    AddUser: { screen: AddUserToReceiptScreen },
-    ReceiptForm: { screen: ReceiptForm },
+    'Current Receipt': { screen: CurrentReceipt },
+    'Add Receipt': { screen: CameraScreen },
+    'Add User': { screen: AddUserToReceiptScreen },
+    'Receipt Form': { screen: ReceiptForm },
+    'My Account': { screen: AccountScreen },
   },
   {
     hideStatusBar: true,

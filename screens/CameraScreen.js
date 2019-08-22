@@ -31,7 +31,7 @@ const flashIcons = {
   torch: 'highlight',
 };
 
-export default class ReceiptScreen extends React.Component {
+export default class CameraScreen extends React.Component {
   static contextType = StateContext;
 
   state = {
@@ -48,7 +48,6 @@ export default class ReceiptScreen extends React.Component {
     pictureSizeId: 0,
     showGallery: false,
     loading: false,
-    receiptId: '',
   };
 
   async componentWillMount() {
@@ -94,38 +93,28 @@ export default class ReceiptScreen extends React.Component {
 
   handleMountError = ({ message }) => console.error(message);
 
-  renderLoading() {
-    console.log('inside render loading');
-    return <LoadingScreen />;
-  }
-
-  renderCurrentReceipt(receiptId, comments) {
-    console.log('render current', receiptId);
-    this.props.navigation.navigate('CurrentReceipt', {
-      receiptId: receiptId,
-      comments: comments,
-    });
-  }
-
   onPictureSaved = async photo => {
     //render loading screen
     this.setState({ loading: true });
-    console.log('picture saved');
-
-    //calls utils - taggun function
-    const results = await sendToTaggun(photo, this.context[0].currentUser);
-
-    if (results.receiptId) {
-      return this.renderCurrentReceipt(receiptId, comments);
-    }
-    //once complete, gets receipt id and renders current receipt screen
-    this.setState({ loading: false, receiptId: results.receiptId });
-
     await FileSystem.moveAsync({
       from: photo.uri,
       to: `${FileSystem.documentDirectory}photos/${Date.now()}.jpg`,
     });
     this.setState({ newPhotos: true });
+
+    //calls utils - taggun function
+    const { receiptId, comments } = await sendToTaggun(
+      photo,
+      this.context[0].currentUser
+    );
+
+    //once complete, gets receipt id and renders current receipt screen
+    if (receiptId) {
+      this.props.navigation.navigate('CurrentReceipt', {
+        receiptId,
+        comments,
+      });
+    }
   };
 
   collectPictureSizes = async () => {
@@ -233,10 +222,10 @@ export default class ReceiptScreen extends React.Component {
       ? this.renderGallery()
       : cameraScreenContent;
 
-    if (!this.state.loading && !this.state.receiptId) return content;
-    else if (this.state.loading) return this.renderLoading();
+    if (!this.state.loading) return content;
+    else if (this.state.loading) return <LoadingScreen />;
     else {
-      return <Text>error</Text>;
+      return <Text>Error</Text>;
     }
   }
 }

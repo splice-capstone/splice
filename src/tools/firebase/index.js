@@ -12,6 +12,10 @@ export default db;
 
 export async function createReceipt(data, itemData, currentUser) {
   try {
+    console.log('inside create receipt in index - data', data);
+    console.log('inside create receipt in index - itemData', itemData);
+    console.log('inside create receipt in index - currentUser', currentUser);
+
     const newReceipt = await db.collection('receipts').add(data);
     //get receipt doc, adding items
     newReceipt.get().then(async function(querySnapshot) {
@@ -43,6 +47,7 @@ export async function createReceipt(data, itemData, currentUser) {
             userTip: 0,
             userTotal: data.total,
             paid: true,
+            photoUrl: currentUser.photoUrl,
           });
 
         //add new recp to users -> user -> receipts
@@ -135,19 +140,25 @@ export async function findOrCreateUser(user) {
 
 export async function findUser(email) {
   try {
-    email.toLowerCase();
-    let user = await db
+    const results = [];
+
+    const user = await db
       .collection('users')
-      .orderBy('email')
-      .where('email', '==', email)
-      .get();
-    user = await user.data();
-    const userDetails = {
-      email: user.email,
-      name: user.name,
-      photoUrl: user.photoUrl,
-    };
-    return userDetails;
+      .where('email', '==', email.toLowerCase())
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(doc => {
+          let userDetails = {
+            email: doc.data().email,
+            name: doc.data().name,
+            photoUrl: doc.data().photoUrl,
+          };
+          results.push(userDetails);
+        });
+      });
+
+    console.log('user', results);
+    return results;
   } catch (err) {
     return `error: ${err}`;
   }
@@ -181,6 +192,7 @@ export async function getMyReceipts(email) {
             userTip: receiptData.userTip,
             userTotal: receiptData.userTotal,
             paid: receiptData.paid,
+            photoUrl: receiptData.photoUrl,
           };
 
           //get receipt doc
@@ -229,6 +241,7 @@ export async function addUserToReceipt(receipt, user) {
         userTip: 0,
         userTotal: 0,
         paid: false,
+        photoUrl: user.photoUrl,
       });
 
     //add user to receipt payees array - false signifies whether the user has paid their share

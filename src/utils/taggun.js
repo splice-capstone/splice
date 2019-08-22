@@ -1,8 +1,16 @@
-// import { createReceipt } from '../tools/firebase';
 import axios from 'axios';
 import Constants from 'expo-constants';
 import _ from 'lodash';
-const createReceipt = require('../tools/firebase');
+import { createReceipt } from '../tools/firebase';
+
+const create = async (receipt, receiptItems, currentUser) => {
+  try {
+    const receiptId = await createReceipt(receipt, receiptItems, currentUser);
+    return receiptId;
+  } catch (error) {
+    console.log('hit an error while creating receipt', error);
+  }
+};
 
 const parseReceipt = async (response, currentUser) => {
   try {
@@ -106,15 +114,7 @@ const parseReceipt = async (response, currentUser) => {
       receipt.tax = receipt.total - receipt.subtotal;
       comments['tax'] = 'Auto calculated tax';
     }
-
-    //now you have all the info to create receipt, receipt_items, and receipt_user in the database
-    try {
-      const receiptId = await createReceipt(receipt, receiptItems, currentUser);
-      return { receiptId, comments };
-    } catch (error) {
-      console.log('hit an error while creating receipt');
-      return { error };
-    }
+    return { receipt, receiptItems, comments };
   } catch (error) {
     console.log('hit an error while parsing receipt');
     console.error(error);
@@ -141,9 +141,14 @@ const sendToTaggun = async (photo, currentUser) => {
         },
       }
     );
-    console.log('response', response.data);
-    const results = parseReceipt(response.data, currentUser);
-    return results;
+    const { receipt, receiptItems, comments } = await parseReceipt(
+      response.data,
+      currentUser
+    );
+
+    //now you have all the info to create receipt, receipt_items, and receipt_user in the database
+    const receiptId = await create(receipt, receiptItems, currentUser);
+    return { receiptId, comments };
   } catch (err) {
     console.log('hit an error while sending to taggun');
     console.error(error);
