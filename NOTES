@@ -1,0 +1,18 @@
+Beta Testing Notes 
+
+- if I press an item first and then the second person also add themselves, my subtotal does not 
+change to talk. but the other person sees only half 
+
+- too many floors on total because we dont see the decimals 
+
+- in the form, the items are selected when you go from the currentReceipt because 
+they are using the same component (VK)
+
+- add blockers so that if I am not the host, I am unable to edit the receipt (VK)
+
+- loading screen for after taggun and loading my receipts (VK)
+
+- clean up DB (VK)
+
+- 
+
