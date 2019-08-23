@@ -32,7 +32,7 @@ const parseReceipt = async (response, currentUser) => {
 
     //set host as one of the payees
     let payees = {};
-    payees[currentUser.email] = true;
+    payees[currentUser.email] = false;
 
     //get base receipt level structure
     const receipt = {
@@ -41,6 +41,7 @@ const parseReceipt = async (response, currentUser) => {
       subtotal: 0,
       tax: Math.ceil(response.taxAmount.data * 100),
       total: Math.ceil(response.totalAmount.data * 100),
+      tip: 0,
       owner: currentUser.email,
       payees,
       open: true,

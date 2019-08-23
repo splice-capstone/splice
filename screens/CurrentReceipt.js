@@ -26,11 +26,15 @@ import {
   useDocumentData,
   useCollectionData,
 } from 'react-firebase-hooks/firestore';
-import db from '../src/tools/firebase';
+import db, { calculateSubtotal } from '../src/tools/firebase';
 
 export default function CurrentReceipt(props) {
   const [{ currentUser }, dispatch] = useStateValue();
   const [comments, setComments] = useState('');
+  const [userSubtotal, setSubtotal] = useState(0);
+  const [userTax, setTax] = useState(0);
+  const [userTip, setTip] = useState(0);
+  const [userTotal, setTotal] = useState(0);
 
   const receiptId = props.navigation.getParam(
     'receiptId',
@@ -41,7 +45,27 @@ export default function CurrentReceipt(props) {
     if (newComments) {
       setComments(newComments);
     }
-  }, []);
+    if (userValues && receiptValue && userValues[0].id) {
+      //recalculate my user subtotals based on sum of my items map
+      calculateSubtotal(receiptId, userValues[0].id).then(subtotal =>
+        setSubtotal(subtotal / 100)
+      );
+      //calculate user tax based on user subtotal/overall total * overall tax
+      setTax(
+        Math.floor(
+          ((userSubtotal / receiptValue.total) * receiptValue.tax) / 100
+        )
+      );
+      //calculate user tip based on user subtotal/overall total * overall tip
+      setTip(
+        Math.floor(
+          ((userSubtotal / receiptValue.total) * receiptValue.tip) / 100
+        )
+      );
+      //calculate user total based on user subtotal + user tax + user tip
+      setTotal(Math.floor(userSubtotal + userTax + userTip) / 100);
+    }
+  });
 
   const [receiptValue, receiptLoading, receiptError] = useDocumentData(
     db.collection('receipts').doc(receiptId),
@@ -90,6 +114,11 @@ export default function CurrentReceipt(props) {
           <Text>Date: {receiptValue.date}</Text>
           <Text>Owner: {receiptValue.owner}</Text>
           <Text>Subtotal: ${receiptValue.subtotal}</Text>
+          <Text>My Subtotal: ${userSubtotal}</Text>
+          <Text>My Tax: ${userTax}</Text>
+          <Text>My Tip: ${userTip}</Text>
+          <Text>My Total: ${userTotal}</Text>
+
           <Text>Tax: ${receiptValue.tax}</Text>
           <Text>Total: ${receiptValue.total}</Text>
           <ItemCard

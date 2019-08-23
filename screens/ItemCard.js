@@ -21,7 +21,7 @@ import db, { updateItem } from '../src/tools/firebase';
 import { useStateValue } from '../state';
 
 export default function ItemCard(props) {
-  const [{ currentUser }, dispatch] = useStateValue();
+  const [{ currentUser, currentReceipt }, dispatch] = useStateValue();
 
   const [values, loading, error] = useCollectionData(
     db
@@ -49,6 +49,12 @@ export default function ItemCard(props) {
               <Body>
                 <Text>
                   {doc.name} ${doc.amount / 100}
+                  {doc.payees[currentUser.email] ? (
+                    <Icon name="checkmark" />
+                  ) : (
+                    // <Text>My Cost: ${doc.costPerUser}</Text>
+                    ''
+                  )}
                 </Text>
               </Body>
             </ListItem>
