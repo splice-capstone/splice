@@ -47,6 +47,7 @@ export async function createReceipt(data, itemData, currentUser) {
             photoUrl: currentUser.photoUrl,
             items: [],
           });
+
         //add new recp to users -> user -> receipts
         userDoc.update({
           receipts: firebase.firestore.FieldValue.arrayUnion(newReceipt),
