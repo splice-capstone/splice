@@ -1,27 +1,22 @@
-import * as WebBrowser from 'expo-web-browser';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
+import { useStateValue } from '../state';
+import ItemCard from './ItemCard';
 import {
   Container,
-  Header,
   Content,
   Button,
   Icon,
   Text,
-  Form,
-  Item,
-  Input,
   List,
   ListItem,
   Left,
   Body,
   Right,
   Thumbnail,
+  View
 } from 'native-base';
 
-import { useStateValue } from '../state';
-import { getReceipt } from '../src/tools/firebase';
-import ItemCard from './ItemCard';
 import {
   useDocumentData,
   useCollectionData,
@@ -40,6 +35,7 @@ export default function CurrentReceipt(props) {
     'receiptId',
     '1Y8k9OAQhJAlctRTAjYW'
   );
+
   useEffect(() => {
     const newComments = props.navigation.getParam('comments', '');
     if (newComments) {
@@ -63,7 +59,7 @@ export default function CurrentReceipt(props) {
         )
       );
       //calculate user total based on user subtotal + user tax + user tip
-      setTotal(Math.floor(userSubtotal + userTax + userTip) / 100);
+      setTotal(Math.floor(userSubtotal + userTax + userTip));
     }
   });
 
@@ -101,7 +97,10 @@ export default function CurrentReceipt(props) {
             <Text>{comments.misc}</Text>
             <Text>{comments.date}</Text>
 
-            <Text onPress={() => props.navigation.navigate('Receipt Form')}>
+            <Text onPress={() => props.navigation.navigate('Receipt Form', {
+                current: currentReceipt,
+                navigation: props.navigation,
+              })}>
               Edit
             </Text>
             <Text>{receiptValue.restaurant}</Text>
@@ -114,13 +113,15 @@ export default function CurrentReceipt(props) {
           <Text>Date: {receiptValue.date}</Text>
           <Text>Owner: {receiptValue.owner}</Text>
           <Text>Subtotal: ${receiptValue.subtotal}</Text>
+          <Text>Tax: ${receiptValue.tax}</Text>
+          <Text>Total: ${receiptValue.total}</Text>
+
+
           <Text>My Subtotal: ${userSubtotal}</Text>
           <Text>My Tax: ${userTax}</Text>
           <Text>My Tip: ${userTip}</Text>
           <Text>My Total: ${userTotal}</Text>
 
-          <Text>Tax: ${receiptValue.tax}</Text>
-          <Text>Total: ${receiptValue.total}</Text>
           <ItemCard
             receiptId={props.navigation.getParam(
               'receiptId',

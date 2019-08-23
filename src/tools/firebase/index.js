@@ -377,3 +377,45 @@ export async function completeReceipt(receipt, user) {
     return `error: ${err}`;
   }
 }
+
+export async function editReceipt(receiptId, tip, total, subtotal) {
+  try {
+    const receiptEditRef = await db.collection('receipts').doc(receiptId);
+    const updatedReceipt = receiptEditRef.update({
+      subtotal: subtotal,
+      tip: tip,
+      total: total,
+    });
+    return receiptEditRef.data();
+  } catch (err) {
+    return err;
+  }
+}
+
+export async function addReceiptItems(receiptId, newItem) {
+  try {
+    const receiptItemEditRef = await db
+      .collection('receipts')
+      .doc(receiptId)
+      .collection('items')
+      .add(newItem);
+    return receiptItemEditRef;
+  } catch (err) {
+    return err;
+  }
+}
+
+//Below is for swipe to delete (vk will take care of this)
+
+// export async function removeReceiptItem(receiptId, itemId) {
+//   try {
+//     const receiptItemEditRef = await db
+//       .collection('receipts')
+//       .doc(receiptId)
+//       .collection('items')
+//       .doc(itemId)
+//       .delete();
+//   } catch (err) {
+//     return err;
+//   }
+// }
