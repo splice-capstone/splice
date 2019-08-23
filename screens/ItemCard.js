@@ -18,9 +18,10 @@ import {
 } from 'native-base';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import db, { updateItem } from '../src/tools/firebase';
+import { useStateValue } from '../state';
 
 export default function ItemCard(props) {
-  // const [{ currentUser }, dispatch] = useStateValue();
+  const [{ currentUser }, dispatch] = useStateValue();
 
   const [values, loading, error] = useCollectionData(
     db
@@ -34,7 +35,7 @@ export default function ItemCard(props) {
   );
 
   update = doc => {
-    updateItem(props.receiptId, doc, currentUser);
+    updateItem(props.receiptId, doc, currentUser, props.receiptUserId);
   };
 
   return (
@@ -44,7 +45,7 @@ export default function ItemCard(props) {
       {values && (
         <Content>
           {values.map(doc => (
-            <ListItem key={doc.id} onPress={() => this.updateItem(doc)}>
+            <ListItem key={doc.id} onPress={() => update(doc)}>
               <Body>
                 <Text>
                   {doc.name} ${doc.amount / 100}

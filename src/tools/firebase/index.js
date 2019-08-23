@@ -53,7 +53,7 @@ export async function createReceipt(data, itemData, currentUser) {
 
         //add user to receipt payees array - false signifies whether the user has paid their share, owner defaults to true
         let payees = {};
-        payees[currentUser.email] = true;
+        payees[currentUser.email] = false;
         newReceipt.update(payees);
         return newItems;
       } else {
@@ -279,27 +279,68 @@ export async function addUserToReceipt(receipt, email) {
   }
 }
 
-export async function updateItem(receiptId, item, user) {
+export async function updateItem(receiptId, item, user, receiptUserId) {
   try {
-    //find current user on payees map & update to true
-    const oldItem = await db
+    //find current user on payees map & update to opposite - toggle function
+    const payees = item.payees;
+    payees[user.email] = !payees[user.email];
+
+    //this updates the payees map on the items doc
+    await db
       .collection('receipts')
       .doc(receiptId)
       .collection('items')
       .doc(item.id)
-      .update({
-        [`payees.${user.email}`]: true,
-      });
-    //recalculate item price per user - count how many payees are true and divide amount by that number, save this val on item. store the true users emails in array?
+      .set(
+        {
+          payees,
+        },
+        { merge: true }
+      );
+    //recalculate item price per user - count how many payees are true and divide amount by that number, save this val on item.
+    const itemRef = db
+      .collection('receipts')
+      .doc(receiptId)
+      .collection('items')
+      .doc(item.id);
 
+    const itemData = await itemRef.get();
+    const itemPayees = itemData.data().payees;
+    const trues = Object.values(itemPayees).filter(val => val === true);
+    const costPerUser = itemData.data().amount / trues.length;
+
+    await itemRef.set({ costPerUser }, { merge: true });
+
+    //add item ref to receipt_users doc
+    if (payees[user.email]) {
+      await db
+        .collection('receipts')
+        .doc(receiptId)
+        .collection('receipt_users')
+        .doc(receiptUserId)
+        .update({
+          items: firebase.firestore.FieldValue.arrayUnion(itemRef),
+        });
+    } else {
+      await db
+        .collection('receipts')
+        .doc(receiptId)
+        .collection('receipt_users')
+        .doc(receiptUserId)
+        .update({
+          items: firebase.firestore.FieldValue.arrayRemove(itemRef),
+        });
+    }
+
+    //ON LOAD
     //map over user emails array - update the item in the user items map to user amount
     //recalculate all users subtotals based on sum of user items map
     //calculate users tax based on user subtotal/overall total * overall tax
     //calculate users tip based on user subtotal/overall total * overall tip
     //calculate users total based on user subtotal + user tax + user tip
-    console.log('old item', oldItem);
-    return oldItem;
+    return costPerUser;
   } catch (err) {
+    console.log('err', err);
     return `error: ${err}`;
   }
 }

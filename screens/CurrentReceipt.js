@@ -22,7 +22,10 @@ import {
 import { useStateValue } from '../state';
 import { getReceipt } from '../src/tools/firebase';
 import ItemCard from './ItemCard';
-import { useDocumentData, useCollectionData } from 'react-firebase-hooks/firestore';
+import {
+  useDocumentData,
+  useCollectionData,
+} from 'react-firebase-hooks/firestore';
 import db from '../src/tools/firebase';
 
 export default function CurrentReceipt(props) {
@@ -31,7 +34,7 @@ export default function CurrentReceipt(props) {
 
   const receiptId = props.navigation.getParam(
     'receiptId',
-    'jbIXS3uNWk0VGEZWqcdP'
+    '1Y8k9OAQhJAlctRTAjYW'
   );
   useEffect(() => {
     const newComments = props.navigation.getParam('comments', '');
@@ -48,7 +51,6 @@ export default function CurrentReceipt(props) {
     }
   );
 
-
   // listen on receipt_users doc that emails current user email
   const [userValues, userLoading, userError] = useCollectionData(
     db
@@ -62,16 +64,13 @@ export default function CurrentReceipt(props) {
     }
   );
 
-
   return (
     <Container>
-      {console.log('user email', currentUser.email)}
-      {console.log('user value', userValues)}
-      {console.log('user error', userError)}
-
-      {receiptError && <Text>Error: {JSON.stringify(receiptError)}</Text>}
-      {receiptLoading && <Text>Collection: Loading...</Text>}
-      {receiptValue && (
+      {(receiptError || userError) && (
+        <Text>Error: {JSON.stringify(receiptError)}</Text>
+      )}
+      {(receiptLoading || userLoading) && <Text>Collection: Loading...</Text>}
+      {receiptValue && userValues && (
         <Content>
           <Button>
             <Text>{comments.restaurant}</Text>
@@ -98,6 +97,7 @@ export default function CurrentReceipt(props) {
               'receiptId',
               'jbIXS3uNWk0VGEZWqcdP'
             )}
+            receiptUserId={userValues[0].id}
           />
         </Content>
       )}
