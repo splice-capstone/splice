@@ -1,12 +1,9 @@
 import * as WebBrowser from 'expo-web-browser';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { useStateValue } from '../state';
 import { getReceipt } from '../src/tools/firebase';
 import ItemCard from './ItemCard';
-import * as WebBrowser from 'expo-web-browser';
-import React, { useState, useEffect } from 'react';
-import { StyleSheet } from 'react-native';
 import {
   Container,
   Content,
@@ -20,10 +17,6 @@ import {
   View,
   Thumbnail,
 } from 'native-base';
-
-import { useStateValue } from '../state';
-import { getReceipt } from '../src/tools/firebase';
-import ItemCard from './ItemCard';
 
 export default function CurrentReceipt(props) {
   const [{ currentUser, currentReceipt }, dispatch] = useStateValue();
@@ -52,30 +45,25 @@ export default function CurrentReceipt(props) {
   return (
     <Container>
       <Content>
-        <Button>
-          <Text
+        <View>
+          <Button
             onPress={() =>
-              props.navigation.navigate('ReceiptForm', {
+              props.navigation.navigate('Receipt Form', {
                 current: currentReceipt,
                 navigation: props.navigation,
               })
             }
           >
-            edit
-          </Text>
-        </Button>
+            <Icon name="add" />
+          </Button>
+          <Button onPress={() => props.navigation.navigate('Add User')}>
+            <Icon name="md-person-add" />
+          </Button>
+        </View>
         <Text>{comments.restaurant}</Text>
         <Text>{comments.misc}</Text>
         <Text>{comments.date}</Text>
-
-        <Text onPress={() => props.navigation.navigate('Receipt Form')}>
-          Edit
-        </Text>
         <Text>{currentReceipt.restaurant}</Text>
-        <Icon
-          name="md-person-add"
-          onPress={() => props.navigation.navigate('Add User')}
-        />
 
         {currentReceipt.items.map(item => (
           <ItemCard item={item} key={item.id} />
