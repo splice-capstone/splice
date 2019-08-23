@@ -8,8 +8,6 @@ const db = firebase.firestore();
 
 export default db;
 
-//TODO: wrap all parts in try/catches and handle each catch if could still recover
-
 export async function createReceipt(data, itemData, currentUser) {
   try {
     const newReceipt = await db.collection('receipts').add(data);
@@ -39,10 +37,6 @@ export async function createReceipt(data, itemData, currentUser) {
             isOwner: true,
             name: currentUser.name,
             email: currentUser.email,
-            // userSubtotal: data.subtotal,
-            // userTax: data.tax,
-            // userTip: 0,
-            // userTotal: data.total,
             paid: true,
             photoUrl: currentUser.photoUrl,
             items: [],
@@ -255,23 +249,6 @@ export async function addUserToReceipt(receipt, email) {
       .collection('receipts')
       .doc(receipt.id)
       .set({ payees }, { merge: true });
-
-    //add users to every item doc to payees map (default to false)- email as key
-
-    // const updatedItems = await db
-    //   .collection('receipts')
-    //   .doc(receipt.id)
-    //   .collection('items');
-
-    // updatedItems.forEach(item => {
-    //   item.set(
-    //     {
-    //       payees,
-    //     },
-    //     { merge: true }
-    //   );
-    // });
-    // console.log('added user to items docs*******');
 
     userDoc.update({
       receipts: firebase.firestore.FieldValue.arrayUnion(
