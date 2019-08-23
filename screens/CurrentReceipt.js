@@ -14,7 +14,7 @@ import {
   Body,
   Right,
   Thumbnail,
-  View
+  View,
 } from 'native-base';
 
 import {
@@ -97,10 +97,16 @@ export default function CurrentReceipt(props) {
             <Text>{comments.misc}</Text>
             <Text>{comments.date}</Text>
 
-            <Text onPress={() => props.navigation.navigate('Receipt Form', {
-                current: currentReceipt,
-                navigation: props.navigation,
-              })}>
+            <Text
+              onPress={() =>
+                props.navigation.navigate('Receipt Form', {
+                  current: receiptValue,
+                  navigation: props.navigation,
+                  userId: userValues[0].id,
+                  email: currentUser.email,
+                })
+              }
+            >
               Edit
             </Text>
             <Text>{receiptValue.restaurant}</Text>
@@ -115,7 +121,6 @@ export default function CurrentReceipt(props) {
           <Text>Subtotal: ${receiptValue.subtotal}</Text>
           <Text>Tax: ${receiptValue.tax}</Text>
           <Text>Total: ${receiptValue.total}</Text>
-
 
           <Text>My Subtotal: ${userSubtotal}</Text>
           <Text>My Tax: ${userTax}</Text>

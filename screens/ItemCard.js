@@ -15,6 +15,7 @@ import {
   Body,
   Right,
   Thumbnail,
+  View,
 } from 'native-base';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import db, { updateItem } from '../src/tools/firebase';
@@ -39,7 +40,7 @@ export default function ItemCard(props) {
   };
 
   return (
-    <Container>
+    <View>
       {error && <Text>Error: {JSON.stringify(error)}</Text>}
       {loading && <Text>Collection: Loading...</Text>}
       {values && (
@@ -60,7 +61,7 @@ export default function ItemCard(props) {
           ))}
         </Content>
       )}
-    </Container>
+    </View>
   );
 }
 
