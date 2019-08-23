@@ -46,20 +46,16 @@ const styles = StyleSheet.create({
 const DrawerNavigator = createDrawerNavigator(
   {
     Home: { screen: HomeScreen },
-    'Current Receipt': { screen: CurrentReceipt },
     'Add Receipt': { screen: CameraScreen },
-    'Add User': { screen: AddUserToReceiptScreen },
-    'Receipt Form': { screen: ReceiptForm },
-    'My Account': { screen: AccountScreen },
     'My Receipts': { screen: MyReceipts }
   },
   {
     hideStatusBar: true,
     drawerBackgroundColor: 'rgba(255,255,255,.9)',
-    overlayColor: '#6b52ae',
+    overlayColor: 'rgba(46, 46, 46, .9)',
     contentOptions: {
       activeTintColor: '#fff',
-      activeBackgroundColor: '#6b52ae',
+      activeBackgroundColor: '#c4f5df',
     },
   }
 );
@@ -109,4 +105,8 @@ const StackNavigator = createStackNavigator({
   },
 });
 
-export default createAppContainer(StackNavigator);
+
+export default (createAppContainer(StackNavigator))
+
+
+// export default
