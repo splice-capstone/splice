@@ -35,7 +35,7 @@ export default function ItemCard(props) {
     }
   );
 
-  update = doc => {
+  const update = doc => {
     updateItem(props.receiptId, doc, currentUser, props.receiptUserId);
   };
 
@@ -48,14 +48,24 @@ export default function ItemCard(props) {
           {values.map(doc => (
             <ListItem key={doc.id} onPress={() => update(doc)}>
               <Body>
-                <Text>
-                  {doc.name} ${doc.amount / 100}
-                  {doc.payees[currentUser.email] ? (
-                    <Icon name="checkmark" />
-                  ) : (
-                    ''
-                  )}
-                </Text>
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                    justifyContent: 'space-evenly',
+                    padding: 2,
+                  }}
+                >
+                  <Text>{doc.name}</Text>
+                  <Text>${doc.amount / 100}</Text>
+                  <Text>
+                    {doc.payees[currentUser.email] ? (
+                      <Icon color="3D9970" name="checkmark" />
+                    ) : (
+                      ''
+                    )}
+                  </Text>
+                </View>
               </Body>
             </ListItem>
           ))}
