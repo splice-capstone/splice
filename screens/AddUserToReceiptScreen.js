@@ -31,9 +31,21 @@ export default function AddUserToReceiptScreen(props) {
     });
   };
 
+  const receipt = props.navigation.getParam('receipt');
+
   return (
     <View style={styles.container}>
-      <Text>Add Friend</Text>
+      <Text
+        style={{
+          fontWeight: '600',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginTop: 2,
+        }}
+      >
+        Add Friend to Receipt
+      </Text>
+      <Text>{receipt.restaurant}</Text>
       <TextInput
         style={{ height: 40 }}
         placeholder="search for user by email"
@@ -64,10 +76,7 @@ export default function AddUserToReceiptScreen(props) {
                   <Button
                     title="Add"
                     onPress={() => {
-                      addUserToReceipt(
-                        props.navigation.getParam('receipt'),
-                        user.email
-                      );
+                      addUserToReceipt(receipt, user.email);
                     }}
                   >
                     <Text>+</Text>

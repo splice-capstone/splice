@@ -59,6 +59,9 @@ const MyReceiptsCard = props => {
                     textStyle={{ color: '#87838B' }}
                     onPress={() => {
                       // placeholder to navigate to paypal
+                      props.navigation.navigate('Add User', {
+                        receipt: props.recptsData,
+                      });
                     }}
                   >
                     <Icon type="Entypo" name="user" />
