@@ -136,14 +136,12 @@ export default function CurrentReceipt(props) {
           <Text>Date: {receiptValue.date}</Text>
           <Text>Owner: {receiptValue.owner}</Text>
           <Text>Subtotal: ${receiptValue.subtotal / 100}</Text>
-          <Text>Tax: ${receiptValue.tax / 100}</Text>
+          <Text>Tax: ${receiptValue.tax / 100}</Text> .
           <Text>Total: ${receiptValue.total / 100}</Text>
-
           <Text>My Subtotal: ${userSubtotal}</Text>
           <Text>My Tax: ${userTax}</Text>
           <Text>My Tip: ${userTip}</Text>
           <Text>My Total: ${userTotal}</Text>
-
           <ItemCard
             receiptId={props.navigation.getParam(
               'receiptId',
