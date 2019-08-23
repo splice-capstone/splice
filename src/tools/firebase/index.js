@@ -1,6 +1,6 @@
-import * as firebase from "firebase";
-import "firebase/firestore";
-import Constants from "expo-constants";
+import * as firebase from 'firebase';
+import 'firebase/firestore';
+import Constants from 'expo-constants';
 
 firebase.initializeApp(Constants.manifest.extra.firebaseConfig);
 
@@ -21,9 +21,9 @@ export async function createReceipt(data, itemData, currentUser) {
     newReceipt.get().then(async function(querySnapshot) {
       if (querySnapshot.exists) {
         const newItems = await db
-          .collection("receipts")
+          .collection('receipts')
           .doc(querySnapshot.id)
-          .collection("items");
+          .collection('items');
         itemData.forEach(item => {
           newItems.add(item);
         });
@@ -31,13 +31,13 @@ export async function createReceipt(data, itemData, currentUser) {
         //multi-step add receipt owner -
 
         //get user doc
-        const userDoc = await db.collection("users").doc(currentUser.email);
+        const userDoc = await db.collection('users').doc(currentUser.email);
 
         //add receipt_user doc for owner
         await db
-          .collection("receipts")
+          .collection('receipts')
           .doc(querySnapshot.id)
-          .collection("receipt_users")
+          .collection('receipt_users')
           .add({
             isOwner: true,
             name: currentUser.name,
@@ -52,7 +52,7 @@ export async function createReceipt(data, itemData, currentUser) {
 
         //add new recp to users -> user -> receipts
         userDoc.update({
-          receipts: firebase.firestore.FieldValue.arrayUnion(newReceipt)
+          receipts: firebase.firestore.FieldValue.arrayUnion(newReceipt),
         });
 
         //add user to receipt payees array - false signifies whether the user has paid their share, owner defaults to true
@@ -61,7 +61,7 @@ export async function createReceipt(data, itemData, currentUser) {
         newReceipt.update(payees);
         return newItems;
       } else {
-        console.log("no such document!");
+        console.log('no such document!');
       }
     });
     return newReceipt.id;
@@ -78,15 +78,15 @@ export async function getReceipt(receiptId) {
   try {
     //this is getting us receipt document
     let receiptInfo = await db
-      .collection("receipts")
+      .collection('receipts')
       .doc(receiptId)
       .get();
 
     //this = items from that receipt document
     let receiptItems = await db
-      .collection("receipts")
+      .collection('receipts')
       .doc(receiptInfo.id)
-      .collection("items")
+      .collection('items')
       .get()
       .then(function(querySnapshot) {
         querySnapshot.forEach(doc => {
@@ -94,15 +94,15 @@ export async function getReceipt(receiptId) {
             name: doc.data().name,
             amount: doc.data().amount,
             id: doc.id,
-            payees: doc.data().payees
+            payees: doc.data().payees,
           });
         });
       });
 
     let receiptUsers = await db
-      .collection("receipts")
+      .collection('receipts')
       .doc(receiptInfo.id)
-      .collection("receipt_users")
+      .collection('receipt_users')
       .get()
       .then(function(querySnapshot) {
         querySnapshot.forEach(doc => {
@@ -123,7 +123,7 @@ export async function getReceipt(receiptId) {
       ...receiptInfo.data(),
       id: receiptId,
       items: contextItems,
-      users: contextUsers
+      users: contextUsers,
     };
   } catch (err) {
     return err;
@@ -133,7 +133,7 @@ export async function getReceipt(receiptId) {
 export async function findOrCreateUser(user) {
   try {
     const newUser = await db
-      .collection("users")
+      .collection('users')
       .doc(user.email)
       .set(
         { email: user.email, name: user.name, photoUrl: user.photoUrl },
@@ -174,7 +174,7 @@ export async function findUser(email) {
 export async function getMyReceipts(email) {
   try {
     const user = await db
-      .collection("users")
+      .collection('users')
       .doc(email)
       .get();
 
@@ -182,10 +182,10 @@ export async function getMyReceipts(email) {
       user.data().receipts.map(async receipt => {
         //get user's receipt_users doc from all the receipts they're on
         let receipt_users = await db
-          .collection("receipts")
+          .collection('receipts')
           .doc(receipt.id)
-          .collection("receipt_users")
-          .where("email", "==", email)
+          .collection('receipt_users')
+          .where('email', '==', email)
           .get();
 
         let myDetails = {};
@@ -213,7 +213,7 @@ export async function getMyReceipts(email) {
         let receiptSnapshot = {
           ...receiptDetails.data(),
           id: receiptDetails.id,
-          myDetails
+          myDetails,
         };
 
         return receiptSnapshot;
@@ -231,18 +231,18 @@ export async function addUserToReceipt(receipt, email) {
     const userDoc = await db.collection('users').doc(email);
 
     //get receipt doc
-    const receiptDoc = await db.collection("receipts").doc(receipt.id);
+    const receiptDoc = await db.collection('receipts').doc(receipt.id);
 
     //add receipt to user doc receipts reference array
     userDoc.update({
-      receipts: firebase.firestore.FieldValue.arrayUnion(receiptDoc)
+      receipts: firebase.firestore.FieldValue.arrayUnion(receiptDoc),
     });
 
     //add receipt_users doc for user on current receipt
     await db
-      .collection("receipts")
+      .collection('receipts')
       .doc(receipt.id)
-      .collection("receipt_users")
+      .collection('receipt_users')
       .add({
         isOwner: false,
         name: userDoc.data().name,
@@ -264,13 +264,13 @@ export async function addUserToReceipt(receipt, email) {
 
     //add users to every item doc to payees map (default to false)- email as key
     await receiptDoc
-      .collection("items")
+      .collection('items')
       .get()
       .then(function(querySnapshot) {
         querySnapshot.forEach(doc => {
           doc.set(
             {
-              payees
+              payees,
             },
             { merge: true }
           );
@@ -291,3 +291,45 @@ export async function completeReceipt(receipt, user) {
     return `error: ${err}`;
   }
 }
+
+export async function editReceipt(receiptId, tip, total, subtotal) {
+  try {
+    const receiptEditRef = await db.collection('receipts').doc(receiptId);
+    const updatedReceipt = receiptEditRef.update({
+      subtotal: subtotal,
+      tip: tip,
+      total: total,
+    });
+    return receiptEditRef.data();
+  } catch (err) {
+    return err;
+  }
+}
+
+export async function addReceiptItems(receiptId, newItem) {
+  try {
+    const receiptItemEditRef = await db
+      .collection('receipts')
+      .doc(receiptId)
+      .collection('items')
+      .add(newItem);
+    return receiptItemEditRef;
+  } catch (err) {
+    return err;
+  }
+}
+
+//Below is for swipe to delete (vk will take care of this)
+
+// export async function removeReceiptItem(receiptId, itemId) {
+//   try {
+//     const receiptItemEditRef = await db
+//       .collection('receipts')
+//       .doc(receiptId)
+//       .collection('items')
+//       .doc(itemId)
+//       .delete();
+//   } catch (err) {
+//     return err;
+//   }
+// }

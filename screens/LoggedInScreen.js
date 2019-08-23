@@ -11,16 +11,32 @@ const LoggedInScreen = props => {
       <View style={styles.bottom}>
         <Button
           title="TAKE A SNAPSHOT"
+          rounded
           style={styles.buttonDark}
           onPress={() => props.navigation.navigate('Add Receipt')}
         >
-          <Text>TAKE A SNAPSHOT</Text>
+          <Text
+            style={{
+              color: 'white',
+              alignContent: 'center',
+              textAlign: 'center',
+            }}
+          >
+            TAKE A SNAPSHOT
+          </Text>
         </Button>
         <Button
+          rounded
           style={styles.buttonLight}
           onPress={() => props.navigation.navigate('Add Receipt')}
         >
-          <Text style={{ color: 'black', alignContent: 'center' }}>
+          <Text
+            style={{
+              color: 'black',
+              alignContent: 'center',
+              textAlign: 'center',
+            }}
+          >
             BY HAND
           </Text>
         </Button>
@@ -48,6 +64,7 @@ const styles = StyleSheet.create({
   buttonDark: {
     backgroundColor: '#3D9970',
     borderRadius: 5,
+    width: 300,
     borderWidth: 1,
     borderColor: '#c4f5df',
     margin: 2,
@@ -55,6 +72,7 @@ const styles = StyleSheet.create({
   buttonLight: {
     backgroundColor: '#c4f5df',
     borderRadius: 5,
+    width: 300,
     borderWidth: 1,
     borderColor: '#c4f5df',
     color: '#050d09',
