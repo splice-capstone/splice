@@ -79,6 +79,7 @@ export default class ReceiptForm extends React.Component {
   }
 
   render() {
+    console.log(this.props);
     return (
       <Container>
         <Content>
@@ -120,7 +121,6 @@ export default class ReceiptForm extends React.Component {
                 success
                 onPress={this.handleCreateNewItem}
               >
-                {/* <Icon name="add" /> */}
                 <Text style={{ textAlign: 'center' }}>add item</Text>
               </Button>
             </View>
