@@ -19,17 +19,7 @@ export const useStateValue = () => useContext(StateContext);
 //set error on context if func returns error then render error page
 export const initialState = {
   currentUser: {},
-  currentReceipt: {
-    items: [],
-    users: [],
-    date: '',
-    owner: '',
-    paid: false,
-    restaurant: '',
-    subtotal: 0,
-    tax: 0,
-    total: 0,
-  },
+  currentReceipt: {},
   mode: 'view',
   myReceipts: [],
   myContacts: [],
@@ -53,7 +43,6 @@ export const reducer = (state, action) => {
       return {
         ...state,
         currentReceipt: action.receipt,
-        mode: 'view',
       };
     case 'SET_MODE':
       return {

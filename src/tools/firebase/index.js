@@ -12,18 +12,15 @@ export default db;
 
 export async function createReceipt(data, itemData, currentUser) {
   try {
-    console.log('inside create receipt in index - data', data);
-    console.log('inside create receipt in index - itemData', itemData);
-    console.log('inside create receipt in index - currentUser', currentUser);
-
     const newReceipt = await db.collection('receipts').add(data);
     //get receipt doc, adding items
-    newReceipt.get().then(async function(querySnapshot) {
+    await newReceipt.get().then(async function(querySnapshot) {
       if (querySnapshot.exists) {
         const newItems = await db
           .collection('receipts')
           .doc(querySnapshot.id)
           .collection('items');
+
         itemData.forEach(item => {
           newItems.add(item);
         });
@@ -42,14 +39,14 @@ export async function createReceipt(data, itemData, currentUser) {
             isOwner: true,
             name: currentUser.name,
             email: currentUser.email,
-            userSubtotal: data.subtotal,
-            userTax: data.tax,
-            userTip: 0,
-            userTotal: data.total,
+            // userSubtotal: data.subtotal,
+            // userTax: data.tax,
+            // userTip: 0,
+            // userTotal: data.total,
             paid: true,
             photoUrl: currentUser.photoUrl,
+            items: [],
           });
-
         //add new recp to users -> user -> receipts
         userDoc.update({
           receipts: firebase.firestore.FieldValue.arrayUnion(newReceipt),
@@ -57,9 +54,9 @@ export async function createReceipt(data, itemData, currentUser) {
 
         //add user to receipt payees array - false signifies whether the user has paid their share, owner defaults to true
         let payees = {};
-        payees[currentUser.email] = true;
+        payees[currentUser.email] = false;
         newReceipt.update(payees);
-        return newItems;
+        // return newItems;
       } else {
         console.log('no such document!');
       }
@@ -109,10 +106,10 @@ export async function getReceipt(receiptId) {
           contextUsers.push({
             name: doc.data().name,
             isOwner: doc.data().isOwner,
-            userSubtotal: doc.data().userSubtotal,
-            userTax: doc.data().userTax,
-            userTip: doc.data().userTip,
-            userTotal: doc.data().userTotal,
+            // userSubtotal: doc.data().userSubtotal,
+            // userTax: doc.data().userTax,
+            // userTip: doc.data().userTip,
+            // userTotal: doc.data().userTotal,
             paid: doc.data().paid,
             photoUrl: doc.data().photoUrl,
           });
@@ -164,7 +161,6 @@ export async function findUser(email) {
         });
       });
 
-    console.log('user', results);
     return results;
   } catch (err) {
     return `error: ${err}`;
@@ -194,10 +190,10 @@ export async function getMyReceipts(email) {
           myDetails = {
             name: receiptData.name,
             isOwner: receiptData.isOwner,
-            userSubtotal: receiptData.userSubtotal,
-            userTax: receiptData.userTax,
-            userTip: receiptData.userTip,
-            userTotal: receiptData.userTotal,
+            // userSubtotal: receiptData.userSubtotal,
+            // userTax: receiptData.userTax,
+            // userTip: receiptData.userTip,
+            // userTotal: receiptData.userTotal,
             paid: receiptData.paid,
             photoUrl: receiptData.photoUrl,
           };
@@ -247,10 +243,10 @@ export async function addUserToReceipt(receipt, email) {
         isOwner: false,
         name: userDoc.data().name,
         email: userDoc.data().email,
-        userSubtotal: 0,
-        userTax: 0,
-        userTip: 0,
-        userTotal: 0,
+        // userSubtotal: 0,
+        // userTax: 0,
+        // userTip: 0,
+        // userTotal: 0,
         paid: false,
         photoUrl: userDoc.data().photoUrl,
       });
@@ -278,6 +274,96 @@ export async function addUserToReceipt(receipt, email) {
       });
 
     return receipt.id;
+  } catch (err) {
+    return `error: ${err}`;
+  }
+}
+
+export async function updateItem(receiptId, item, user, receiptUserId) {
+  try {
+    //find current user on payees map & update to opposite - toggle function
+    const payees = item.payees;
+    payees[user.email] = !payees[user.email];
+
+    //this updates the payees map on the items doc
+    await db
+      .collection('receipts')
+      .doc(receiptId)
+      .collection('items')
+      .doc(item.id)
+      .set(
+        {
+          payees,
+        },
+        { merge: true }
+      );
+    //recalculate item price per user - count how many payees are true and divide amount by that number, save this val on item.
+    const itemRef = db
+      .collection('receipts')
+      .doc(receiptId)
+      .collection('items')
+      .doc(item.id);
+
+    const itemData = await itemRef.get();
+    const itemPayees = itemData.data().payees;
+    const trues = Object.values(itemPayees).filter(val => val === true);
+    let costPerUser = itemData.data().amount;
+
+    if (trues.length > 0) {
+      costPerUser = itemData.data().amount / trues.length;
+    }
+    await itemRef.set({ costPerUser }, { merge: true });
+
+    //add item ref to receipt_users doc
+    if (payees[user.email]) {
+      await db
+        .collection('receipts')
+        .doc(receiptId)
+        .collection('receipt_users')
+        .doc(receiptUserId)
+        .update({
+          items: firebase.firestore.FieldValue.arrayUnion(itemRef),
+        });
+    } else {
+      await db
+        .collection('receipts')
+        .doc(receiptId)
+        .collection('receipt_users')
+        .doc(receiptUserId)
+        .update({
+          items: firebase.firestore.FieldValue.arrayRemove(itemRef),
+        });
+    }
+    await db
+      .collection('receipts')
+      .doc(receiptId)
+      .get();
+
+    return costPerUser;
+  } catch (err) {
+    console.log('err', err);
+    return `error: ${err}`;
+  }
+}
+
+export async function calculateSubtotal(receiptId, receiptUserId) {
+  try {
+    const receiptUserDoc = await db
+      .collection('receipts')
+      .doc(receiptId)
+      .collection('receipt_users')
+      .doc(receiptUserId)
+      .get();
+    const itemPriceArray = await Promise.all(
+      receiptUserDoc.data().items.map(async item => {
+        const itemDoc = await item.get();
+        return itemDoc.data().costPerUser;
+      })
+    );
+    const subtotal = itemPriceArray.reduce(function(subtotal, currentValue) {
+      return subtotal + currentValue;
+    }, 0);
+    return subtotal;
   } catch (err) {
     return `error: ${err}`;
   }

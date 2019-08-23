@@ -18,9 +18,8 @@ export default class ReceiptForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: this.props.navigation.getParam('current').items,
       name: '',
-      amount: 0,
+      amount: '0',
       subtotal: this.props.navigation.getParam('current').subtotal,
       tax: this.props.navigation.getParam('current').tax,
       tip: this.props.navigation.getParam('current').tip / 100,
@@ -42,7 +41,7 @@ export default class ReceiptForm extends React.Component {
   }
 
   handleNameText(name) {
-    this.setState({ name: name.toLowerCase() });
+    this.setState({ name });
   }
 
   handleAmountText(amount) {
@@ -52,9 +51,12 @@ export default class ReceiptForm extends React.Component {
   async handleCreateNewItem(event) {
     event.preventDefault();
     const receiptId = await this.props.navigation.getParam('current').id;
-    let newItem = { name: this.state.name, amount: this.state.amount * 100 };
+    let newItem = {
+      name: this.state.name,
+      amount: Number(this.state.amount) * 100,
+      payees: { [this.props.navigation.getParam('email')]: false },
+    };
     this.setState({
-      items: this.state.items.concat(newItem),
       total: this.state.total + Number(newItem.amount),
       subtotal: this.state.subtotal + Number(newItem.amount),
     });
@@ -73,13 +75,12 @@ export default class ReceiptForm extends React.Component {
       this.state.total,
       this.state.subtotal
     );
-    this.props.navigation.navigate('CurrentReceipt', {
+    this.props.navigation.navigate('Current Receipt', {
       current: receiptId,
     });
   }
 
   render() {
-    console.log(this.props);
     return (
       <Container>
         <Content>
@@ -103,7 +104,7 @@ export default class ReceiptForm extends React.Component {
               </Item>
               <Item>
                 <TextInput
-                  type="newItem.amount"
+                  type="number"
                   name="amount"
                   placeholder="amount"
                   onChangeText={amount => this.handleAmountText(amount)}
@@ -131,9 +132,10 @@ export default class ReceiptForm extends React.Component {
               />
             </Item>
           </Form>
-          {this.state.items.map(item => (
-            <ItemCard item={item} key={item.id} />
-          ))}
+          <ItemCard
+            receiptId={this.props.navigation.getParam('current').id}
+            receiptUserId={this.props.navigation.getParam('userId')}
+          />
           <View style={{ marginTop: 10, marginBottom: 10 }}>
             <Text>Subtotal: ${this.state.subtotal / 100}</Text>
             <Text>Tax: ${this.state.tax / 100}</Text>

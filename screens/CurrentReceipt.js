@@ -1,8 +1,6 @@
-import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { useStateValue } from '../state';
-import { getReceipt } from '../src/tools/firebase';
 import ItemCard from './ItemCard';
 import {
   Container,
@@ -14,84 +12,130 @@ import {
   ListItem,
   Left,
   Body,
-  View,
+  Right,
   Thumbnail,
+  View,
 } from 'native-base';
 
-export default function CurrentReceipt(props) {
-  const [{ currentUser, currentReceipt }, dispatch] = useStateValue();
-  const [comments, setComments] = useState('');
+import {
+  useDocumentData,
+  useCollectionData,
+} from 'react-firebase-hooks/firestore';
+import db, { calculateSubtotal } from '../src/tools/firebase';
 
-  const setCurrentReceipt = receipt => {
-    dispatch({ type: 'SET_RECEIPT', receipt });
-  };
+export default function CurrentReceipt(props) {
+  const [{ currentUser }, dispatch] = useStateValue();
+  const [comments, setComments] = useState('');
+  const [userSubtotal, setSubtotal] = useState(0);
+  const [userTax, setTax] = useState(0);
+  const [userTip, setTip] = useState(0);
+  const [userTotal, setTotal] = useState(0);
+
+  const receiptId = props.navigation.getParam(
+    'receiptId',
+    '1Y8k9OAQhJAlctRTAjYW'
+  );
 
   useEffect(() => {
-    const receiptId = props.navigation.getParam(
-      'receiptId',
-      'BPG1dyK2xu41UEahdMG6'
-    );
     const newComments = props.navigation.getParam('comments', '');
     if (newComments) {
       setComments(newComments);
     }
-    if (currentReceipt.id !== receiptId) {
-      getReceipt(receiptId).then(receipt => {
-        setCurrentReceipt(receipt);
-      });
+    if (userValues && receiptValue && userValues[0].id) {
+      //recalculate my user subtotals based on sum of my items map
+      calculateSubtotal(receiptId, userValues[0].id).then(subtotal =>
+        setSubtotal(subtotal / 100)
+      );
+      //calculate user tax based on user subtotal/overall total * overall tax
+      setTax(
+        Math.floor(
+          ((userSubtotal / receiptValue.total) * receiptValue.tax) / 100
+        )
+      );
+      //calculate user tip based on user subtotal/overall total * overall tip
+      setTip(
+        Math.floor(
+          ((userSubtotal / receiptValue.total) * receiptValue.tip) / 100
+        )
+      );
+      //calculate user total based on user subtotal + user tax + user tip
+      setTotal(Math.floor(userSubtotal + userTax + userTip));
     }
   });
 
+  const [receiptValue, receiptLoading, receiptError] = useDocumentData(
+    db.collection('receipts').doc(receiptId),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+      idField: 'id',
+    }
+  );
+
+  // listen on receipt_users doc that emails current user email
+  const [userValues, userLoading, userError] = useCollectionData(
+    db
+      .collection('receipts')
+      .doc(receiptId)
+      .collection('receipt_users')
+      .where('email', '==', currentUser.email),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+      idField: 'id',
+    }
+  );
+
   return (
     <Container>
-      <Content>
-        <View>
-          <Button
-            onPress={() =>
-              props.navigation.navigate('Receipt Form', {
-                current: currentReceipt,
-                navigation: props.navigation,
-              })
-            }
-          >
-            <Icon name="add" />
-          </Button>
-          <Button onPress={() => props.navigation.navigate('Add User')}>
-            <Icon name="md-person-add" />
-          </Button>
-        </View>
-        <Text>{comments.restaurant}</Text>
-        <Text>{comments.misc}</Text>
-        <Text>{comments.date}</Text>
-        <Text>{currentReceipt.restaurant}</Text>
+      {(receiptError || userError) && (
+        <Text>Error: {JSON.stringify(receiptError)}</Text>
+      )}
+      {(receiptLoading || userLoading) && <Text>Collection: Loading...</Text>}
+      {receiptValue && userValues && (
+        <Content>
+          <Button>
+            <Text>{comments.restaurant}</Text>
+            <Text>{comments.misc}</Text>
+            <Text>{comments.date}</Text>
 
-        {currentReceipt.items.map(item => (
-          <ItemCard item={item} key={item.id} />
-        ))}
-        <View style={{ marginTop: 10, marginBottom: 10 }}>
-          <Text>Date: {currentReceipt.date}</Text>
-          <Text>Owner: {currentReceipt.owner}</Text>
-          <Text>Subtotal: ${currentReceipt.subtotal / 100}</Text>
-          <Text>Tax: ${currentReceipt.tax / 100}</Text>
-          <Text>Tip: ${currentReceipt.tip / 100}</Text>
-          <Text>Total: ${currentReceipt.total / 100}</Text>
-        </View>
-        <View>
-          {currentReceipt.users.map(user => {
-            <List key={user.email}>
-              <ListItem avatar>
-                <Left>
-                  <Thumbnail source={{ uri: user.photoUrl }} />
-                </Left>
-                <Body>
-                  <Text>{user.name}</Text>
-                  <Text note>{user.email}</Text>
-                </Body>
-              </ListItem>
-            </List>;
-          })}
-        </View>
-      </Content>
+            <Text
+              onPress={() =>
+                props.navigation.navigate('Receipt Form', {
+                  current: receiptValue,
+                  navigation: props.navigation,
+                  userId: userValues[0].id,
+                  email: currentUser.email,
+                })
+              }
+            >
+              Edit
+            </Text>
+            <Text>{receiptValue.restaurant}</Text>
+            <Icon
+              name="md-person-add"
+              onPress={() => props.navigation.navigate('Add User')}
+            />
+          </Button>
+          <Text>Id: {receiptValue.id}</Text>
+          <Text>Date: {receiptValue.date}</Text>
+          <Text>Owner: {receiptValue.owner}</Text>
+          <Text>Subtotal: ${receiptValue.subtotal}</Text>
+          <Text>Tax: ${receiptValue.tax}</Text>
+          <Text>Total: ${receiptValue.total}</Text>
+
+          <Text>My Subtotal: ${userSubtotal}</Text>
+          <Text>My Tax: ${userTax}</Text>
+          <Text>My Tip: ${userTip}</Text>
+          <Text>My Total: ${userTotal}</Text>
+
+          <ItemCard
+            receiptId={props.navigation.getParam(
+              'receiptId',
+              'jbIXS3uNWk0VGEZWqcdP'
+            )}
+            receiptUserId={userValues[0].id}
+          />
+        </Content>
+      )}
     </Container>
   );
 }
