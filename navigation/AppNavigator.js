@@ -6,7 +6,7 @@ import {
   createDrawerNavigator,
   createStackNavigator,
 } from 'react-navigation';
-import MyReceipts from "../screens/MyReceipts";
+import MyReceipts from '../screens/MyReceipts';
 import { DrawerActions } from 'react-navigation-drawer';
 import HomeScreen from '../screens/HomeScreen';
 import CameraScreen from '../screens/CameraScreen';
@@ -47,7 +47,31 @@ const DrawerNavigator = createDrawerNavigator(
   {
     Home: { screen: HomeScreen },
     'Add Receipt': { screen: CameraScreen },
-    'My Receipts': { screen: MyReceipts }
+    'My Receipts': { screen: MyReceipts },
+    'Current Receipt': {
+      screen: CurrentReceipt,
+      navigationOptions: {
+        drawerLabel: ' ',
+      },
+    },
+    'Add User': {
+      screen: AddUserToReceiptScreen,
+      navigationOptions: {
+        drawerLabel: ' ',
+      },
+    },
+    'Receipt Form': {
+      screen: ReceiptForm,
+      navigationOptions: {
+        drawerLabel: ' ',
+      },
+    },
+    'My Account': {
+      screen: AccountScreen,
+      navigationOptions: {
+        drawerLabel: ' ',
+      },
+    },
   },
   {
     hideStatusBar: true,
@@ -105,8 +129,6 @@ const StackNavigator = createStackNavigator({
   },
 });
 
-
-export default (createAppContainer(StackNavigator))
-
+export default createAppContainer(StackNavigator);
 
 // export default

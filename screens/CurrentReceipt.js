@@ -122,13 +122,18 @@ export default function CurrentReceipt(props) {
             >
               {receiptValue.restaurant}
             </Text>
-            <Icon
-              name="md-person-add"
-              onPress={() =>
-                props.navigation.navigate('Add User', { receipt: receiptValue })
-              }
-            />
+            <Button>
+              <Icon
+                name="md-person-add"
+                onPress={() =>
+                  props.navigation.navigate('Add User', {
+                    receipt: receiptValue,
+                  })
+                }
+              />
+            </Button>
           </View>
+
           <Text>{comments.restaurant}</Text>
           <Text>{comments.misc}</Text>
           <Text>{comments.date}</Text>
@@ -136,7 +141,7 @@ export default function CurrentReceipt(props) {
           <Text>Date: {receiptValue.date}</Text>
           <Text>Owner: {receiptValue.owner}</Text>
           <Text>Subtotal: ${receiptValue.subtotal / 100}</Text>
-          <Text>Tax: ${receiptValue.tax / 100}</Text> .
+          <Text>Tax: ${receiptValue.tax / 100}</Text>
           <Text>Total: ${receiptValue.total / 100}</Text>
           <Text>My Subtotal: ${userSubtotal}</Text>
           <Text>My Tax: ${userTax}</Text>
