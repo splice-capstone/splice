@@ -93,10 +93,6 @@ export default function CurrentReceipt(props) {
       {receiptValue && userValues && (
         <Content>
           <Button>
-            <Text>{comments.restaurant}</Text>
-            <Text>{comments.misc}</Text>
-            <Text>{comments.date}</Text>
-
             <Text
               onPress={() =>
                 props.navigation.navigate('Receipt Form', {
@@ -112,9 +108,14 @@ export default function CurrentReceipt(props) {
             <Text>{receiptValue.restaurant}</Text>
             <Icon
               name="md-person-add"
-              onPress={() => props.navigation.navigate('Add User')}
+              onPress={() =>
+                props.navigation.navigate('Add User', { receipt: receiptValue })
+              }
             />
           </Button>
+          <Text>{comments.restaurant}</Text>
+          <Text>{comments.misc}</Text>
+          <Text>{comments.date}</Text>
           <Text>Id: {receiptValue.id}</Text>
           <Text>Date: {receiptValue.date}</Text>
           <Text>Owner: {receiptValue.owner}</Text>

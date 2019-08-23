@@ -35,7 +35,7 @@ export default function ItemCard(props) {
     }
   );
 
-  update = doc => {
+  const update = doc => {
     updateItem(props.receiptId, doc, currentUser, props.receiptUserId);
   };
 
