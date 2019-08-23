@@ -13,7 +13,7 @@ const LoggedInScreen = props => {
           title="TAKE A SNAPSHOT"
           rounded
           style={styles.buttonDark}
-          onPress={() => props.navigation.navigate('AddReceipt')}
+          onPress={() => props.navigation.navigate('Add Receipt')}
         >
           <Text
             style={{
@@ -28,7 +28,7 @@ const LoggedInScreen = props => {
         <Button
           rounded
           style={styles.buttonLight}
-          onPress={() => props.navigation.navigate('AddReceipt')}
+          onPress={() => props.navigation.navigate('Add Receipt')}
         >
           <Text
             style={{

@@ -1,0 +1,648 @@
+{
+  "location": {
+    "city": {
+      "geoname_id": 4887398,
+      "names": {
+        "de": "Chicago",
+        "en": "Chicago",
+        "es": "Chicago",
+        "fr": "Chicago",
+        "ja": "シカゴ",
+        "pt-BR": "Chicago",
+        "ru": "Чикаго",
+        "zh-CN": "芝加哥"
+      }
+    },
+    "continent": {
+      "code": "NA",
+      "geoname_id": 6255149,
+      "names": {
+        "de": "Nordamerika",
+        "en": "North America",
+        "es": "Norteamérica",
+        "fr": "Amérique du Nord",
+        "ja": "北アメリカ",
+        "pt-BR": "América do Norte",
+        "ru": "Северная Америка",
+        "zh-CN": "北美洲"
+      }
+    },
+    "country": {
+      "geoname_id": 6252001,
+      "iso_code": "US",
+      "names": {
+        "de": "USA",
+        "en": "United States",
+        "es": "Estados Unidos",
+        "fr": "États-Unis",
+        "ja": "アメリカ合衆国",
+        "pt-BR": "Estados Unidos",
+        "ru": "США",
+        "zh-CN": "美国"
+      }
+    },
+    "location": {
+      "accuracy_radius": 5,
+      "latitude": 41.9033,
+      "longitude": -87.6336,
+      "metro_code": 602,
+      "time_zone": "America/Chicago"
+    },
+    "postal": {
+      "code": "60610"
+    },
+    "registered_country": {
+      "geoname_id": 6252001,
+      "iso_code": "US",
+      "names": {
+        "de": "USA",
+        "en": "United States",
+        "es": "Estados Unidos",
+        "fr": "États-Unis",
+        "ja": "アメリカ合衆国",
+        "pt-BR": "Estados Unidos",
+        "ru": "США",
+        "zh-CN": "美国"
+      }
+    },
+    "subdivisions": [
+      {
+        "geoname_id": 4896861,
+        "iso_code": "IL",
+        "names": {
+          "en": "Illinois",
+          "es": "Illinois",
+          "fr": "Illinois",
+          "ja": "イリノイ州",
+          "pt-BR": "Ilinóis",
+          "ru": "Иллинойс",
+          "zh-CN": "伊利诺伊州"
+        }
+      }
+    ]
+  },
+  "totalAmount": {
+    "confidenceLevel": 0.9,
+    "index": 10,
+    "data": 15.93,
+    "text": "Total  $15.93",
+    "regions": [
+      [
+        {
+          "x": 40,
+          "y": 2425
+        },
+        {
+          "x": 251,
+          "y": 2425
+        },
+        {
+          "x": 251,
+          "y": 2525
+        },
+        {
+          "x": 40,
+          "y": 2525
+        }
+      ],
+      [
+        {
+          "x": 1874,
+          "y": 2425
+        },
+        {
+          "x": 1902,
+          "y": 2425
+        },
+        {
+          "x": 2129,
+          "y": 2522
+        },
+        {
+          "x": 2058,
+          "y": 2522
+        }
+      ]
+    ],
+    "currencyCode": "USD",
+    "keyword": "Total  $15.93"
+  },
+  "taxAmount": {
+    "index": 9,
+    "data": 1.64,
+    "text": "Tax  $1.64",
+    "regions": [
+      [
+        {
+          "x": 58,
+          "y": 2320
+        },
+        {
+          "x": 160,
+          "y": 2333
+        },
+        {
+          "x": 150,
+          "y": 2413
+        },
+        {
+          "x": 48,
+          "y": 2400
+        }
+      ],
+      [
+        {
+          "x": 1912,
+          "y": 2321
+        },
+        {
+          "x": 1937,
+          "y": 2321
+        },
+        {
+          "x": 2124,
+          "y": 2408
+        },
+        {
+          "x": 2026,
+          "y": 2408
+        }
+      ]
+    ],
+    "currencyCode": "USD",
+    "confidenceLevel": 0.68,
+    "keyword": "Tax  $1.64"
+  },
+  "confidenceLevel": 0.8809999999999999,
+  "date": {
+    "data": "2019-08-19T12:00:00.000Z",
+    "text": "August 19, 2019",
+    "regions": [
+      [
+        {
+          "x": 739,
+          "y": 3210
+        },
+        {
+          "x": 1022,
+          "y": 3210
+        },
+        {
+          "x": 1150,
+          "y": 3342
+        },
+        {
+          "x": 1076,
+          "y": 3342
+        }
+      ]
+    ],
+    "index": 13,
+    "confidenceLevel": 0.9
+  },
+  "text": {
+    "text": "ORDERED with RITUAL\nEdgar C\nReady by 12:11pm\n$7.79\nEgg Burger\n+ Meat Preparation: Medium\n$3.00\n+ Add Double Patty\n+ Add Cheese Slice\n+ Regular Fries\n$0.50\n$3.00\nSubtotal\nTax\n$14.29\n$1.64\n$15.93\nTotal\nNeed help?\nContact RITUAL at support@ritual.co\nAugust 19, 2019\n",
+    "regions": [
+      {
+        "x": 40,
+        "y": 581
+      },
+      {
+        "x": 2129,
+        "y": 581
+      },
+      {
+        "x": 2129,
+        "y": 3342
+      },
+      {
+        "x": 40,
+        "y": 3342
+      }
+    ]
+  },
+  "amounts": [
+    {
+      "data": 7.79,
+      "index": 3,
+      "regions": [
+        [
+          {
+            "x": 73,
+            "y": 1386
+          },
+          {
+            "x": 191,
+            "y": 1389
+          },
+          {
+            "x": 486,
+            "y": 1490
+          },
+          {
+            "x": 239,
+            "y": 1483
+          }
+        ],
+        [
+          {
+            "x": 1872,
+            "y": 1377
+          },
+          {
+            "x": 1901,
+            "y": 1377
+          },
+          {
+            "x": 2077,
+            "y": 1478
+          },
+          {
+            "x": 2002,
+            "y": 1478
+          }
+        ]
+      ],
+      "text": "Egg Burger  $7.79",
+      "currencyCode": "USD"
+    },
+    {
+      "data": 3,
+      "index": 5,
+      "regions": [
+        [
+          {
+            "x": 107,
+            "y": 1693
+          },
+          {
+            "x": 135,
+            "y": 1693
+          },
+          {
+            "x": 865,
+            "y": 1789
+          },
+          {
+            "x": 654,
+            "y": 1789
+          }
+        ],
+        [
+          {
+            "x": 1878,
+            "y": 1696
+          },
+          {
+            "x": 1903,
+            "y": 1696
+          },
+          {
+            "x": 2084,
+            "y": 1783
+          },
+          {
+            "x": 2004,
+            "y": 1783
+          }
+        ]
+      ],
+      "text": "+ Add Double Patty  $3.00",
+      "currencyCode": "USD"
+    },
+    {
+      "data": 0.5,
+      "index": 6,
+      "regions": [
+        [
+          {
+            "x": 109,
+            "y": 1792
+          },
+          {
+            "x": 138,
+            "y": 1792
+          },
+          {
+            "x": 868,
+            "y": 1894
+          },
+          {
+            "x": 664,
+            "y": 1894
+          }
+        ],
+        [
+          {
+            "x": 1875,
+            "y": 1796
+          },
+          {
+            "x": 1902,
+            "y": 1794
+          },
+          {
+            "x": 1956,
+            "y": 1884
+          },
+          {
+            "x": 1929,
+            "y": 1886
+          }
+        ]
+      ],
+      "text": "+ Add Cheese Slice  $0.50",
+      "currencyCode": "USD"
+    },
+    {
+      "data": 3,
+      "index": 7,
+      "regions": [
+        [
+          {
+            "x": 108,
+            "y": 1897
+          },
+          {
+            "x": 137,
+            "y": 1897
+          },
+          {
+            "x": 741,
+            "y": 1998
+          },
+          {
+            "x": 533,
+            "y": 1998
+          }
+        ],
+        [
+          {
+            "x": 1881,
+            "y": 1888
+          },
+          {
+            "x": 1911,
+            "y": 1888
+          },
+          {
+            "x": 2093,
+            "y": 1991
+          },
+          {
+            "x": 2016,
+            "y": 1991
+          }
+        ]
+      ],
+      "text": "+ Regular Fries  $3.00",
+      "currencyCode": "USD"
+    },
+    {
+      "data": 14.29,
+      "index": 8,
+      "regions": [
+        [
+          {
+            "x": 49,
+            "y": 2209
+          },
+          {
+            "x": 402,
+            "y": 2209
+          },
+          {
+            "x": 402,
+            "y": 2305
+          },
+          {
+            "x": 49,
+            "y": 2305
+          }
+        ],
+        [
+          {
+            "x": 1864,
+            "y": 2205
+          },
+          {
+            "x": 1893,
+            "y": 2205
+          },
+          {
+            "x": 2110,
+            "y": 2306
+          },
+          {
+            "x": 2035,
+            "y": 2306
+          }
+        ]
+      ],
+      "text": "Subtotal  $14.29",
+      "currencyCode": "USD"
+    },
+    {
+      "data": 1.64,
+      "index": 9,
+      "regions": [
+        [
+          {
+            "x": 58,
+            "y": 2320
+          },
+          {
+            "x": 160,
+            "y": 2333
+          },
+          {
+            "x": 150,
+            "y": 2413
+          },
+          {
+            "x": 48,
+            "y": 2400
+          }
+        ],
+        [
+          {
+            "x": 1912,
+            "y": 2321
+          },
+          {
+            "x": 1937,
+            "y": 2321
+          },
+          {
+            "x": 2124,
+            "y": 2408
+          },
+          {
+            "x": 2026,
+            "y": 2408
+          }
+        ]
+      ],
+      "text": "Tax  $1.64",
+      "currencyCode": "USD"
+    },
+    {
+      "data": 15.93,
+      "index": 10,
+      "regions": [
+        [
+          {
+            "x": 40,
+            "y": 2425
+          },
+          {
+            "x": 251,
+            "y": 2425
+          },
+          {
+            "x": 251,
+            "y": 2525
+          },
+          {
+            "x": 40,
+            "y": 2525
+          }
+        ],
+        [
+          {
+            "x": 1874,
+            "y": 2425
+          },
+          {
+            "x": 1902,
+            "y": 2425
+          },
+          {
+            "x": 2129,
+            "y": 2522
+          },
+          {
+            "x": 2058,
+            "y": 2522
+          }
+        ]
+      ],
+      "text": "Total  $15.93",
+      "currencyCode": "USD"
+    }
+  ],
+  "numbers": [],
+  "lineAmounts": [],
+  "entities": {},
+  "merchantName": {
+    "data": "Edgar C",
+    "confidenceLevel": 0.41,
+    "text": "Edgar C",
+    "index": 1,
+    "regions": [
+      [
+        {
+          "x": 801,
+          "y": 774
+        },
+        {
+          "x": 1199,
+          "y": 774
+        },
+        {
+          "x": 1343,
+          "y": 944
+        },
+        {
+          "x": 1293,
+          "y": 944
+        }
+      ]
+    ]
+  },
+  "merchantAddress": {
+    "confidenceLevel": 0
+  },
+  "merchantCity": {
+    "data": "Chicago",
+    "confidenceLevel": 0.41,
+    "text": "Edgar C",
+    "index": 1,
+    "regions": [
+      [
+        {
+          "x": 801,
+          "y": 774
+        },
+        {
+          "x": 1199,
+          "y": 774
+        },
+        {
+          "x": 1343,
+          "y": 944
+        },
+        {
+          "x": 1293,
+          "y": 944
+        }
+      ]
+    ]
+  },
+  "merchantState": {
+    "data": "IL",
+    "confidenceLevel": 0.41,
+    "text": "Edgar C",
+    "index": 1,
+    "regions": [
+      [
+        {
+          "x": 801,
+          "y": 774
+        },
+        {
+          "x": 1199,
+          "y": 774
+        },
+        {
+          "x": 1343,
+          "y": 944
+        },
+        {
+          "x": 1293,
+          "y": 944
+        }
+      ]
+    ]
+  },
+  "merchantCountryCode": {
+    "data": "US",
+    "confidenceLevel": 0.41,
+    "text": "Edgar C",
+    "index": 1,
+    "regions": [
+      [
+        {
+          "x": 801,
+          "y": 774
+        },
+        {
+          "x": 1199,
+          "y": 774
+        },
+        {
+          "x": 1343,
+          "y": 944
+        },
+        {
+          "x": 1293,
+          "y": 944
+        }
+      ]
+    ]
+  },
+  "merchantTypes": {
+    "confidenceLevel": 0
+  },
+  "elapsed": 5424.082073997706
+}

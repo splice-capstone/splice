@@ -8,8 +8,7 @@ import {
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import LinksScreen from '../screens/LinksScreen';
-import SettingsScreen from '../screens/SettingsScreen';
-import ReceiptScreen from '../screens/ReceiptScreen';
+import CameraScreen from '../screens/CameraScreen';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -58,28 +57,9 @@ LinksStack.navigationOptions = {
 
 LinksStack.path = '';
 
-const SettingsStack = createStackNavigator(
-  {
-    Settings: SettingsScreen,
-  },
-  config
-);
-
-SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'}
-    />
-  ),
-};
-
-SettingsStack.path = '';
-
 const ReceiptStack = createStackNavigator(
   {
-    Receipt: ReceiptScreen,
+    Receipt: CameraScreen,
   },
   config
 );
@@ -99,7 +79,6 @@ ReceiptStack.path = '';
 const tabNavigator = createBottomTabNavigator({
   HomeStack,
   LinksStack,
-  SettingsStack,
   ReceiptStack,
 });
 

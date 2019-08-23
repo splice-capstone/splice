@@ -21,7 +21,7 @@ export const initialState = {
   currentUser: {},
   currentReceipt: {
     items: [],
-    receipt_users: [],
+    users: [],
     date: '',
     owner: '',
     paid: false,

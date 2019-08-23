@@ -5,7 +5,6 @@ import {
   Container,
   Content,
   Button,
-  Icon,
   Text,
   Form,
   Item,
@@ -68,7 +67,7 @@ export default class ReceiptForm extends React.Component {
 
   async handleComplete() {
     const receiptId = await this.props.navigation.getParam('current').id;
-    let updatedReceipt = await editReceipt(
+    await editReceipt(
       receiptId,
       this.state.tip * 100,
       this.state.total,

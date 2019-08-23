@@ -1,13 +1,33 @@
 import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
-import { Container, Content, Button, Icon, Text, View } from 'native-base';
+import { useStateValue } from '../state';
+import { getReceipt } from '../src/tools/firebase';
+import ItemCard from './ItemCard';
+import * as WebBrowser from 'expo-web-browser';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet } from 'react-native';
+import {
+  Container,
+  Content,
+  Button,
+  Icon,
+  Text,
+  List,
+  ListItem,
+  Left,
+  Body,
+  View,
+  Thumbnail,
+} from 'native-base';
+
 import { useStateValue } from '../state';
 import { getReceipt } from '../src/tools/firebase';
 import ItemCard from './ItemCard';
 
 export default function CurrentReceipt(props) {
   const [{ currentUser, currentReceipt }, dispatch] = useStateValue();
+  const [comments, setComments] = useState('');
 
   const setCurrentReceipt = receipt => {
     dispatch({ type: 'SET_RECEIPT', receipt });
@@ -18,7 +38,11 @@ export default function CurrentReceipt(props) {
       'receiptId',
       'BPG1dyK2xu41UEahdMG6'
     );
-    if (!currentReceipt.id) {
+    const newComments = props.navigation.getParam('comments', '');
+    if (newComments) {
+      setComments(newComments);
+    }
+    if (currentReceipt.id !== receiptId) {
       getReceipt(receiptId).then(receipt => {
         setCurrentReceipt(receipt);
       });
@@ -39,12 +63,20 @@ export default function CurrentReceipt(props) {
           >
             edit
           </Text>
-          <Text>{currentReceipt.restaurant}</Text>
-          <Icon
-            name="md-person-add"
-            onPress={() => props.navigation.navigate('AddUser')}
-          />
         </Button>
+        <Text>{comments.restaurant}</Text>
+        <Text>{comments.misc}</Text>
+        <Text>{comments.date}</Text>
+
+        <Text onPress={() => props.navigation.navigate('Receipt Form')}>
+          Edit
+        </Text>
+        <Text>{currentReceipt.restaurant}</Text>
+        <Icon
+          name="md-person-add"
+          onPress={() => props.navigation.navigate('Add User')}
+        />
+
         {currentReceipt.items.map(item => (
           <ItemCard item={item} key={item.id} />
         ))}
@@ -55,6 +87,21 @@ export default function CurrentReceipt(props) {
           <Text>Tax: ${currentReceipt.tax / 100}</Text>
           <Text>Tip: ${currentReceipt.tip / 100}</Text>
           <Text>Total: ${currentReceipt.total / 100}</Text>
+        </View>
+        <View>
+          {currentReceipt.users.map(user => {
+            <List key={user.email}>
+              <ListItem avatar>
+                <Left>
+                  <Thumbnail source={{ uri: user.photoUrl }} />
+                </Left>
+                <Body>
+                  <Text>{user.name}</Text>
+                  <Text note>{user.email}</Text>
+                </Body>
+              </ListItem>
+            </List>;
+          })}
         </View>
       </Content>
     </Container>

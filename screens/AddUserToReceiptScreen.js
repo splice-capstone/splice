@@ -1,19 +1,39 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { StyleSheet, View, TextInput } from 'react-native';
 import { findUser, addUserToReceipt } from '../src/tools/firebase';
 import { useStateValue } from '../state';
+import {
+  Container,
+  Header,
+  Content,
+  List,
+  ListItem,
+  Left,
+  Body,
+  Right,
+  Thumbnail,
+  Button,
+  Text,
+} from 'native-base';
 
 export default function AddUserToReceiptScreen() {
   const [search, setSearch] = useState('');
+  const [usersToAdd, setUserOptions] = useState([]);
   const [{ currentUser, currentReceipt }, dispatch] = useStateValue();
 
   const setUser = (user, receipts) => {
     dispatch({ type: 'SET_USER', user, receipts });
   };
 
+  const getUsers = search => {
+    findUser(search).then(users => {
+      setUserOptions(users);
+    });
+  };
+
   return (
     <View style={styles.container}>
-      <Text>add user to receipt</Text>
+      <Text>Add Friend</Text>
       <TextInput
         style={{ height: 40 }}
         placeholder="search for user by email"
@@ -23,19 +43,38 @@ export default function AddUserToReceiptScreen() {
       <Button
         title="Search"
         onPress={() => {
-          findUser(search);
+          getUsers(search);
         }}
       >
-        Search
+        <Text>Search</Text>
       </Button>
-      <Button
-        title="Add"
-        onPress={() => {
-          addUserToReceipt();
-        }}
-      >
-        Add
-      </Button>
+      {usersToAdd.map(user => {
+        return (
+          <Content key={user.email}>
+            <List>
+              <ListItem avatar>
+                <Left>
+                  <Thumbnail source={{ uri: user.photoUrl }} />
+                </Left>
+                <Body>
+                  <Text>{user.name}</Text>
+                  <Text note>{user.email}</Text>
+                </Body>
+                <Right>
+                  <Button
+                    title="Add"
+                    onPress={() => {
+                      addUserToReceipt(currentReceipt, user.email);
+                    }}
+                  >
+                    <Text>+</Text>
+                  </Button>
+                </Right>
+              </ListItem>
+            </List>
+          </Content>
+        );
+      })}
     </View>
   );
 }
