@@ -6,7 +6,7 @@ import {
   createDrawerNavigator,
   createStackNavigator,
 } from 'react-navigation';
-import MyReceipts from "../screens/MyReceipts";
+import MyReceipts from '../screens/MyReceipts';
 import { DrawerActions } from 'react-navigation-drawer';
 import HomeScreen from '../screens/HomeScreen';
 import CameraScreen from '../screens/CameraScreen';
@@ -46,20 +46,40 @@ const styles = StyleSheet.create({
 const DrawerNavigator = createDrawerNavigator(
   {
     Home: { screen: HomeScreen },
-    'Current Receipt': { screen: CurrentReceipt },
     'Add Receipt': { screen: CameraScreen },
-    'Add User': { screen: AddUserToReceiptScreen },
-    'Receipt Form': { screen: ReceiptForm },
-    'My Account': { screen: AccountScreen },
-    'My Receipts': { screen: MyReceipts }
+    'My Receipts': { screen: MyReceipts },
+    'Current Receipt': {
+      screen: CurrentReceipt,
+      navigationOptions: {
+        drawerLabel: ' ',
+      },
+    },
+    'Add User': {
+      screen: AddUserToReceiptScreen,
+      navigationOptions: {
+        drawerLabel: ' ',
+      },
+    },
+    'Receipt Form': {
+      screen: ReceiptForm,
+      navigationOptions: {
+        drawerLabel: ' ',
+      },
+    },
+    'My Account': {
+      screen: AccountScreen,
+      navigationOptions: {
+        drawerLabel: ' ',
+      },
+    },
   },
   {
     hideStatusBar: true,
     drawerBackgroundColor: 'rgba(255,255,255,.9)',
-    overlayColor: '#6b52ae',
+    overlayColor: 'rgba(46, 46, 46, .9)',
     contentOptions: {
       activeTintColor: '#fff',
-      activeBackgroundColor: '#6b52ae',
+      activeBackgroundColor: '#c4f5df',
     },
   }
 );
@@ -110,3 +130,5 @@ const StackNavigator = createStackNavigator({
 });
 
 export default createAppContainer(StackNavigator);
+
+// export default

@@ -16,7 +16,7 @@ import {
   Text,
 } from 'native-base';
 
-export default function AddUserToReceiptScreen() {
+export default function AddUserToReceiptScreen(props) {
   const [search, setSearch] = useState('');
   const [usersToAdd, setUserOptions] = useState([]);
   const [{ currentUser, currentReceipt }, dispatch] = useStateValue();
@@ -64,7 +64,10 @@ export default function AddUserToReceiptScreen() {
                   <Button
                     title="Add"
                     onPress={() => {
-                      addUserToReceipt(currentReceipt, user.email);
+                      addUserToReceipt(
+                        props.navigation.getParam('receipt'),
+                        user.email
+                      );
                     }}
                   >
                     <Text>+</Text>
