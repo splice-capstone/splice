@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, TextInput } from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 import {
   findUser,
   addUserToReceipt,
   findOrCreateUser,
 } from '../src/tools/firebase';
-import { useStateValue } from '../state';
 import db from '../src/tools/firebase';
 
 import { useCollectionData } from 'react-firebase-hooks/firestore';
@@ -108,15 +107,19 @@ export default function AddUserToReceiptScreen(props) {
           ))}
         {!usersToAdd.length && searching ? (
           <ListItem>
-            <Text>User does not exist.</Text>
-            <Button
-              title="Adduser"
-              onPress={() => {
-                createUser();
-              }}
-            >
-              <Text>Add User</Text>
-            </Button>
+            <Left>
+              <Text>User does not exist yet.</Text>
+            </Left>
+            <Right>
+              <Button
+                title="Adduser"
+                onPress={() => {
+                  createUser();
+                }}
+              >
+                <Text>+</Text>
+              </Button>
+            </Right>
           </ListItem>
         ) : (
           usersToAdd.map(user => {
