@@ -37,7 +37,6 @@ export default function CurrentReceipt(props) {
   );
 
   useEffect(() => {
-    hack;
     const newComments = props.navigation.getParam('comments', '');
     if (newComments) {
       setComments(newComments);
