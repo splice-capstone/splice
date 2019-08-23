@@ -19,7 +19,7 @@ export default class ReceiptForm extends React.Component {
     super(props);
     this.state = {
       name: '',
-      amount: '0',
+      amount: '',
       subtotal: this.props.navigation.getParam('current').subtotal,
       tax: this.props.navigation.getParam('current').tax,
       tip: this.props.navigation.getParam('current').tip / 100,

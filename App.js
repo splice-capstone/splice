@@ -13,8 +13,9 @@ import {
 } from 'react-native';
 import { Ionicons, Entypo } from '@expo/vector-icons';
 import AppNavigator from './navigation/AppNavigator';
-import { StateProvider, initialState, reducer } from './state';
+import { StateProvider, initialState, reducer, useStateValue} from './state';
 import LoadingScreen from './screens/LoadingScreen';
+
 
 export default function App() {
   const [isAppReady, setAppReady] = useState(false);

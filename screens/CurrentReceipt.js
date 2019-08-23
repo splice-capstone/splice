@@ -92,42 +92,56 @@ export default function CurrentReceipt(props) {
       {(receiptLoading || userLoading) && <Text>Collection: Loading...</Text>}
       {receiptValue && userValues && (
         <Content>
-          <Button>
+          <View
+            style={{
+              flexDirection: 'row',
+              flex: 1,
+              justifyContent: 'space-evenly',
+            }}
+          >
+            <Button>
+              <Text
+                onPress={() =>
+                  props.navigation.navigate('Receipt Form', {
+                    current: receiptValue,
+                    navigation: props.navigation,
+                    userId: userValues[0].id,
+                    email: currentUser.email,
+                  })
+                }
+              >
+                Edit
+              </Text>
+            </Button>
             <Text
-              onPress={() =>
-                props.navigation.navigate('Receipt Form', {
-                  current: receiptValue,
-                  navigation: props.navigation,
-                  userId: userValues[0].id,
-                  email: currentUser.email,
-                })
-              }
+              style={{
+                fontWeight: '600',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
             >
-              Edit
+              {receiptValue.restaurant}
             </Text>
-            <Text>{receiptValue.restaurant}</Text>
             <Icon
               name="md-person-add"
               onPress={() =>
                 props.navigation.navigate('Add User', { receipt: receiptValue })
               }
             />
-          </Button>
+          </View>
           <Text>{comments.restaurant}</Text>
           <Text>{comments.misc}</Text>
           <Text>{comments.date}</Text>
           <Text>Id: {receiptValue.id}</Text>
           <Text>Date: {receiptValue.date}</Text>
           <Text>Owner: {receiptValue.owner}</Text>
-          <Text>Subtotal: ${receiptValue.subtotal}</Text>
-          <Text>Tax: ${receiptValue.tax}</Text>
-          <Text>Total: ${receiptValue.total}</Text>
-
+          <Text>Subtotal: ${receiptValue.subtotal / 100}</Text>
+          <Text>Tax: ${receiptValue.tax / 100}</Text> .
+          <Text>Total: ${receiptValue.total / 100}</Text>
           <Text>My Subtotal: ${userSubtotal}</Text>
           <Text>My Tax: ${userTax}</Text>
           <Text>My Tip: ${userTip}</Text>
           <Text>My Total: ${userTotal}</Text>
-
           <ItemCard
             receiptId={props.navigation.getParam(
               'receiptId',
