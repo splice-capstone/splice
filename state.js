@@ -24,6 +24,7 @@ export const initialState = {
   myReceipts: [],
   myContacts: [],
   error: '',
+  hack: [],
 };
 
 export const reducer = (state, action) => {
@@ -48,6 +49,11 @@ export const reducer = (state, action) => {
       return {
         ...state,
         mode: action.mode,
+      };
+    case 'HACK':
+      return {
+        ...state,
+        hack: [...hack, 'hello'],
       };
     default:
       return state;

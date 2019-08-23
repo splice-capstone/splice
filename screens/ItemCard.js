@@ -22,7 +22,7 @@ import db, { updateItem } from '../src/tools/firebase';
 import { useStateValue } from '../state';
 
 export default function ItemCard(props) {
-  const [{ currentUser, currentReceipt }, dispatch] = useStateValue();
+  const [{ currentUser, currentReceipt, hack }, dispatch] = useStateValue();
 
   const [values, loading, error] = useCollectionData(
     db
@@ -37,6 +37,7 @@ export default function ItemCard(props) {
 
   const update = doc => {
     updateItem(props.receiptId, doc, currentUser, props.receiptUserId);
+    dispatch({ type: 'HACK' });
   };
 
   return (

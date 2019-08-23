@@ -24,7 +24,7 @@ import {
 import db, { calculateSubtotal } from '../src/tools/firebase';
 
 export default function CurrentReceipt(props) {
-  const [{ currentUser }, dispatch] = useStateValue();
+  const [{ currentUser, hack }, dispatch] = useStateValue();
   const [comments, setComments] = useState('');
   const [userSubtotal, setSubtotal] = useState(0);
   const [userTax, setTax] = useState(0);
@@ -37,6 +37,7 @@ export default function CurrentReceipt(props) {
   );
 
   useEffect(() => {
+    hack;
     const newComments = props.navigation.getParam('comments', '');
     if (newComments) {
       setComments(newComments);
