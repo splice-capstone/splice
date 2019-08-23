@@ -10,6 +10,7 @@ import {
   Form,
   Item,
   Input,
+  View,
 } from 'native-base';
 import ItemCard from './ItemCard';
 import { editReceipt, addReceiptItems } from '../src/tools/firebase';
@@ -21,10 +22,10 @@ export default class ReceiptForm extends React.Component {
       items: this.props.navigation.getParam('current').items,
       name: '',
       amount: 0,
-      subtotal: this.props.navigation.getParam('current').subtotal / 100,
-      tax: this.props.navigation.getParam('current').tax / 100,
-      tip: 0,
-      total: this.props.navigation.getParam('current').total / 100,
+      subtotal: this.props.navigation.getParam('current').subtotal,
+      tax: this.props.navigation.getParam('current').tax,
+      tip: this.props.navigation.getParam('current').tip / 100,
+      total: this.props.navigation.getParam('current').total,
     };
     this.handleCreateNewItem = this.handleCreateNewItem.bind(this);
     this.handleComplete = this.handleComplete.bind(this);
@@ -34,16 +35,15 @@ export default class ReceiptForm extends React.Component {
 
   updateTotal(tip) {
     let tipInput = Number(tip);
-    console.log('88888888', tipInput);
     this.setState({ tip: tipInput });
-    const total = tipInput + this.state.subtotal + this.state.tax;
+    const total = tipInput * 100 + this.state.subtotal + this.state.tax;
     this.setState({
       total: total,
     });
   }
 
   handleNameText(name) {
-    this.setState({ name });
+    this.setState({ name: name.toLowerCase() });
   }
 
   handleAmountText(amount) {
@@ -52,8 +52,8 @@ export default class ReceiptForm extends React.Component {
 
   async handleCreateNewItem(event) {
     event.preventDefault();
-    const receiptId = await this.props.navigation.state.params.current.id;
-    let newItem = { name: this.state.name, amount: this.state.amount };
+    const receiptId = await this.props.navigation.getParam('current').id;
+    let newItem = { name: this.state.name, amount: this.state.amount * 100 };
     this.setState({
       items: this.state.items.concat(newItem),
       total: this.state.total + Number(newItem.amount),
@@ -67,11 +67,11 @@ export default class ReceiptForm extends React.Component {
   }
 
   async handleComplete() {
-    const receiptId = await this.props.navigation.state.params.current.id;
+    const receiptId = await this.props.navigation.getParam('current').id;
     let updatedReceipt = await editReceipt(
       receiptId,
       this.state.tip * 100,
-      this.state.total * 100,
+      this.state.total,
       this.state.subtotal
     );
     this.props.navigation.navigate('CurrentReceipt', {
@@ -80,34 +80,51 @@ export default class ReceiptForm extends React.Component {
   }
 
   render() {
-    let owner = this.props.navigation.getParam('current').owner;
-
     return (
       <Container>
         <Content>
           <Form>
-            <Item>
-              <TextInput
-                type="text"
-                name="name"
-                placeholder="name"
-                onChangeText={name => this.handleNameText(name)}
-                value={this.state.name}
-              />
-            </Item>
-            <Item>
-              <TextInput
-                type="newItem.amount"
-                name="amount"
-                placeholder="amount"
-                onChangeText={amount => this.handleAmountText(amount)}
-                value={this.state.amount}
-              />
-            </Item>
-
-            <Button small rounded success onPress={this.handleCreateNewItem}>
-              <Icon name="add" />
-            </Button>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                padding: 20,
+              }}
+            >
+              <Item>
+                <TextInput
+                  type="text"
+                  name="name"
+                  placeholder="item name"
+                  onChangeText={name => this.handleNameText(name)}
+                  value={this.state.name}
+                />
+              </Item>
+              <Item>
+                <TextInput
+                  type="newItem.amount"
+                  name="amount"
+                  placeholder="amount"
+                  onChangeText={amount => this.handleAmountText(amount)}
+                  value={this.state.amount}
+                />
+              </Item>
+            </View>
+            <View style={{ height: 30, justifyContent: 'center' }}>
+              <Button
+                title="add item"
+                textAlign="center"
+                backgroundColor="#3D9970"
+                small
+                rounded
+                success
+                onPress={this.handleCreateNewItem}
+              >
+                {/* <Icon name="add" /> */}
+                <Text style={{ textAlign: 'center' }}>add item</Text>
+              </Button>
+            </View>
             <Item>
               <Input
                 placeholder="tip"
@@ -118,11 +135,12 @@ export default class ReceiptForm extends React.Component {
           {this.state.items.map(item => (
             <ItemCard item={item} key={item.id} />
           ))}
-          <Text>Owner: {owner}</Text>
-          <Text>Subtotal: ${this.state.subtotal}</Text>
-          <Text>Tax: ${this.state.tax}</Text>
-          <Text>Tip: ${this.state.tip} </Text>
-          <Text>Total: ${this.state.total}</Text>
+          <View style={{ marginTop: 10, marginBottom: 10 }}>
+            <Text>Subtotal: ${this.state.subtotal / 100}</Text>
+            <Text>Tax: ${this.state.tax / 100}</Text>
+            <Text>Tip: ${this.state.tip} </Text>
+            <Text>Total: ${this.state.total / 100}</Text>
+          </View>
           <Button small rounded danger onPress={() => this.handleComplete()}>
             <Text>finish</Text>
           </Button>
@@ -143,5 +161,8 @@ const styles = StyleSheet.create({
   header: {
     marginTop: 10,
     fontSize: 18,
+  },
+  addItemButton: {
+    backgroundColor: '#3D9970',
   },
 });

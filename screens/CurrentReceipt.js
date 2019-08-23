@@ -1,7 +1,7 @@
 import * as WebBrowser from 'expo-web-browser';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
-import { Container, Content, Button, Icon, Text } from 'native-base';
+import { Container, Content, Button, Icon, Text, View } from 'native-base';
 import { useStateValue } from '../state';
 import { getReceipt } from '../src/tools/firebase';
 import ItemCard from './ItemCard';
@@ -37,7 +37,7 @@ export default function CurrentReceipt(props) {
               })
             }
           >
-            Edit
+            edit
           </Text>
           <Text>{currentReceipt.restaurant}</Text>
           <Icon
@@ -48,12 +48,14 @@ export default function CurrentReceipt(props) {
         {currentReceipt.items.map(item => (
           <ItemCard item={item} key={item.id} />
         ))}
-        <Text>Date: {currentReceipt.date}</Text>
-        <Text>Owner: {currentReceipt.owner}</Text>
-        <Text>Subtotal: ${currentReceipt.subtotal / 100}</Text>
-        <Text>Tax: ${currentReceipt.tax / 100}</Text>
-        <Text>Tip: ${currentReceipt.tip / 100}</Text>
-        <Text>Total: ${currentReceipt.total / 100}</Text>
+        <View style={{ marginTop: 10, marginBottom: 10 }}>
+          <Text>Date: {currentReceipt.date}</Text>
+          <Text>Owner: {currentReceipt.owner}</Text>
+          <Text>Subtotal: ${currentReceipt.subtotal / 100}</Text>
+          <Text>Tax: ${currentReceipt.tax / 100}</Text>
+          <Text>Tip: ${currentReceipt.tip / 100}</Text>
+          <Text>Total: ${currentReceipt.total / 100}</Text>
+        </View>
       </Content>
     </Container>
   );

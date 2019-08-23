@@ -1,14 +1,23 @@
 import React from 'react';
-import { ListItem, CheckBox, Text, Body } from 'native-base';
+import { ListItem, CheckBox, Text, Body, View } from 'native-base';
 
 export default function ItemCard(props) {
   return (
     <ListItem>
-      <CheckBox checked={true} />
+      <CheckBox checked={true} color="#c4f5df" />
       <Body>
-        <Text>
-          {props.item.name} ${props.item.amount / 100}
-        </Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingLeft: 30,
+            paddingRight: 30,
+          }}
+        >
+          <Text>{props.item.name}</Text>
+          <Text>${props.item.amount / 100}</Text>
+        </View>
       </Body>
     </ListItem>
   );

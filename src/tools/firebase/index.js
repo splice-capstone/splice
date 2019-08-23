@@ -267,21 +267,18 @@ export async function completeReceipt(receipt, user) {
   }
 }
 
-//updating receipt
 export async function editReceipt(receiptId, tip, total, subtotal) {
-  const receiptEditRef = await db.collection('receipts').doc(receiptId);
-  receiptEditRef
-    .update({
+  try {
+    const receiptEditRef = await db.collection('receipts').doc(receiptId);
+    const updatedReceipt = receiptEditRef.update({
       subtotal: subtotal,
       tip: tip,
       total: total,
-    })
-    .then(function() {
-      console.log('receipt successfully updated!');
-    })
-    .catch(function(error) {
-      console.error('error updated the document:', error);
     });
+    return receiptEditRef.data();
+  } catch (err) {
+    return err;
+  }
 }
 
 export async function addReceiptItems(receiptId, newItem) {
@@ -291,6 +288,7 @@ export async function addReceiptItems(receiptId, newItem) {
       .doc(receiptId)
       .collection('items')
       .add(newItem);
+    return receiptItemEditRef;
   } catch (err) {
     return err;
   }
