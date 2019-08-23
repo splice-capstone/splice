@@ -49,6 +49,7 @@ export const reducer = (state, action) => {
         ...state,
         mode: action.mode,
       };
+
     default:
       return state;
   }
