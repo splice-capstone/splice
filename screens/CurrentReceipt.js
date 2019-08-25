@@ -36,7 +36,36 @@ export default function CurrentReceipt(props) {
     '1Y8k9OAQhJAlctRTAjYW'
   );
 
+
+  let [receiptValue, receiptLoading, receiptError] = useDocumentData(
+    db.collection('receipts').doc(receiptId),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+      idField: 'id',
+    }
+  )
+
+
+
+  let [userValues, userLoading, userError] = useCollectionData(
+    db
+      .collection('receipts')
+      .doc(receiptId)
+      .collection('receipt_users')
+      .where('email', '==', currentUser.email),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+      idField: 'id',
+    }
+  );
+
+  let itemColRef = db.collection('receipts').doc(receiptId).collection('items')
+
   useEffect(() => {
+
+
+
+
     const newComments = props.navigation.getParam('comments', '');
     if (newComments) {
       setComments(newComments);
@@ -63,26 +92,9 @@ export default function CurrentReceipt(props) {
     }
   });
 
-  const [receiptValue, receiptLoading, receiptError] = useDocumentData(
-    db.collection('receipts').doc(receiptId),
-    {
-      snapshotListenOptions: { includeMetadataChanges: true },
-      idField: 'id',
-    }
-  );
+
 
   // listen on receipt_users doc that emails current user email
-  const [userValues, userLoading, userError] = useCollectionData(
-    db
-      .collection('receipts')
-      .doc(receiptId)
-      .collection('receipt_users')
-      .where('email', '==', currentUser.email),
-    {
-      snapshotListenOptions: { includeMetadataChanges: true },
-      idField: 'id',
-    }
-  );
 
   return (
     <Container>

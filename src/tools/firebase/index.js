@@ -166,11 +166,13 @@ export async function findUser(email) {
 
 export async function getMyReceipts(email) {
   try {
+    console.log('going to her user receipts refs; user is: ', email )
     const user = await db
       .collection('users')
-      .doc(email)
+      // .doc(email)
       .get();
-
+    console.log('geting user!!!!!', user)
+    console.log("got receipts field")
     const myReceipts = await Promise.all(
       user.data().receipts.map(async receipt => {
         //get user's receipt_users doc from all the receipts they're on

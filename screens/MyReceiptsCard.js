@@ -14,6 +14,8 @@ import {
 } from 'native-base';
 
 const MyReceiptsCard = props => {
+
+
   const { restaurant, date, id, total, owner } = props.recptsData;
   const {
     myDetails: { isOwner, userTotal, paid },
