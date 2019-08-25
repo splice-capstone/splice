@@ -32,7 +32,6 @@ export const reducer = (state, action) => {
       return {
         ...state,
         currentUser: action.user,
-        myReceipts: action.receipts,
       };
     case 'SET_CONTACTS':
       return {

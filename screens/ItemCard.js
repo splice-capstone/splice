@@ -39,6 +39,8 @@ export default function ItemCard(props) {
     updateItem(props.receiptId, doc, currentUser, props.receiptUserId);
   };
 
+  //add circles for users that are on the item
+
   return (
     <View>
       {error && <Text>Error: {JSON.stringify(error)}</Text>}

@@ -153,14 +153,6 @@ export default function AddUserToReceiptScreen(props) {
   );
 }
 
-//  Rendered from click on single receipt
-//   see people already on it
-//  x invite people - search by email x
-//   add receipt_users subcollection doc (default to false on host field)
-//   add other users to the friends item on Users doc
-//   add receipt to Users doc
-//   add users to every item doc to payees map (default to false)
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

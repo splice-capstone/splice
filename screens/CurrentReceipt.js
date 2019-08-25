@@ -14,6 +14,7 @@ import {
   Body,
   Right,
   Thumbnail,
+  Title,
   View,
 } from 'native-base';
 
@@ -22,9 +23,10 @@ import {
   useCollectionData,
 } from 'react-firebase-hooks/firestore';
 import db, { calculateSubtotal } from '../src/tools/firebase';
+import { ScrollView } from 'react-native-gesture-handler';
 
 export default function CurrentReceipt(props) {
-  const [{ currentUser, hack }, dispatch] = useStateValue();
+  const [{ currentUser }, dispatch] = useStateValue();
   const [comments, setComments] = useState('');
   const [userSubtotal, setSubtotal] = useState(0);
   const [userTax, setTax] = useState(0);
@@ -33,8 +35,12 @@ export default function CurrentReceipt(props) {
 
   const receiptId = props.navigation.getParam(
     'receiptId',
-    '1Y8k9OAQhJAlctRTAjYW'
+    'Sd5SAIYhhN7VWwmSNIBk'
   );
+
+  if (!currentUser.email) {
+    currentUser.email = 'amandamarienelson2@gmail.com';
+  }
 
   useEffect(() => {
     const newComments = props.navigation.getParam('comments', '');
@@ -47,19 +53,11 @@ export default function CurrentReceipt(props) {
         setSubtotal(subtotal / 100)
       );
       //calculate user tax based on user subtotal/overall total * overall tax
-      setTax(
-        Math.floor(
-          ((userSubtotal / receiptValue.total) * receiptValue.tax) / 100
-        )
-      );
+      setTax(((userSubtotal / receiptValue.total) * receiptValue.tax) / 100);
       //calculate user tip based on user subtotal/overall total * overall tip
-      setTip(
-        Math.floor(
-          ((userSubtotal / receiptValue.total) * receiptValue.tip) / 100
-        )
-      );
+      setTip(((userSubtotal / receiptValue.total) * receiptValue.tip) / 100);
       //calculate user total based on user subtotal + user tax + user tip
-      setTotal(Math.floor(userSubtotal + userTax + userTip));
+      setTotal(userSubtotal + userTax + userTip);
     }
   });
 
@@ -122,6 +120,9 @@ export default function CurrentReceipt(props) {
             >
               {receiptValue.restaurant}
             </Text>
+            <Text>
+              {new Date(receiptValue.date).toLocaleDateString('en-US')}
+            </Text>
             <Button>
               <Icon
                 name="md-person-add"
@@ -137,23 +138,44 @@ export default function CurrentReceipt(props) {
           <Text>{comments.restaurant}</Text>
           <Text>{comments.misc}</Text>
           <Text>{comments.date}</Text>
-          <Text>Id: {receiptValue.id}</Text>
-          <Text>Date: {receiptValue.date}</Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              flex: 1,
+              justifyContent: 'space-evenly',
+              backgroundColor: '#3D9970',
+              padding: 10,
+            }}
+          >
+            <Text light>My Subtotal: ${userSubtotal}</Text>
+            <Text light>My Tax: ${userTax}</Text>
+            <Text light>My Tip: ${userTip}</Text>
+          </View>
+          <Text
+            style={{
+              textAlign: 'center',
+            }}
+          >
+            My Total: ${userTotal}
+          </Text>
+
+          <ScrollView>
+            <ItemCard
+              receiptId={props.navigation.getParam(
+                'receiptId',
+                'Sd5SAIYhhN7VWwmSNIBk'
+              )}
+              receiptUserId={userValues[0].id}
+            />
+          </ScrollView>
+
           <Text>Owner: {receiptValue.owner}</Text>
           <Text>Subtotal: ${receiptValue.subtotal / 100}</Text>
           <Text>Tax: ${receiptValue.tax / 100}</Text>
           <Text>Total: ${receiptValue.total / 100}</Text>
-          <Text>My Subtotal: ${userSubtotal}</Text>
-          <Text>My Tax: ${userTax}</Text>
-          <Text>My Tip: ${userTip}</Text>
-          <Text>My Total: ${userTotal}</Text>
-          <ItemCard
-            receiptId={props.navigation.getParam(
-              'receiptId',
-              'jbIXS3uNWk0VGEZWqcdP'
-            )}
-            receiptUserId={userValues[0].id}
-          />
+          <Button>
+            <Text light>COMPLETE</Text>
+          </Button>
         </Content>
       )}
     </Container>

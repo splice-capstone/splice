@@ -1,88 +1,15 @@
 import React from 'react';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { findOrCreateUser } from '../src/tools/firebase';
+import { Image, ScrollView, StyleSheet, View } from 'react-native';
 import Constants from 'expo-constants';
-import LoginScreen from './LoginScreen';
-import LoggedInScreen from './LoggedInScreen';
-import * as Google from 'expo-google-app-auth';
 import { useStateValue } from '../state';
-import * as Contacts from 'expo-contacts';
-import * as Permissions from 'expo-permissions';
+import { Container, Header, Content, Button, Text, Title } from 'native-base';
 
 export default function HomeScreen(props) {
-  const [{ currentUser, contacts }, dispatch] = useStateValue();
-
-  const setUser = (user, receipts) => {
-    dispatch({ type: 'SET_USER', user, receipts });
-  };
-
-  const setContacts = contacts => {
-    dispatch({ type: 'SET_CONTACTS', contacts });
-  };
-
-  async function checkMultiPermissions() {
-    const { status, expires } = await Permissions.askAsync(
-      Permissions.CONTACTS
-    );
-    if (status !== 'granted') {
-      alert('Hey! You have not enabled selected permissions');
-    } else {
-      const { data } = await Contacts.getContactsAsync({
-        fields: [Contacts.Fields.Emails],
-      });
-      if (data.length > 0) {
-        const contacts = data.map(item => {
-          if (item.emails && item.emails.length) {
-            email = item.emails[0].email;
-          }
-          return {
-            name: item.name,
-            email,
-          };
-        });
-        return contacts;
-      }
-    }
-  }
-
-  // if (!contacts) {
-  //   const newContacts = checkMultiPermissions();
-  //   setContacts(newContacts);
-  // }
-
-  const signIn = async () => {
-    try {
-      const result = await Google.logInAsync({
-        androidClientId: Constants.manifest.extra.androidClientId,
-        iosClientId: Constants.manifest.extra.iosClientId,
-        scopes: ['profile', 'email'],
-      });
-      if (result.type === 'success') {
-        let userInfoResponse = await fetch(
-          'https://www.googleapis.com/userinfo/v2/me',
-          {
-            headers: { Authorization: `Bearer ${result.accessToken}` },
-          }
-        );
-        await findOrCreateUser(result.user);
-        await setUser(
-          {
-            name: result.user.name,
-            email: result.user.email,
-            photoUrl: result.user.photoUrl,
-          }
-        );
-        return 'logged in';
-      } else {
-        return { cancelled: true };
-      }
-    } catch (err) {
-      return { error: err };
-    }
-  };
+  const [{ currentUser }, dispatch] = useStateValue();
 
   return (
     <View style={styles.container}>
+      <Header />
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
@@ -93,15 +20,24 @@ export default function HomeScreen(props) {
             style={styles.welcomeImage}
           />
           <Text style={styles.header}>splice</Text>
-          <View>
-            {!currentUser.name ? (
-              <LoginScreen signIn={signIn} />
-            ) : (
-              <LoggedInScreen
-                user={currentUser}
-                navigation={props.navigation}
-              />
-            )}
+          <Text style={styles.header}>Welcome, {currentUser.name}</Text>
+          <Image style={styles.image} source={{ uri: currentUser.photoUrl }} />
+          <View style={styles.bottom}>
+            <Button
+              title="TAKE A SNAPSHOT"
+              success
+              style={styles.margin}
+              onPress={() => props.navigation.navigate('Add Receipt')}
+            >
+              <Title light>TAKE A SNAPSHOT</Title>
+            </Button>
+            <Button
+              light
+              style={styles.margin}
+              onPress={() => props.navigation.navigate('Receipt Form')}
+            >
+              <Title centered>BY HAND</Title>
+            </Button>
           </View>
         </View>
       </ScrollView>
@@ -110,7 +46,13 @@ export default function HomeScreen(props) {
 }
 
 HomeScreen.navigationOptions = {
-  header: null,
+  headerRight: (
+    <Button
+      onPress={() => alert('This is a button!')}
+      title="Info"
+      color="#fff"
+    />
+  ),
 };
 
 const styles = StyleSheet.create({
