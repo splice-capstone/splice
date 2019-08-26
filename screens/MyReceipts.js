@@ -10,11 +10,8 @@ const MyReceipts = (props) => {
   const [myRecps, setMyReceipts] = useState([]);
 
   useEffect(() => {
-    console.log('using effect - current user: ', currentUser)
     getMyReceipts(currentUser.email).then(data => {
-      console.log(data)
       setMyReceipts(data);
-      console.log(myRecps)
     });
   }, []);
 

@@ -166,13 +166,11 @@ export async function findUser(email) {
 
 export async function getMyReceipts(email) {
   try {
-    console.log('going to her user receipts refs; user is: ', email )
-    const user = await db
+    let user = db
       .collection('users')
-      // .doc(email)
-      .get();
-    console.log('geting user!!!!!', user)
-    console.log("got receipts field")
+      .doc(email);
+
+    user = await user.get()
     const myReceipts = await Promise.all(
       user.data().receipts.map(async receipt => {
         //get user's receipt_users doc from all the receipts they're on
@@ -352,6 +350,45 @@ export async function updateItem(receiptId, item, user, receiptUserId) {
     console.log('err', err);
     return `error: ${err}`;
   }
+}
+
+export async function toggleReceiptUser(user, itemId, receiptId, payees) {
+  // console.log('toggling the user receipt!', itemDocRef, userId)
+  const newPayees = payees
+
+  const email = user.email
+  const photo = user.photoUrl
+
+  console.log(user, itemId, receiptId)
+
+  if (newPayees[user.email].isPayee) {
+    newPayees[user.email] = {
+      email,
+      isPayee: false,
+      photo
+    }
+  } else {
+    newPayees[user.email] = {
+      email,
+      isPayee: true,
+      photo
+    }
+  }
+
+  const itemDocRef = db.collection('receipts').doc(receiptId).collection('items').doc(itemId)
+
+  try {
+    const newItemDoc = await itemDocRef.set({
+      payees: payees
+    }, {merge: true})
+
+    // console.log(newItemDoc)
+  } catch(err) {
+    console.error('big old error in togglereceiptuser', err)
+  }
+
+
+  return 'hey'
 }
 
 export async function calculateSubtotal(receiptId, receiptUserId) {
