@@ -1,25 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  Container,
-  Header,
-  Content,
-  Button,
-  Icon,
-  Text,
-  Form,
-  Item,
-  Input,
-  List,
-  ListItem,
-  Left,
-  Body,
-  Right,
-  Thumbnail,
-  View,
-} from 'native-base';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
-import db, { updateItem } from '../src/tools/firebase';
-import { useStateValue } from '../state';
+import { Content, Text, ListItem, Right, Thumbnail, View } from 'native-base';
 
 export default function ItemCard(props) {
   const itemData = props.itemInfo.item;

@@ -4,22 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, FlatList, ScrollView, Alert } from 'react-native';
 import { useStateValue } from '../state';
 import ItemCard from './ItemCard';
-import {
-  Container,
-  Content,
-  Button,
-  Icon,
-  Text,
-  List,
-  ListItem,
-  Left,
-  Body,
-  Right,
-  Thumbnail,
-  Title,
-  View,
-} from 'native-base';
-
+import { Container, Content, Button, Icon, Text, View } from 'native-base';
 import {
   useDocumentData,
   useCollectionData,
@@ -30,7 +15,6 @@ import db, {
   toggleReceiptUser,
   completeReceipt,
 } from '../src/tools/firebase';
-
 export default function CurrentReceipt(props) {
   const [{ currentUser }, dispatch] = useStateValue();
   const [comments, setComments] = useState('');
@@ -41,12 +25,10 @@ export default function CurrentReceipt(props) {
   const [receiptItems, setItems] = useState([]);
   const [loadingState, setLoadingState] = useState(true);
   const [myPrices, setMyPrices] = useState({});
-
   const receiptId = props.navigation.getParam(
     'receiptId',
     '1Y8k9OAQhJAlctRTAjYW'
   );
-
   let [receiptValue, receiptLoading, receiptError] = useDocumentData(
     db.collection('receipts').doc(receiptId),
     {
@@ -54,7 +36,6 @@ export default function CurrentReceipt(props) {
       idField: 'id',
     }
   );
-
   let [userValues, userLoading, userError] = useCollectionData(
     db
       .collection('receipts')
@@ -66,7 +47,6 @@ export default function CurrentReceipt(props) {
       idField: 'id',
     }
   );
-
   const tapItem = async (userId, itemId, payees, amount) => {
     try {
       if (userValues[0].paid) {
@@ -78,7 +58,6 @@ export default function CurrentReceipt(props) {
       console.error(err);
     }
   };
-
   const calcSubtotal = () => {
     let subtotal = 0;
     receiptItems.forEach(item => {
@@ -88,7 +67,6 @@ export default function CurrentReceipt(props) {
     });
     return Math.floor(subtotal);
   };
-
   const handleCheckout = () => {
     //save user amounts on receipt_user doc & update to say user has paid
     const checkoutData = {
@@ -103,8 +81,6 @@ export default function CurrentReceipt(props) {
   };
 
   useEffect(() => {
-    const unsub = db
-      .collection('receipts')
       .doc(receiptId)
       .collection('items')
       .onSnapshot(snap => {
@@ -122,7 +98,6 @@ export default function CurrentReceipt(props) {
         setLoadingState(false);
         setItems(itemArr);
       });
-
     const newComments = props.navigation.getParam('comments', '');
     if (newComments) {
       setComments(newComments);
@@ -141,7 +116,6 @@ export default function CurrentReceipt(props) {
     }
     return () => unsub();
   }, [receiptId]);
-
   return (
     <Container>
       {(receiptError || userError) && (
@@ -194,7 +168,6 @@ export default function CurrentReceipt(props) {
               />
             </Button>
           </View>
-
           <Text>{comments.restaurant}</Text>
           <Text>{comments.misc}</Text>
           <Text>{comments.date}</Text>
@@ -238,7 +211,6 @@ export default function CurrentReceipt(props) {
     </Container>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
