@@ -12,10 +12,9 @@ import {
   Body,
   Right,
 } from 'native-base';
+import PayPal from './PayPal';
 
 const MyReceiptsCard = props => {
-
-
   const { restaurant, date, id, total, owner } = props.recptsData;
   const {
     myDetails: { isOwner, userTotal, paid },
@@ -30,6 +29,7 @@ const MyReceiptsCard = props => {
           <Body>
             <Text>{restaurant}</Text>
             <Text note>{date}</Text>
+            <PayPal />
           </Body>
         </Left>
       </CardItem>
