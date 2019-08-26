@@ -124,10 +124,40 @@ export async function findOrCreateUser(user) {
       .collection('users')
       .doc(user.email)
       .set(
-        { email: user.email, name: user.name, photoUrl: user.photoUrl },
+        {
+          email: user.email,
+          name: user.name,
+          photoUrl: user.photoUrl,
+          token: user.token,
+        },
         { merge: true }
       );
-    return newUser;
+    return newUser[0];
+  } catch (err) {
+    return `error: ${err}`;
+  }
+}
+
+export async function findUserByToken(token) {
+  try {
+    const results = [];
+
+    const user = await db
+      .collection('users')
+      .where('token', '==', token)
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(doc => {
+          let userDetails = {
+            email: doc.data().email,
+            name: doc.data().name,
+            photoUrl: doc.data().photoUrl,
+          };
+          results.push(userDetails);
+        });
+      });
+    console.log('user results', results);
+    return results;
   } catch (err) {
     return `error: ${err}`;
   }

@@ -17,16 +17,6 @@ import ReceiptForm from '../screens/ReceiptForm';
 import AccountScreen from '../screens/AccountScreen';
 import LoginScreen from '../screens/LoginScreen';
 
-// import MainTabNavigator from './MainTabNavigator';
-
-// export default createAppContainer(
-//   createSwitchNavigator({
-//     // You could add another route here for authentication.
-//     // Read more at https://reactnavigation.org/docs/en/auth-flow.html
-//     Main: MainTabNavigator,
-//   })
-// );
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -59,14 +49,12 @@ const InvisibleStack = createStackNavigator({
   'Add User': {
     screen: AddUserToReceiptScreen,
     navigationOptions: {
-      drawerLabel: ' ',
       title: 'Add User',
     },
   },
   'Receipt Form': {
     screen: ReceiptForm,
     navigationOptions: {
-      drawerLabel: ' ',
       title: 'Edit Receipt',
     },
   },
@@ -91,7 +79,7 @@ const DrawerNavigator = createDrawerNavigator(
       navigationOptions: {
         title: 'My Receipts',
       },
-    },
+    }, //for testing - take out for prod
     'Current Receipt': {
       screen: CurrentReceipt,
       navigationOptions: {
@@ -101,7 +89,6 @@ const DrawerNavigator = createDrawerNavigator(
     'My Account': {
       screen: AccountScreen,
       navigationOptions: {
-        drawerLabel: ' ',
         title: 'My Account',
       },
     },
@@ -163,17 +150,9 @@ const AppStack = createStackNavigator({
   },
 });
 
-const AppNavigator = createSwitchNavigator(
-  {
-    App: AppStack,
-    Login: {
-      screen: LoginScreen,
-    },
-    Invisible: InvisibleStack,
-  },
-  {
-    initialRouteName: 'Login',
-  }
-);
+const AppNavigator = createSwitchNavigator({
+  App: AppStack,
+  Invisible: InvisibleStack,
+});
 
 export default createAppContainer(AppNavigator);

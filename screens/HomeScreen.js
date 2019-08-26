@@ -3,9 +3,21 @@ import { Image, ScrollView, StyleSheet, View } from 'react-native';
 import Constants from 'expo-constants';
 import { useStateValue } from '../state';
 import { Container, Header, Content, Button, Text, Title } from 'native-base';
+import { signOut } from '../src/utils/auth';
 
 export default function HomeScreen(props) {
   const [{ currentUser }, dispatch] = useStateValue();
+
+  const setUser = user => {
+    dispatch({ type: 'SET_USER', user });
+  };
+
+  handleSignOut = () => {
+    //clear token from Async storage
+    signOut();
+    //clear user from state which will navigate to login
+    setUser({});
+  };
 
   return (
     <View style={styles.container}>
@@ -19,7 +31,7 @@ export default function HomeScreen(props) {
             source={require('../assets/images/splice.png')}
             style={styles.welcomeImage}
           />
-          <Text style={styles.header}>splice</Text>
+          <Title style={styles.header}>splice</Title>
           <Text style={styles.header}>Welcome, {currentUser.name}</Text>
           <Image style={styles.image} source={{ uri: currentUser.photoUrl }} />
           <View style={styles.bottom}>
@@ -37,6 +49,9 @@ export default function HomeScreen(props) {
               onPress={() => props.navigation.navigate('Receipt Form')}
             >
               <Title centered>BY HAND</Title>
+            </Button>
+            <Button light style={styles.margin} onPress={() => handleSignOut()}>
+              <Title centered>SIGN OUT</Title>
             </Button>
           </View>
         </View>

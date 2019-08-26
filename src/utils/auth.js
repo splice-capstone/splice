@@ -1,25 +1,26 @@
 import { AsyncStorage } from 'react-native';
-import { findOrCreateUser } from '../tools/firebase';
+import { findOrCreateUser, findUserByToken } from '../tools/firebase';
 import Constants from 'expo-constants';
 import * as Google from 'expo-google-app-auth';
 import { useStateValue } from '../../state';
 import * as Contacts from 'expo-contacts';
 import * as Permissions from 'expo-permissions';
 
-// export const onSignOut = () => AsyncStorage.removeItem(USER_KEY);
+export const signOut = () => AsyncStorage.removeItem('USER_KEY');
 
-export const isSignedIn = () => {
-  return new Promise((resolve, reject) => {
-    AsyncStorage.getItem(USER_KEY)
-      .then(res => {
-        if (res !== null) {
-          resolve(true);
-        } else {
-          resolve(false);
-        }
-      })
-      .catch(err => reject(err));
-  });
+export const isSignedIn = async () => {
+  try {
+    let token = await AsyncStorage.getItem('USER_KEY');
+    if (token) {
+      console.log('finding user', token);
+      const user = await findUserByToken(token);
+      return user;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.log('Something went wrong', error);
+  }
 };
 
 export const checkMultiPermissions = async () => {
@@ -64,14 +65,14 @@ export const signIn = async () => {
           headers: { Authorization: `Bearer ${result.accessToken}` },
         }
       );
-      await findOrCreateUser(result.user);
-      console.log('access', result.accessToken);
-      await AsyncStorage.setItem('userToken', result.accessToken);
       const user = {
         name: result.user.name,
         email: result.user.email,
         photoUrl: result.user.photoUrl,
+        token: result.accessToken,
       };
+      await findOrCreateUser(user);
+      await AsyncStorage.setItem('USER_KEY', result.accessToken);
       return user;
     } else {
       return { cancelled: true };
