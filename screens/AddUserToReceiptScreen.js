@@ -53,14 +53,14 @@ export default function AddUserToReceiptScreen(props) {
 
   const createUser = () => {
     setSearching(false);
-    user = {
+    let user = {
       email: search,
       name: search.replace(/@[^@]+$/, ''),
       photoUrl:
         'https://lh4.googleusercontent.com/-ZZkaquQy0CQ/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rfQM27r8piZ9BfdwEI15D-B6Quxqg/photo.jpg',
     };
     findOrCreateUser(user);
-    addUserToReceipt(receipt, user.email);
+    addUserToReceipt(receipt, user);
   };
 
   return (
