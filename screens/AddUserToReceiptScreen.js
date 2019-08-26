@@ -32,7 +32,6 @@ export default function AddUserToReceiptScreen(props) {
 
   const receipt = props.navigation.getParam('receipt');
 
-  // listen on receipt_users doc that emails current user email
   const [userValues, userLoading, userError] = useCollectionData(
     db
       .collection('receipts')

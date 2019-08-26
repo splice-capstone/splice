@@ -68,13 +68,7 @@ export default function CurrentReceipt(props) {
 
   const tapItem = async (userId, itemId, payees, amount) => {
     try {
-      const hehe = await toggleReceiptUser(
-        userId,
-        itemId,
-        receiptId,
-        payees,
-        amount
-      );
+      await toggleReceiptUser(userId, itemId, receiptId, payees, amount);
     } catch (err) {
       console.error(err);
     }
@@ -129,8 +123,6 @@ export default function CurrentReceipt(props) {
     }
     return () => unsub();
   }, [receiptId]);
-
-  // listen on receipt_users doc that emails current user email
 
   return (
     <Container>
@@ -201,14 +193,7 @@ export default function CurrentReceipt(props) {
             <Text light>My Tax: ${userTax}</Text>
             <Text light>My Tip: ${userTip}</Text>
           </View>
-          <Text
-            style={{
-              textAlign: 'center',
-            }}
-          >
-            My Total: ${userTotal}
-          </Text>
-
+          <Text center>My Total: ${userTotal}</Text>
           <Text>Owner: {receiptValue.owner}</Text>
           <Text>Subtotal: ${receiptValue.subtotal / 100}</Text>
           <Text>Tax: ${receiptValue.tax / 100}</Text>
@@ -216,15 +201,6 @@ export default function CurrentReceipt(props) {
           {!loadingState ? null : <Text>still loading..</Text>}
 
           {!loadingState && (
-            // receiptItems.map(itemInfo => {
-            //   return (
-            //     <ItemCard
-            //       itemInfo={itemInfo}
-            //       receiptUserId={userValues[0].id}
-            //       key={itemInfo.key}
-            //     />
-            //   );
-            // })}
             <FlatList
               data={receiptItems}
               renderItem={itemInfo => (

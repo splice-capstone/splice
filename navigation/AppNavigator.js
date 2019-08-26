@@ -136,6 +136,7 @@ const AppStack = createStackNavigator({
                 size={32}
                 color={titleStyle}
               />
+              {/* {title} */}
             </TouchableOpacity>
           ),
         };
