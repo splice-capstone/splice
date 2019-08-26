@@ -4,22 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, FlatList, ScrollView } from 'react-native';
 import { useStateValue } from '../state';
 import ItemCard from './ItemCard';
-import {
-  Container,
-  Content,
-  Button,
-  Icon,
-  Text,
-  List,
-  ListItem,
-  Left,
-  Body,
-  Right,
-  Thumbnail,
-  Title,
-  View,
-} from 'native-base';
-
+import { Container, Content, Button, Icon, Text, View } from 'native-base';
 import {
   useDocumentData,
   useCollectionData,
@@ -29,7 +14,6 @@ import db, {
   calculateSubtotal,
   toggleReceiptUser,
 } from '../src/tools/firebase';
-
 export default function CurrentReceipt(props) {
   const [{ currentUser }, dispatch] = useStateValue();
   const [comments, setComments] = useState('');
@@ -40,12 +24,10 @@ export default function CurrentReceipt(props) {
   const [receiptItems, setItems] = useState([]);
   const [loadingState, setLoadingState] = useState(true);
   const [myPrices, setMyPrices] = useState({});
-
   const receiptId = props.navigation.getParam(
     'receiptId',
     '1Y8k9OAQhJAlctRTAjYW'
   );
-
   let [receiptValue, receiptLoading, receiptError] = useDocumentData(
     db.collection('receipts').doc(receiptId),
     {
@@ -53,7 +35,6 @@ export default function CurrentReceipt(props) {
       idField: 'id',
     }
   );
-
   let [userValues, userLoading, userError] = useCollectionData(
     db
       .collection('receipts')
@@ -65,21 +46,13 @@ export default function CurrentReceipt(props) {
       idField: 'id',
     }
   );
-
   const tapItem = async (userId, itemId, payees, amount) => {
     try {
-      const hehe = await toggleReceiptUser(
-        userId,
-        itemId,
-        receiptId,
-        payees,
-        amount
-      );
+      await toggleReceiptUser(userId, itemId, receiptId, payees, amount);
     } catch (err) {
       console.error(err);
     }
   };
-
   const calcSubtotal = () => {
     let subtotal = 0;
     receiptItems.forEach(item => {
@@ -89,7 +62,6 @@ export default function CurrentReceipt(props) {
     });
     return Math.floor(subtotal);
   };
-
   useEffect(() => {
     const unsub = db
       .collection('receipts')
@@ -110,7 +82,6 @@ export default function CurrentReceipt(props) {
         setLoadingState(false);
         setItems(itemArr);
       });
-
     const newComments = props.navigation.getParam('comments', '');
     if (newComments) {
       setComments(newComments);
@@ -129,9 +100,6 @@ export default function CurrentReceipt(props) {
     }
     return () => unsub();
   }, [receiptId]);
-
-  // listen on receipt_users doc that emails current user email
-
   return (
     <Container>
       {(receiptError || userError) && (
@@ -184,7 +152,6 @@ export default function CurrentReceipt(props) {
               />
             </Button>
           </View>
-
           <Text>{comments.restaurant}</Text>
           <Text>{comments.misc}</Text>
           <Text>{comments.date}</Text>
@@ -201,30 +168,13 @@ export default function CurrentReceipt(props) {
             <Text light>My Tax: ${userTax}</Text>
             <Text light>My Tip: ${userTip}</Text>
           </View>
-          <Text
-            style={{
-              textAlign: 'center',
-            }}
-          >
-            My Total: ${userTotal}
-          </Text>
-
+          <Text center>My Total: ${userTotal}</Text>
           <Text>Owner: {receiptValue.owner}</Text>
           <Text>Subtotal: ${receiptValue.subtotal / 100}</Text>
           <Text>Tax: ${receiptValue.tax / 100}</Text>
           <Text>Total: ${receiptValue.total / 100}</Text>
           {!loadingState ? null : <Text>still loading..</Text>}
-
           {!loadingState && (
-            // receiptItems.map(itemInfo => {
-            //   return (
-            //     <ItemCard
-            //       itemInfo={itemInfo}
-            //       receiptUserId={userValues[0].id}
-            //       key={itemInfo.key}
-            //     />
-            //   );
-            // })}
             <FlatList
               data={receiptItems}
               renderItem={itemInfo => (
@@ -242,7 +192,6 @@ export default function CurrentReceipt(props) {
     </Container>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
