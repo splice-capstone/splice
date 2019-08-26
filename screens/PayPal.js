@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, WebView, ActivityIndicator } from 'react-native';
+import Constants from 'expo-constants';
 
 export default class Paypal extends Component {
   state = {
@@ -7,8 +8,7 @@ export default class Paypal extends Component {
     approvalUrl: null,
     paymentId: null,
   };
-
-  componentDidMount() {
+  async componentDidMount() {
     let currency = '1 USD';
     currency.replace(' USD', '');
 
@@ -34,57 +34,57 @@ export default class Paypal extends Component {
         },
       ],
       redirect_urls: {
-        return_url: 'https://example.com',
+        return_url:
+          'http://127.0.0.1:19001/node_modules/expo/AppEntry.bundle?platform=ios&dev=true&minify=false&hot=false',
         cancel_url: 'https://example.com',
       },
     };
-    console.log('we are here');
-    fetch('https://api.sandbox.paypal.com/v1/oauth2/token', {
+    const PAYPAL_CLIENT = Constants.manifest.extra.payPalClient;
+    const PAYPAL_SECRET = Constants.manifest.extra.payPalSecret;
+    const PAYPAL_OAUTH_API = 'https://api.sandbox.paypal.com/v1/oauth2/token/';
+    const PAYPAL_ORDER_API =
+      'https://api.sandbox.paypal.com/v2/checkout/orders/';
+
+    console.log('sending to oauth....');
+
+    let authResponse = await fetch(PAYPAL_OAUTH_API, {
       method: 'POST',
-      mode: 'cors',
-      cache: 'no-cache',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
         Authorization:
-          'Basic QWZScVJLZTl4Z0hWamI2UEJkSlc4STdXU0tQVzdqWkFNMU5aOXNtNWlkQ1IwS2lOMmZtQ3ozbVdDRkdRMnlpZV9BM0VoVzBVTlBudklNdnA6RUthd3BNOHFSdlNkeTJPeDNpUmgweE55M01iOHlJMmhwYzZFVEFXSWZNMFF2cGVhNkdHd3lnV3IxVlViWEhSd1U3Wm5kZEp5TTRMeGtJZXE=',
+          'Basic QWNCRGcxTml0ZVpybjZpMVNnWkVVZXpOVGVuWnVuYTZ3OC1lX1FNTlNBS0JObGo4LXU3Vi1WaDFmM25ZMFduS1QxZzBLT1ZCNnVtaXZzXzc6RUZURi01SC1sT1o5MWxUa3IzbDZRTkRmaHgzY19SVlFvSWpJay1XU3R3Y0VQLTdJbzVBWVFzaFJGMnE1SE5oeFhaOER2ZTJLWmRoc3ZVZEM=',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json',
       },
-      body: JSON.stringify({ grant_type: 'client_credentials' }),
-    })
-      .then(response => {
-        console.log('responseeeeeeee', response);
-        this.setState({
-          accessToken: response.data.access_token,
-        });
+      body: `grant_type=client_credentials`,
+    });
+    const authData = await authResponse.json();
+    await this.setState({
+      accessToken: authData.access_token,
+    });
 
-        fetch(
-          'https://api.sandbox.paypal.com/v1/payments/payment',
-          dataDetail,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${this.state.accessToken}`,
-            },
-          }
-        )
-          .then(response => {
-            console.log('response!', response);
-            const { id, links } = response.data;
-            const approvalUrl = links.find(data => data.rel == 'approval_url');
-            console.log('approvalUrl', approvalUrl);
+    console.log('state', this.state);
+    const response = await fetch(
+      'https://api.sandbox.paypal.com/v1/payments/payment',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.state.accessToken}`,
+        },
+        // body: JSON.stringify(dataDetail),
+      }
+    );
 
-            this.setState({
-              paymentId: id,
-              approvalUrl: approvalUrl.href,
-            });
-            console.log('approvalURL1', this.state.approvalUrl);
-          })
-          .catch(err => {
-            console.log({ ...err });
-          });
-      })
-      .catch(err => {
-        console.log({ ...err });
-      });
+    console.log('response!', response);
+    const data2 = await response.json();
+    console.log('dat******************!', data2);
+
+    const { id, links } = response.data;
+    const approvalUrl = links.find(data => data.rel == 'approval_url');
+    this.setState({
+      paymentId: id,
+      approvalUrl: approvalUrl.href,
+    });
   }
 
   _onNavigationStateChange = webViewState => {
@@ -92,9 +92,7 @@ export default class Paypal extends Component {
       this.setState({
         approvalUrl: null,
       });
-
       const { PayerID, paymentId } = webViewState.url;
-
       fetch(
         `https://api.sandbox.paypal.com/v1/payments/payment/${paymentId}/execute`,
         { payer_id: PayerID },
@@ -113,22 +111,19 @@ export default class Paypal extends Component {
         });
     }
   };
-
   render() {
     const { approvalUrl } = this.state;
     console.log('Approval', approvalUrl);
-    console.log('STATE', this.state);
     return (
       <View style={{ flex: 1 }}>
         {approvalUrl ? (
           <WebView
-            style={{ height: 400, width: 300 }}
+            style={{ height: 400, width: 300, marginTop: 20 }}
             source={{ uri: approvalUrl }}
             onNavigationStateChange={this._onNavigationStateChange}
             javaScriptEnabled={true}
             domStorageEnabled={true}
             startInLoadingState={false}
-            style={{ marginTop: 20 }}
           />
         ) : (
           <ActivityIndicator />
