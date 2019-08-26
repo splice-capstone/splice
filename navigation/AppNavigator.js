@@ -15,21 +15,7 @@ import CurrentReceipt from '../screens/CurrentReceipt';
 import { Ionicons } from '@expo/vector-icons';
 import ReceiptForm from '../screens/ReceiptForm';
 import AccountScreen from '../screens/AccountScreen';
-<<<<<<< HEAD
-import LoadScreen from '../screens/LoadScreen';
-
-// import MainTabNavigator from './MainTabNavigator';
-
-// export default createAppContainer(
-//   createSwitchNavigator({
-//     // You could add another route here for authentication.
-//     // Read more at https://reactnavigation.org/docs/en/auth-flow.html
-//     Main: MainTabNavigator,
-//   })
-// );
-=======
 import LoginScreen from '../screens/LoginScreen';
->>>>>>> 1e36b0d64d9d2e61d6a6b3125f129591652d03c3
 
 const styles = StyleSheet.create({
   container: {
@@ -73,17 +59,8 @@ const InvisibleStack = createStackNavigator({
 
 const DrawerNavigator = createDrawerNavigator(
   {
-<<<<<<< HEAD
-    Home: { screen: HomeScreen },
-    'Add Receipt': { screen: CameraScreen },
-    'My Receipts': { screen: MyReceipts },
-    'Load Screen': { screen: LoadScreen },
-    'Current Receipt': {
-      screen: CurrentReceipt,
-=======
     Home: {
       screen: HomeScreen,
->>>>>>> 1e36b0d64d9d2e61d6a6b3125f129591652d03c3
       navigationOptions: {
         title: 'Home',
       },
