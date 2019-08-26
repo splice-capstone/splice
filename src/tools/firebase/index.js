@@ -189,11 +189,9 @@ export async function findUser(email) {
 
 export async function getMyReceipts(email) {
   try {
-    let user = db
-      .collection('users')
-      .doc(email);
+    let user = db.collection('users').doc(email);
 
-    user = await user.get()
+    user = await user.get();
     const myReceipts = await Promise.all(
       user.data().receipts.map(async receipt => {
         //get user's receipt_users doc from all the receipts they're on
@@ -271,7 +269,6 @@ export async function addUserToReceipt(receipt, email) {
 
     //add user to receipt payees array - false signifies whether the user has paid their share
     const payees = receiptDoc.data().payees;
-
     payees[email] = false;
 
     await db
@@ -358,50 +355,60 @@ export async function updateItem(receiptId, item, user, receiptUserId) {
   }
 }
 
-export async function toggleReceiptUser(user, itemId, receiptId, payees, amount) {
-  const newPayees = payees
-  const email = user.email
-  const photo = user.photoUrl
-
+export async function toggleReceiptUser(
+  user,
+  itemId,
+  receiptId,
+  payees,
+  amount
+) {
+  const newPayees = payees;
+  const email = user.email;
+  const photo = user.photoUrl;
 
   if (newPayees[user.email].isPayee) {
     newPayees[user.email] = {
       email,
       isPayee: false,
-      photo
-    }
+      photo,
+    };
   } else {
     newPayees[user.email] = {
       email,
       isPayee: true,
-      photo
-    }
+      photo,
+    };
   }
 
-  let trueArr = []
+  let trueArr = [];
 
   for (let [key, value] of Object.entries(payees)) {
     if (value.isPayee) {
-      trueArr.push(true)
+      trueArr.push(true);
     }
   }
 
-  const costPerUser = trueArr.length > 0 ? (amount / trueArr.length) : (amount)
+  const costPerUser = trueArr.length > 0 ? amount / trueArr.length : amount;
 
-  const itemDocRef = db.collection('receipts').doc(receiptId).collection('items').doc(itemId)
+  const itemDocRef = db
+    .collection('receipts')
+    .doc(receiptId)
+    .collection('items')
+    .doc(itemId);
 
   try {
-    const newItemDoc = await itemDocRef.set({
-      payees: payees,
-      costPerUser
-    }, {merge: true})
-
-  } catch(err) {
-    console.error('big old error in togglereceiptuser', err)
+    const newItemDoc = await itemDocRef.set(
+      {
+        payees: payees,
+        costPerUser,
+      },
+      { merge: true }
+    );
+  } catch (err) {
+    console.error('big old error in togglereceiptuser', err);
   }
 
-
-  return 'hey'
+  return 'hey';
 }
 
 export async function calculateSubtotal(receiptId, receiptUserId) {
@@ -427,10 +434,30 @@ export async function calculateSubtotal(receiptId, receiptUserId) {
   }
 }
 
-export async function completeReceipt(receipt, user) {
+export async function completeReceipt(
+  receiptId,
+  checkoutData,
+  receiptUserId,
+  email
+) {
   try {
-    //   add other users to the friends item on Users doc
-    return receipt.id;
+    //TODO: save friends
+    await db
+      .collection('receipts')
+      .doc(receiptId)
+      .collection('receipt_users')
+      .doc(receiptUserId)
+      .set(checkoutData, { merge: true });
+
+    const payees = {};
+    payees[email] = true;
+
+    await db
+      .collection('receipts')
+      .doc(receiptId)
+      .set({ payees }, { merge: true });
+
+    return 'success';
   } catch (err) {
     return `error: ${err}`;
   }

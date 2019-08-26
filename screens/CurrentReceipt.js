@@ -1,7 +1,7 @@
 /* eslint-disable quotes */
 /* eslint-disable complexity */
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, FlatList, ScrollView } from 'react-native';
+import { StyleSheet, FlatList, ScrollView, Alert } from 'react-native';
 import { useStateValue } from '../state';
 import ItemCard from './ItemCard';
 import {
@@ -28,6 +28,7 @@ import {
 import db, {
   calculateSubtotal,
   toggleReceiptUser,
+  completeReceipt,
 } from '../src/tools/firebase';
 
 export default function CurrentReceipt(props) {
@@ -68,7 +69,11 @@ export default function CurrentReceipt(props) {
 
   const tapItem = async (userId, itemId, payees, amount) => {
     try {
-      await toggleReceiptUser(userId, itemId, receiptId, payees, amount);
+      if (userValues[0].paid) {
+        Alert.alert("You've already checked out!");
+      } else {
+        await toggleReceiptUser(userId, itemId, receiptId, payees, amount);
+      }
     } catch (err) {
       console.error(err);
     }
@@ -82,6 +87,19 @@ export default function CurrentReceipt(props) {
       }
     });
     return Math.floor(subtotal);
+  };
+
+  const handleCheckout = () => {
+    //save user amounts on receipt_user doc & update to say user has paid
+    const checkoutData = {
+      subtotal: calcSubtotal() / 100,
+      tax: userTax,
+      tip: userTip,
+      total: userTotal,
+      paid: true,
+    };
+    const receiptUserId = userValues[0].id;
+    completeReceipt(receiptId, checkoutData, receiptUserId, currentUser.email);
   };
 
   useEffect(() => {
@@ -198,8 +216,10 @@ export default function CurrentReceipt(props) {
           <Text>Subtotal: ${receiptValue.subtotal / 100}</Text>
           <Text>Tax: ${receiptValue.tax / 100}</Text>
           <Text>Total: ${receiptValue.total / 100}</Text>
+          <Button onPress={() => handleCheckout()}>
+            <Text>Checkout</Text>
+          </Button>
           {!loadingState ? null : <Text>still loading..</Text>}
-
           {!loadingState && (
             <FlatList
               data={receiptItems}
