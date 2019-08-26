@@ -17,7 +17,7 @@ const parseReceipt = async (response, currentUser) => {
     //send user feedback on if items were not detected
     let comments = {};
 
-    let date = response.date.data;
+    let date = new Date(response.date.data);
     if (!date) {
       date = new Date();
       comments['date'] = 'No date detected - defaulted to today';

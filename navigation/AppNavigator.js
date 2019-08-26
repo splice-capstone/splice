@@ -15,16 +15,7 @@ import CurrentReceipt from '../screens/CurrentReceipt';
 import { Ionicons } from '@expo/vector-icons';
 import ReceiptForm from '../screens/ReceiptForm';
 import AccountScreen from '../screens/AccountScreen';
-
-// import MainTabNavigator from './MainTabNavigator';
-
-// export default createAppContainer(
-//   createSwitchNavigator({
-//     // You could add another route here for authentication.
-//     // Read more at https://reactnavigation.org/docs/en/auth-flow.html
-//     Main: MainTabNavigator,
-//   })
-// );
+import LoginScreen from '../screens/LoginScreen';
 
 const styles = StyleSheet.create({
   container: {
@@ -43,34 +34,57 @@ const styles = StyleSheet.create({
   },
 });
 
+export const AuthNavigator = createStackNavigator({
+  Login: {
+    screen: LoginScreen,
+    headerMode: 'none',
+    navigationOptions: {
+      title: 'Login',
+      headerVisibile: false,
+    },
+  },
+});
+
+const InvisibleStack = createStackNavigator({
+  'Add User': {
+    screen: AddUserToReceiptScreen,
+  },
+  'Receipt Form': {
+    screen: ReceiptForm,
+  },
+  'Current Receipt': {
+    screen: CurrentReceipt,
+  },
+});
+
 const DrawerNavigator = createDrawerNavigator(
   {
-    Home: { screen: HomeScreen },
-    'Add Receipt': { screen: CameraScreen },
-    'My Receipts': { screen: MyReceipts },
-    'Current Receipt': {
-      screen: CurrentReceipt,
+    Home: {
+      screen: HomeScreen,
       navigationOptions: {
-        drawerLabel: ' ',
+        title: 'Home',
       },
     },
-    'Add User': {
-      screen: AddUserToReceiptScreen,
+    'Add Receipt': {
+      screen: CameraScreen,
       navigationOptions: {
-        drawerLabel: ' ',
+        title: 'Add Receipt',
       },
     },
-    'Receipt Form': {
-      screen: ReceiptForm,
+    'My Receipts': {
+      screen: MyReceipts,
       navigationOptions: {
-        drawerLabel: ' ',
+        title: 'My Receipts',
       },
     },
     'My Account': {
       screen: AccountScreen,
       navigationOptions: {
-        drawerLabel: ' ',
+        title: 'My Account',
       },
+    },
+    'Current Receipt': {
+      screen: CurrentReceipt,
     },
   },
   {
@@ -81,10 +95,11 @@ const DrawerNavigator = createDrawerNavigator(
       activeTintColor: '#fff',
       activeBackgroundColor: '#c4f5df',
     },
+    initialRouteName: 'Home',
   }
 );
 
-const StackNavigator = createStackNavigator({
+const AppStack = createStackNavigator({
   DrawerNavigator: {
     screen: DrawerNavigator,
     navigationOptions: ({ navigation }) => {
@@ -129,6 +144,9 @@ const StackNavigator = createStackNavigator({
   },
 });
 
-export default createAppContainer(StackNavigator);
+const AppNavigator = createSwitchNavigator({
+  App: AppStack,
+  Invisible: InvisibleStack,
+});
 
-// export default
+export default createAppContainer(AppNavigator);

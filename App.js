@@ -8,25 +8,57 @@ import {
   StyleSheet,
   View,
   Image,
-  Text,
   Animated,
 } from 'react-native';
+import {
+  Container,
+  Header,
+  Content,
+  Button,
+  Text,
+  StyleProvider,
+  Title,
+} from 'native-base';
 import { Ionicons, Entypo } from '@expo/vector-icons';
-import AppNavigator from './navigation/AppNavigator';
+import AppNavigator, {
+  AuthStack,
+  AuthNavigator,
+  AppNav,
+} from './navigation/AppNavigator';
 import { StateProvider, initialState, reducer, useStateValue } from './state';
 import LoadingScreen from './screens/LoadingScreen';
+import LoginScreen from './screens/LoginScreen';
+import HomeScreen from './screens/HomeScreen';
+import getTheme from './native-base-theme/components';
+import commonColor from './native-base-theme/variables/commonColor';
+import { AsyncStorage } from 'react-native';
+import { signIn, isSignedIn } from './src/utils/auth';
 
-export default function App() {
+export default function App(props) {
   const [isAppReady, setAppReady] = useState(false);
   const [isSplashReady, setSplashReady] = useState(false);
   const [value] = useState(new Animated.Value(1));
+  const [{ currentUser }, dispatch] = useStateValue();
+
+  const setUser = user => {
+    dispatch({ type: 'SET_USER', user });
+  };
+
+  const checkForUser = async () => {
+    //check if signed in from auth function
+    const user = await isSignedIn();
+    if (user) {
+      await setUser(user[0]);
+    }
+  };
 
   useEffect(() => {
+    checkForUser();
     Animated.timing(value, {
       toValue: 0,
       duration: 1000,
     }).start();
-  });
+  }, []);
 
   if (!isSplashReady) {
     return (
@@ -46,14 +78,22 @@ export default function App() {
       />
     );
   }
-  return (
-    <StateProvider initialState={initialState} reducer={reducer}>
+  if (!currentUser || !currentUser.email) {
+    return (
+      <Animated.View style={{ ...styles.container }}>
+        {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+        <LoginScreen />
+      </Animated.View>
+    );
+  }
+  if (currentUser.email) {
+    return (
       <Animated.View style={{ ...styles.container }}>
         {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
         <AppNavigator />
       </Animated.View>
-    </StateProvider>
-  );
+    );
+  }
 }
 
 async function _cacheSplashResourcesAsync() {
@@ -62,21 +102,23 @@ async function _cacheSplashResourcesAsync() {
 }
 
 async function _cacheResourcesAsync(setAppReady) {
-  SplashScreen.hide();
-  await Promise.all([
-    Asset.loadAsync([require('./assets/images/splice.png')]),
-    Asset.loadAsync([require('./assets/images/google_signin.png')]),
-    Font.loadAsync({
-      Roboto: require('native-base/Fonts/Roboto.ttf'),
-      Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
-      ...Ionicons.font,
-      ...Entypo.font,
-      // We include SpaceMono because we use it in HomeScreen.js. Feel free to
-      // remove this if you are not using it in your app
-      'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
-    }),
-  ]);
-  setTimeout(() => setAppReady(true), 2000);
+  try {
+    SplashScreen.hide();
+    await Promise.all([
+      Asset.loadAsync([require('./assets/images/splice.png')]),
+      Asset.loadAsync([require('./assets/images/google_signin.png')]),
+      Font.loadAsync({
+        Roboto: require('native-base/Fonts/Roboto.ttf'),
+        Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
+        ...Ionicons.font,
+        ...Entypo.font,
+        'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
+      }),
+    ]);
+    setTimeout(() => setAppReady(true), 2000);
+  } catch (err) {
+    console.warn(err);
+  }
 }
 
 function handleLoadingError(error) {

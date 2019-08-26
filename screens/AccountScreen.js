@@ -1,15 +1,7 @@
 import React from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { findOrCreateUser, getMyReceipts } from '../src/tools/firebase';
-import Constants from 'expo-constants';
-import LoginScreen from './LoginScreen';
-import LoggedInScreen from './LoggedInScreen';
-import * as Google from 'expo-google-app-auth';
-import { useStateValue } from '../state';
-import * as Contacts from 'expo-contacts';
-import * as Permissions from 'expo-permissions';
 
-export default function HomeScreen(props) {
+export default function AccountScreen(props) {
   return (
     <View style={styles.container}>
       <ScrollView
