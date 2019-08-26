@@ -1,3 +1,5 @@
+/* eslint-disable max-statements */
+/* eslint-disable complexity */
 import axios from 'axios';
 import Constants from 'expo-constants';
 import _ from 'lodash';
@@ -13,13 +15,23 @@ const create = async (receipt, receiptItems, currentUser) => {
 };
 
 const parseReceipt = async (response, currentUser) => {
+  const itemPayees = {
+    [currentUser['email']]: {
+      email: (currentUser['email']),
+      isPayee: false,
+      photo: currentUser.photoUrl
+    }
+  }
+
   try {
     //send user feedback on if items were not detected
     let comments = {};
+    let date = (response.date.data);
+    console.log('datatatatatat', date)
 
-    let date = new Date(response.date.data);
     if (!date) {
       date = new Date();
+      console.log('new date!!!!', date)
       comments['date'] = 'No date detected - defaulted to today';
     }
 
@@ -31,8 +43,8 @@ const parseReceipt = async (response, currentUser) => {
     }
 
     //set host as one of the payees
-    let payees = {};
-    payees[currentUser.email] = false;
+    let payee = {};
+    payee[currentUser.email] = false;
 
     //get base receipt level structure
     const receipt = {
@@ -43,7 +55,7 @@ const parseReceipt = async (response, currentUser) => {
       total: Math.ceil(response.totalAmount.data * 100),
       tip: 0,
       owner: currentUser.email,
-      payees,
+      payees: payee,
       open: true,
     };
 
@@ -84,10 +96,12 @@ const parseReceipt = async (response, currentUser) => {
           duplicateTextCheck.push(response.amounts[i].text);
 
           //add keys needed for receipt_items document in database
+
+
           receiptItems.push({
             amount: Math.ceil(data * 100),
             name: text,
-            payees,
+            payees: itemPayees,
           });
 
           //increment the sum for the check at the end
@@ -106,7 +120,7 @@ const parseReceipt = async (response, currentUser) => {
       receiptItems.push({
         amount: receipt.subtotal - sum,
         name: 'Misc item',
-        payees,
+        payees: itemPayees,
       });
       comments['misc'] =
         'Items did not add up to subtotal so misc item was added';
