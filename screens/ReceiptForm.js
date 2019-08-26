@@ -11,7 +11,7 @@ import {
   Input,
   View,
 } from 'native-base';
-import ItemCard from './ItemCard';
+import ItemCardEdit from './ItemCardEdit';
 import { editReceipt, addReceiptItems } from '../src/tools/firebase';
 
 export default class ReceiptForm extends React.Component {
@@ -27,8 +27,6 @@ export default class ReceiptForm extends React.Component {
     };
     this.handleCreateNewItem = this.handleCreateNewItem.bind(this);
     this.handleComplete = this.handleComplete.bind(this);
-    this.handleNameText = this.handleNameText.bind(this);
-    this.handleAmountText = this.handleAmountText.bind(this);
   }
 
   updateTotal(tip) {
@@ -40,13 +38,13 @@ export default class ReceiptForm extends React.Component {
     });
   }
 
-  handleNameText(name) {
+  handleNameText = name => {
     this.setState({ name });
-  }
+  };
 
-  handleAmountText(amount) {
+  handleAmountText = amount => {
     this.setState({ amount });
-  }
+  };
 
   async handleCreateNewItem(event) {
     event.preventDefault();
@@ -132,7 +130,7 @@ export default class ReceiptForm extends React.Component {
               />
             </Item>
           </Form>
-          <ItemCard
+          <ItemCardEdit
             receiptId={this.props.navigation.getParam('current').id}
             receiptUserId={this.props.navigation.getParam('userId')}
           />

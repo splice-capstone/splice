@@ -71,7 +71,7 @@ export default class Paypal extends Component {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.state.accessToken}`,
         },
-        // body: JSON.stringify(dataDetail),
+        body: dataDetail,
       }
     );
 
