@@ -45,18 +45,6 @@ export const AuthNavigator = createStackNavigator({
   },
 });
 
-const InvisibleStack = createStackNavigator({
-  'Add User': {
-    screen: AddUserToReceiptScreen,
-  },
-  'Receipt Form': {
-    screen: ReceiptForm,
-  },
-  'Current Receipt': {
-    screen: CurrentReceipt,
-  },
-});
-
 const DrawerNavigator = createDrawerNavigator(
   {
     Home: {
@@ -81,6 +69,11 @@ const DrawerNavigator = createDrawerNavigator(
       screen: AccountScreen,
       navigationOptions: {
         title: 'My Account',
+        headerTitle: 'My Account',
+        headerStyle: {
+          backgroundColor: '#1E90FF',
+        },
+        headerTintColor: 'white',
       },
     },
     'Current Receipt': {
@@ -143,11 +136,19 @@ const AppStack = createStackNavigator({
       }
     },
   },
+  'Add User': {
+    screen: AddUserToReceiptScreen,
+  },
+  'Receipt Form': {
+    screen: ReceiptForm,
+  },
+  'Current Receipt': {
+    screen: CurrentReceipt,
+  },
 });
 
 const AppNavigator = createSwitchNavigator({
   App: AppStack,
-  Invisible: InvisibleStack,
 });
 
 export default createAppContainer(AppNavigator);
