@@ -88,9 +88,7 @@ export default function CurrentReceipt(props) {
     }
     if (userValues && receiptValue && userValues[0].id) {
       //recalculate my user subtotals based on sum of my items map
-      calculateSubtotal(receiptId, userValues[0].id).then(subtotal =>
-        setSubtotal(subtotal / 100)
-      );
+      setSubtotal(calcSubtotal())
       //calculate user tax based on user subtotal/overall total * overall tax
       setTax(((userSubtotal / receiptValue.total) * receiptValue.tax) / 100);
       //calculate user tip based on user subtotal/overall total * overall tip
@@ -164,7 +162,7 @@ export default function CurrentReceipt(props) {
               padding: 10,
             }}
           >
-            <Text light>My Subtotal: ${calcSubtotal() / 100}</Text>
+            <Text light>My Subtotal: ${userSubtotal / 100}</Text>
             <Text light>My Tax: ${userTax}</Text>
             <Text light>My Tip: ${userTip}</Text>
           </View>
