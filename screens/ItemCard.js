@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react';
 import {
   Container,
   Header,
@@ -15,31 +15,27 @@ import {
   Body,
   Right,
   Thumbnail,
-  View
-} from "native-base";
-import { useCollectionData } from "react-firebase-hooks/firestore";
-import db, { updateItem } from "../src/tools/firebase";
-import { useStateValue } from "../state";
+  View,
+} from 'native-base';
+import { useCollectionData } from 'react-firebase-hooks/firestore';
+import db, { updateItem } from '../src/tools/firebase';
+import { useStateValue } from '../state';
 
 export default function ItemCard(props) {
+  const itemData = props.itemInfo.item;
 
-  const itemData = props.itemInfo.item
-
-  let photoArr = []
+  let photoArr = [];
 
   for (let [key, value] of Object.entries(itemData.payees)) {
     if (value.isPayee) {
-      photoArr.push(value.photo)
+      photoArr.push(value.photo);
     }
   }
-
-
-  //add circles for users that are on the item
 
   return (
     <ListItem
       noIdent
-      style={{ backgroundColor: "white" }}
+      style={{ backgroundColor: 'white' }}
       onPress={() =>
         props.presser(
           props.receiptUser,
@@ -53,9 +49,9 @@ export default function ItemCard(props) {
         <View
           style={{
             flex: 1,
-            flexDirection: "row",
-            justifyContent: "space-evenly",
-            padding: 2
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+            padding: 2,
           }}
         >
           <Text>{itemData.name}</Text>
@@ -69,9 +65,7 @@ export default function ItemCard(props) {
           </Text> */}
           <Right>
             {photoArr.map((photoUri, ind) => {
-              return (
-                <Thumbnail key={ind} small source={{uri: photoUri}} />
-              )
+              return <Thumbnail key={ind} small source={{ uri: photoUri }} />;
             })}
           </Right>
         </View>

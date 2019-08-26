@@ -1,7 +1,7 @@
 /* eslint-disable quotes */
 /* eslint-disable complexity */
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, FlatList } from 'react-native';
+import { StyleSheet, FlatList, ScrollView } from 'react-native';
 import { useStateValue } from '../state';
 import ItemCard from './ItemCard';
 import {
@@ -87,7 +87,7 @@ export default function CurrentReceipt(props) {
         subtotal += item.costPerUser;
       }
     });
-    return subtotal;
+    return Math.floor(subtotal);
   };
 
   useEffect(() => {
@@ -197,7 +197,7 @@ export default function CurrentReceipt(props) {
               padding: 10,
             }}
           >
-            <Text light>My Subtotal: ${userSubtotal}</Text>
+            <Text light>My Subtotal: ${calcSubtotal() / 100}</Text>
             <Text light>My Tax: ${userTax}</Text>
             <Text light>My Tip: ${userTip}</Text>
           </View>
@@ -209,24 +209,10 @@ export default function CurrentReceipt(props) {
             My Total: ${userTotal}
           </Text>
 
-          <ScrollView>
-            <ItemCard
-              receiptId={props.navigation.getParam(
-                'receiptId',
-                'Sd5SAIYhhN7VWwmSNIBk'
-              )}
-              receiptUserId={userValues[0].id}
-            />
-          </ScrollView>
-
           <Text>Owner: {receiptValue.owner}</Text>
           <Text>Subtotal: ${receiptValue.subtotal / 100}</Text>
           <Text>Tax: ${receiptValue.tax / 100}</Text>
           <Text>Total: ${receiptValue.total / 100}</Text>
-          <Text>My Subtotal: ${calcSubtotal() / 100}</Text>
-          <Text>My Tax: ${userTax}</Text>
-          <Text>My Tip: ${userTip}</Text>
-          <Text>My Total: ${userTotal}</Text>
           {!loadingState ? null : <Text>still loading..</Text>}
 
           {!loadingState && (
@@ -249,7 +235,7 @@ export default function CurrentReceipt(props) {
                   presser={tapItem}
                 />
               )}
-            />
+            ></FlatList>
           )}
         </Content>
       )}

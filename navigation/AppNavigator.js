@@ -48,15 +48,12 @@ export const AuthNavigator = createStackNavigator({
 const InvisibleStack = createStackNavigator({
   'Add User': {
     screen: AddUserToReceiptScreen,
-    navigationOptions: {
-      title: 'Add User',
-    },
   },
   'Receipt Form': {
     screen: ReceiptForm,
-    navigationOptions: {
-      title: 'Edit Receipt',
-    },
+  },
+  'Current Receipt': {
+    screen: CurrentReceipt,
   },
 });
 
@@ -79,18 +76,15 @@ const DrawerNavigator = createDrawerNavigator(
       navigationOptions: {
         title: 'My Receipts',
       },
-    }, //for testing - take out for prod
-    'Current Receipt': {
-      screen: CurrentReceipt,
-      navigationOptions: {
-        title: 'Current Receipt',
-      },
     },
     'My Account': {
       screen: AccountScreen,
       navigationOptions: {
         title: 'My Account',
       },
+    },
+    'Current Receipt': {
+      screen: CurrentReceipt,
     },
   },
   {
