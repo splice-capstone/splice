@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import React from 'react';
 import { View } from 'react-native';
 import {
@@ -16,20 +17,18 @@ import PayPal from './PayPal';
 const MyReceiptsCard = props => {
   const { restaurant, date, id, total, owner } = props.recptsData;
   const {
-    myDetails: { isOwner, userTotal, paid },
+    myDetails: { isOwner, paid },
   } = props.recptsData;
 
   const totalInDollars = total / 100;
-  const userTotalInDollars = userTotal / 100;
-
   return (
     <Card style={{ flex: 0 }} onPress>
       <CardItem>
         <Left>
           <Body>
             <Text>{restaurant}</Text>
-            <Text note>{date}</Text>
             <PayPal />
+            <Text note>{new Date(date).toLocaleDateString('en-US')}</Text>
           </Body>
         </Left>
       </CardItem>
@@ -45,11 +44,9 @@ const MyReceiptsCard = props => {
                 }`}
               </Text>
             ) : (
-              <Text style={paid ? { color: 'green' } : { color: 'red' }}>
-                {`${
-                  paid ? 'Paid' : 'Need to pay'
-                }: $${userTotalInDollars} to ${owner}`}
-              </Text>
+              <Text style={paid ? { color: 'green' } : { color: 'red' }}>{`${
+                paid ? 'Paid' : 'Need to pay'
+              }: ${owner}`}</Text>
             )}
           </Body>
         </Left>
