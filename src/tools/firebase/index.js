@@ -208,10 +208,6 @@ export async function getMyReceipts(email) {
           myDetails = {
             name: receiptData.name,
             isOwner: receiptData.isOwner,
-            // userSubtotal: receiptData.userSubtotal,
-            // userTax: receiptData.userTax,
-            // userTip: receiptData.userTip,
-            // userTotal: receiptData.userTotal,
             paid: receiptData.paid,
             photoUrl: receiptData.photoUrl,
           };
@@ -239,18 +235,17 @@ export async function getMyReceipts(email) {
   }
 }
 
-export async function addUserToReceipt(receipt, email) {
+export async function addUserToReceipt(receipt, userEmail) {
+  console.log(receipt, userEmail);
   try {
-    //get receipt doc
-    const receiptRef = await db.collection('receipts').doc(receipt.id);
-    const receiptDoc = await receiptRef.get();
+    // const receiptDoc = await receiptRef.get();
 
     //get user doc & add receipt to user doc receipts reference array
-    const userDoc = await db.collection('users').doc(email);
+    const userDoc = await db.collection('users').doc(userEmail);
 
     const userData = await db
       .collection('users')
-      .doc(email)
+      .doc(userEmail)
       .get();
 
     //add receipt_users doc for user on current receipt
@@ -261,20 +256,21 @@ export async function addUserToReceipt(receipt, email) {
       .add({
         isOwner: false,
         name: userData.data().name,
-        email,
+        email: userEmail,
         paid: false,
         photoUrl: userData.data().photoUrl,
         items: [],
       });
 
     //add user to receipt payees array - false signifies whether the user has paid their share
-    const payees = receiptDoc.data().payees;
-    payees[email] = false;
+    const newPayees = receipt.payees;
+
+    newPayees[userEmail] = false;
 
     await db
       .collection('receipts')
       .doc(receipt.id)
-      .set({ payees }, { merge: true });
+      .set({ payees: newPayees }, { merge: true });
 
     userDoc.update({
       receipts: firebase.firestore.FieldValue.arrayUnion(
@@ -282,75 +278,46 @@ export async function addUserToReceipt(receipt, email) {
       ),
     });
 
-    return receipt.id;
-  } catch (err) {
-    return `error: ${err}`;
-  }
-}
+    const itemMapArr = [];
 
-export async function updateItem(receiptId, item, user, receiptUserId) {
-  try {
-    //find current user on payees map & update to opposite - toggle function
-    const payees = item.payees;
-    payees[user.email] = !payees[user.email];
-
-    //this updates the payees map on the items doc
-    await db
+    //get query snapshot of itemCollection
+    const itemColl = await db
       .collection('receipts')
-      .doc(receiptId)
+      .doc(receipt.id)
       .collection('items')
-      .doc(item.id)
-      .set(
-        {
-          payees,
-        },
-        { merge: true }
-      );
-    //recalculate item price per user - count how many payees are true and divide amount by that number, save this val on item.
-    const itemRef = db
-      .collection('receipts')
-      .doc(receiptId)
-      .collection('items')
-      .doc(item.id);
-
-    const itemData = await itemRef.get();
-    const itemPayees = itemData.data().payees;
-    const trues = Object.values(itemPayees).filter(val => val === true);
-    let costPerUser = itemData.data().amount;
-
-    if (trues.length > 0) {
-      costPerUser = itemData.data().amount / trues.length;
-    }
-    await itemRef.set({ costPerUser }, { merge: true });
-
-    //add item ref to receipt_users doc
-    if (payees[user.email]) {
-      await db
-        .collection('receipts')
-        .doc(receiptId)
-        .collection('receipt_users')
-        .doc(receiptUserId)
-        .update({
-          items: firebase.firestore.FieldValue.arrayUnion(itemRef),
-        });
-    } else {
-      await db
-        .collection('receipts')
-        .doc(receiptId)
-        .collection('receipt_users')
-        .doc(receiptUserId)
-        .update({
-          items: firebase.firestore.FieldValue.arrayRemove(itemRef),
-        });
-    }
-    await db
-      .collection('receipts')
-      .doc(receiptId)
       .get();
 
-    return costPerUser;
+    //add item document id and payee info into itemMapArr
+    const itemCollection = itemColl.forEach(querySnap => {
+      const { payees } = querySnap.data();
+      itemMapArr.push({
+        id: querySnap.id,
+        payees,
+      });
+    });
+
+    //map over itemCollection doc replacing each element
+    //with an array of promises returned from .set on each doc
+    await Promise.all(
+      itemMapArr.map(async itemDataObj => {
+        itemDataObj.payees[userEmail] = {
+          email: userEmail,
+          isPayee: false,
+          photo: userData.data().photoUrl,
+        };
+
+        return db
+          .collection('receipts')
+          .doc(receipt.id)
+          .collection('items')
+          .doc(itemDataObj.id)
+          .set({ payees: itemDataObj.payees }, { merge: true });
+      })
+    );
+
+    return receipt.id;
   } catch (err) {
-    console.log('err', err);
+    console.error(err);
     return `error: ${err}`;
   }
 }
@@ -406,6 +373,7 @@ export async function toggleReceiptUser(
     );
   } catch (err) {
     console.error('big old error in togglereceiptuser', err);
+    return `error: ${err}`;
   }
 
   return 'hey';

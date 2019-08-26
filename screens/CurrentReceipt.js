@@ -81,6 +81,8 @@ export default function CurrentReceipt(props) {
   };
 
   useEffect(() => {
+    const unsub = db
+      .collection('receipts')
       .doc(receiptId)
       .collection('items')
       .onSnapshot(snap => {
