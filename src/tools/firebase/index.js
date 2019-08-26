@@ -352,14 +352,11 @@ export async function updateItem(receiptId, item, user, receiptUserId) {
   }
 }
 
-export async function toggleReceiptUser(user, itemId, receiptId, payees) {
-  // console.log('toggling the user receipt!', itemDocRef, userId)
+export async function toggleReceiptUser(user, itemId, receiptId, payees, amount) {
   const newPayees = payees
-
   const email = user.email
   const photo = user.photoUrl
 
-  console.log(user, itemId, receiptId)
 
   if (newPayees[user.email].isPayee) {
     newPayees[user.email] = {
@@ -375,14 +372,24 @@ export async function toggleReceiptUser(user, itemId, receiptId, payees) {
     }
   }
 
+  let trueArr = []
+
+  for (let [key, value] of Object.entries(payees)) {
+    if (value.isPayee) {
+      trueArr.push(true)
+    }
+  }
+
+  const costPerUser = trueArr.length > 0 ? (amount / trueArr.length) : (amount)
+
   const itemDocRef = db.collection('receipts').doc(receiptId).collection('items').doc(itemId)
 
   try {
     const newItemDoc = await itemDocRef.set({
-      payees: payees
+      payees: payees,
+      costPerUser
     }, {merge: true})
 
-    // console.log(newItemDoc)
   } catch(err) {
     console.error('big old error in togglereceiptuser', err)
   }

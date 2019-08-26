@@ -61,10 +61,9 @@ export default function CurrentReceipt(props) {
     }
   );
 
-  const tapItem = async (userId, itemId, payees) => {
-    console.log('in tapItem')
+  const tapItem = async (userId, itemId, payees, amount) => {
     try {
-      const hehe = await toggleReceiptUser(userId, itemId, receiptId, payees)
+      const hehe = await toggleReceiptUser(userId, itemId, receiptId, payees, amount)
       console.log(hehe)
     } catch (err) {
       console.error(err)
@@ -72,7 +71,6 @@ export default function CurrentReceipt(props) {
   }
 
   useEffect(() => {
-    console.log("ididididididid", receiptId);
 
     const unsub = db
       .collection("receipts")
@@ -81,13 +79,13 @@ export default function CurrentReceipt(props) {
       .onSnapshot(snap => {
         const itemArr = [];
         snap.forEach(itemDoc => {
-          const { name, amount, payees } = itemDoc.data();
+          const { name, amount, payees, costPerUser } = itemDoc.data();
           itemArr.push({
             name,
             key: itemDoc.id,
             amount,
             payees,
-            // itemDoc
+            costPerUser
           });
         });
         setLoadingState(false);
@@ -186,7 +184,6 @@ export default function CurrentReceipt(props) {
           <Text>My Tax: ${userTax}</Text>
           <Text>My Tip: ${userTip}</Text>
           <Text>My Total: ${userTotal}</Text>
-          {/* {console.log(itemLoading, itemValues)} */}
           {!loadingState ? (
             null
           ) : (

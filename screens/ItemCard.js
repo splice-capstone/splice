@@ -22,7 +22,20 @@ import db, { updateItem } from "../src/tools/firebase";
 import { useStateValue } from "../state";
 
 export default function ItemCard(props) {
-  console.log(props.presser);
+
+  const itemData = props.itemInfo.item
+
+  console.log(itemData.costPerUser, typeof itemData.costPerUser)
+
+  let photoArr = []
+
+  for (let [key, value] of Object.entries(itemData.payees)) {
+    if (value.isPayee) {
+      photoArr.push(value.photo)
+    }
+  }
+
+
   return (
     <ListItem
       noIdent
@@ -30,8 +43,9 @@ export default function ItemCard(props) {
       onPress={() =>
         props.presser(
           props.receiptUser,
-          props.itemInfo.item.key,
-          props.itemInfo.item.payees
+          itemData.key,
+          itemData.payees,
+          itemData.amount
         )
       }
     >
@@ -44,15 +58,22 @@ export default function ItemCard(props) {
             padding: 2
           }}
         >
-          <Text>{props.itemInfo.item.name}</Text>
-          <Text>${props.itemInfo.item.amount / 100}</Text>
-          <Text>
+          <Text>{itemData.name}</Text>
+          <Text>${itemData.costPerUser / 100}</Text>
+          {/* <Text>
             {props.itemInfo.item.payees[props.receiptUser.email].isPayee ? (
               <Icon color="3D9970" name="checkmark" />
             ) : (
               ""
             )}
-          </Text>
+          </Text> */}
+          <Right>
+            {photoArr.map((photoUri, ind) => {
+              return (
+                <Thumbnail key={ind} small source={{uri: photoUri}} />
+              )
+            })}
+          </Right>
         </View>
       </Content>
     </ListItem>
