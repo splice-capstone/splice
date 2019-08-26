@@ -1,125 +1,71 @@
 import React from 'react';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { findOrCreateUser } from '../src/tools/firebase';
+import { Image, ScrollView, StyleSheet, View } from 'react-native';
 import Constants from 'expo-constants';
-import LoginScreen from './LoginScreen';
-import LoggedInScreen from './LoggedInScreen';
-import * as Google from 'expo-google-app-auth';
 import { useStateValue } from '../state';
-import * as Contacts from 'expo-contacts';
-import * as Permissions from 'expo-permissions';
+import { Container, Header, Content, Button, Text, Title } from 'native-base';
+import { signOut } from '../src/utils/auth';
 
 export default function HomeScreen(props) {
-  const [{ currentUser, contacts }, dispatch] = useStateValue();
+  const [{ currentUser }, dispatch] = useStateValue();
 
-  const setUser = (user, receipts) => {
-    dispatch({ type: 'SET_USER', user, receipts });
+  const setUser = user => {
+    dispatch({ type: 'SET_USER', user });
   };
 
-  const setContacts = contacts => {
-    dispatch({ type: 'SET_CONTACTS', contacts });
-  };
-
-  async function checkMultiPermissions() {
-    const { status, expires } = await Permissions.askAsync(
-      Permissions.CONTACTS
-    );
-    if (status !== 'granted') {
-      alert('Hey! You have not enabled selected permissions');
-    } else {
-      const { data } = await Contacts.getContactsAsync({
-        fields: [Contacts.Fields.Emails],
-      });
-      if (data.length > 0) {
-        const contacts = data.map(item => {
-          if (item.emails && item.emails.length) {
-            email = item.emails[0].email;
-          }
-          return {
-            name: item.name,
-            email,
-          };
-        });
-        return contacts;
-      }
-    }
-  }
-
-  // if (!contacts) {
-  //   const newContacts = checkMultiPermissions();
-  //   setContacts(newContacts);
-  // }
-
-  const signIn = async () => {
-    try {
-      const result = await Google.logInAsync({
-        androidClientId: Constants.manifest.extra.androidClientId,
-        iosClientId: Constants.manifest.extra.iosClientId,
-        scopes: ['profile', 'email'],
-      });
-      if (result.type === 'success') {
-        let userInfoResponse = await fetch(
-          'https://www.googleapis.com/userinfo/v2/me',
-          {
-            headers: { Authorization: `Bearer ${result.accessToken}` },
-          }
-        );
-        await findOrCreateUser(result.user);
-        await setUser(
-          {
-            name: result.user.name,
-            email: result.user.email,
-            photoUrl: result.user.photoUrl,
-          }
-        );
-        return 'logged in';
-      } else {
-        return { cancelled: true };
-      }
-    } catch (err) {
-      return { error: err };
-    }
+  handleSignOut = () => {
+    //clear token from Async storage
+    signOut();
+    //clear user from state which will navigate to login
+    setUser({});
   };
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
-      >
-        <View style={styles.welcomeContainer}>
-          <Image
-            source={require('../assets/images/splice.png')}
-            style={styles.welcomeImage}
-          />
-          <Text style={styles.header}>splice</Text>
-          <View>
-            {!currentUser.name ? (
-              <LoginScreen signIn={signIn} />
-            ) : (
-              <LoggedInScreen
-                user={currentUser}
-                navigation={props.navigation}
-              />
-            )}
-          </View>
-        </View>
-      </ScrollView>
+      <View style={styles.welcomeContainer}>
+        <Image
+          source={require('../assets/images/splice.png')}
+          style={styles.welcomeImage}
+        />
+        <Text style={styles.header}>splice</Text>
+      </View>
+      <View style={styles.bottom}>
+        <Button
+          title="TAKE A SNAPSHOT"
+          success
+          style={styles.button}
+          onPress={() => props.navigation.navigate('Add Receipt')}
+        >
+          <Text light>TAKE A SNAPSHOT</Text>
+        </Button>
+        <Button
+          light
+          style={styles.button}
+          onPress={() => props.navigation.navigate('Receipt Form')}
+        >
+          <Text black center>
+            BY HAND
+          </Text>
+        </Button>
+        <Button bordered style={styles.button} onPress={() => handleSignOut()}>
+          <Text black center>
+            SIGN OUT
+          </Text>
+        </Button>
+      </View>
     </View>
   );
 }
-
-HomeScreen.navigationOptions = {
-  header: null,
-};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    marginTop: 30,
   },
-  contentContainer: {
-    paddingTop: 30,
+  bottom: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    marginBottom: 50,
   },
   header: {
     marginTop: 10,
@@ -127,20 +73,19 @@ const styles = StyleSheet.create({
   },
   welcomeContainer: {
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 40,
     marginBottom: 20,
+  },
+  button: {
+    margin: 5,
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   welcomeImage: {
     width: 100,
     height: 80,
     resizeMode: 'contain',
     marginTop: 3,
-    marginLeft: -10,
-  },
-  loginContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 200,
-    marginBottom: 20,
   },
 });
