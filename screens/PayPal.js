@@ -9,7 +9,7 @@ export default class Paypal extends Component {
   };
 
   componentDidMount() {
-    let currency = '100 USD';
+    let currency = '1 USD';
     currency.replace(' USD', '');
 
     const dataDetail = {
@@ -39,19 +39,18 @@ export default class Paypal extends Component {
       },
     };
     console.log('we are here');
-    fetch(
-      'https://api.sandbox.paypal.com/v1/oauth2/token',
-      { grant_type: 'client_credentials' },
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization:
-            'Basic QWNCRGcxTml0ZVpybjZpMVNnWkVVZXpOVGVuWnVuYTZ3OC1lX1FNTlNBS0JObGo4LXU3Vi1WaDFmM25ZMFduS1QxZzBLT1ZCNnVtaXZzXzc6RUZURi01SC1sT1o5MWxUa3IzbDZRTkRmaHgzY19SVlFvSWpJay1XU3R3Y0VQLTdJbzVBWVFzaFJGMnE1SE5oeFhaOER2ZTJLWmRoc3ZVZEM=',
-        },
-      }
-    )
+    fetch('https://api.sandbox.paypal.com/v1/oauth2/token', {
+      method: 'POST',
+      mode: 'cors',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization:
+          'Basic QWZScVJLZTl4Z0hWamI2UEJkSlc4STdXU0tQVzdqWkFNMU5aOXNtNWlkQ1IwS2lOMmZtQ3ozbVdDRkdRMnlpZV9BM0VoVzBVTlBudklNdnA6RUthd3BNOHFSdlNkeTJPeDNpUmgweE55M01iOHlJMmhwYzZFVEFXSWZNMFF2cGVhNkdHd3lnV3IxVlViWEhSd1U3Wm5kZEp5TTRMeGtJZXE=',
+      },
+      body: JSON.stringify({ grant_type: 'client_credentials' }),
+    })
       .then(response => {
-        console.log('and now here');
         console.log('responseeeeeeee', response);
         this.setState({
           accessToken: response.data.access_token,
@@ -71,11 +70,13 @@ export default class Paypal extends Component {
             console.log('response!', response);
             const { id, links } = response.data;
             const approvalUrl = links.find(data => data.rel == 'approval_url');
+            console.log('approvalUrl', approvalUrl);
 
             this.setState({
               paymentId: id,
               approvalUrl: approvalUrl.href,
             });
+            console.log('approvalURL1', this.state.approvalUrl);
           })
           .catch(err => {
             console.log({ ...err });
@@ -116,6 +117,7 @@ export default class Paypal extends Component {
   render() {
     const { approvalUrl } = this.state;
     console.log('Approval', approvalUrl);
+    console.log('STATE', this.state);
     return (
       <View style={{ flex: 1 }}>
         {approvalUrl ? (

@@ -14,6 +14,8 @@ import db, {
   calculateSubtotal,
   toggleReceiptUser,
 } from '../src/tools/firebase';
+import LoadScreen from './LoadScreen';
+
 export default function CurrentReceipt(props) {
   const [{ currentUser }, dispatch] = useStateValue();
   const [comments, setComments] = useState('');
@@ -105,7 +107,7 @@ export default function CurrentReceipt(props) {
       {(receiptError || userError) && (
         <Text>Error: {JSON.stringify(receiptError)}</Text>
       )}
-      {(receiptLoading || userLoading) && <Text>Collection: Loading...</Text>}
+      {(receiptLoading || userLoading) && <LoadScreen />}
       {receiptValue && userValues && (
         <Content>
           <View
