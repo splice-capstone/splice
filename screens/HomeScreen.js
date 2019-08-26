@@ -1,5 +1,11 @@
 import React from 'react';
-import { Image, ScrollView, StyleSheet, View } from 'react-native';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+} from 'react-native';
 import Constants from 'expo-constants';
 import { useStateValue } from '../state';
 import { Container, Header, Content, Button, Text, Title } from 'native-base';

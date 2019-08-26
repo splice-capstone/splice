@@ -68,7 +68,6 @@ export default function CurrentReceipt(props) {
     });
     return Math.floor(subtotal);
   };
-
   const handleCheckout = () => {
     //save user amounts on receipt_user doc & update to say user has paid
     const checkoutData = {

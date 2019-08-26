@@ -27,7 +27,6 @@ const MyReceiptsCard = props => {
         <Left>
           <Body>
             <Text>{restaurant}</Text>
-            <PayPal />
             <Text note>{new Date(date).toLocaleDateString('en-US')}</Text>
           </Body>
         </Left>

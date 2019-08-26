@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native';
 import {
   createAppContainer,
   createSwitchNavigator,
@@ -29,19 +29,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   menuClose: {
-    marginLeft: 14,
+    marginLeft: 30,
     marginTop: 10,
-  },
-});
-
-export const AuthNavigator = createStackNavigator({
-  Login: {
-    screen: LoginScreen,
-    headerMode: 'none',
-    navigationOptions: {
-      title: 'Login',
-      headerVisibile: false,
-    },
   },
 });
 
@@ -76,9 +65,6 @@ const DrawerNavigator = createDrawerNavigator(
         headerTintColor: 'white',
       },
     },
-    'Current Receipt': {
-      screen: CurrentReceipt,
-    },
   },
   {
     hideStatusBar: true,
@@ -95,11 +81,15 @@ const DrawerNavigator = createDrawerNavigator(
 const AppStack = createStackNavigator({
   DrawerNavigator: {
     screen: DrawerNavigator,
+    headerMode: 'float',
     navigationOptions: ({ navigation }) => {
       const { state } = navigation;
 
       if (state.isDrawerOpen) {
         return {
+          headerStyle: { backgroundColor: '#F9FAFC' },
+          title: state.routes[state.index].routeName,
+          headerTintColor: 'black',
           headerLeft: ({ titleStyle }) => (
             <TouchableOpacity
               onPress={() => {
@@ -110,13 +100,16 @@ const AppStack = createStackNavigator({
                 name="ios-close"
                 style={styles.menuClose}
                 size={36}
-                color={titleStyle}
+                color="#3D9970"
               />
             </TouchableOpacity>
           ),
         };
       } else {
         return {
+          headerStyle: { backgroundColor: '#F9FAFC' },
+          title: state.routes[state.index].routeName,
+          headerTintColor: 'black',
           headerLeft: ({ titleStyle }) => (
             <TouchableOpacity
               onPress={() => {
@@ -127,9 +120,8 @@ const AppStack = createStackNavigator({
                 name="ios-menu"
                 style={styles.menuOpen}
                 size={32}
-                color={titleStyle}
+                color="#3D9970"
               />
-              {/* {title} */}
             </TouchableOpacity>
           ),
         };
@@ -138,12 +130,21 @@ const AppStack = createStackNavigator({
   },
   'Add User': {
     screen: AddUserToReceiptScreen,
+    navigationOptions: {
+      title: 'Add User',
+    },
   },
   'Receipt Form': {
     screen: ReceiptForm,
+    navigationOptions: {
+      title: 'Edit Receipt',
+    },
   },
   'Current Receipt': {
     screen: CurrentReceipt,
+    navigationOptions: {
+      title: 'Current Receipt',
+    },
   },
 });
 
