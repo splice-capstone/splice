@@ -1,21 +1,9 @@
+/* eslint-disable complexity */
 import React, { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { useStateValue } from '../state';
 import ItemCard from './ItemCard';
-import {
-  Container,
-  Content,
-  Button,
-  Icon,
-  Text,
-  List,
-  ListItem,
-  Left,
-  Body,
-  Right,
-  Thumbnail,
-  View,
-} from 'native-base';
+import { Container, Content, Button, Icon, Text, View } from 'native-base';
 
 import {
   useDocumentData,
@@ -33,7 +21,7 @@ export default function CurrentReceipt(props) {
 
   const receiptId = props.navigation.getParam(
     'receiptId',
-    '1Y8k9OAQhJAlctRTAjYW'
+    'J6DOUzP2OGdcger73ciF'
   );
 
   useEffect(() => {
@@ -84,35 +72,93 @@ export default function CurrentReceipt(props) {
     }
   );
 
-  return (
-    <Container>
-      {(receiptError || userError) && (
-        <Text>Error: {JSON.stringify(receiptError)}</Text>
-      )}
-      {(receiptLoading || userLoading) && <Text>Collection: Loading...</Text>}
-      {receiptValue && userValues && (
-        <Content>
-          <View
-            style={{
-              flexDirection: 'row',
-              flex: 1,
-              justifyContent: 'space-evenly',
-            }}
-          >
-            <Button>
+  if (receiptValue && userValues) {
+    if (receiptValue.owner == currentUser.email) {
+      return (
+        <Container>
+          {(receiptError || userError) && (
+            <Text>Error: {JSON.stringify(receiptError)}</Text>
+          )}
+          {(receiptLoading || userLoading) && (
+            <Text>Collection: Loading...</Text>
+          )}
+          <Content>
+            <View
+              style={{
+                flexDirection: 'row',
+                flex: 1,
+                justifyContent: 'space-evenly',
+              }}
+            >
+              <Button>
+                <Text
+                  onPress={() =>
+                    props.navigation.navigate('Receipt Form', {
+                      current: receiptValue,
+                      navigation: props.navigation,
+                      userId: userValues[0].id,
+                      email: currentUser.email,
+                    })
+                  }
+                >
+                  Edit
+                </Text>
+              </Button>
               <Text
-                onPress={() =>
-                  props.navigation.navigate('Receipt Form', {
-                    current: receiptValue,
-                    navigation: props.navigation,
-                    userId: userValues[0].id,
-                    email: currentUser.email,
-                  })
-                }
+                style={{
+                  fontWeight: '600',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
               >
-                Edit
+                {receiptValue.restaurant}
               </Text>
-            </Button>
+              <Button>
+                <Icon
+                  name="md-person-add"
+                  onPress={() =>
+                    props.navigation.navigate('Add User', {
+                      receipt: receiptValue,
+                    })
+                  }
+                />
+              </Button>
+            </View>
+
+            <Text>{comments.restaurant}</Text>
+            <Text>{comments.misc}</Text>
+            <Text>{comments.date}</Text>
+            <Text>Id: {receiptValue.id}</Text>
+            <Text>Date: {receiptValue.date}</Text>
+            <Text>Owner: {receiptValue.owner}</Text>
+            <Text>Subtotal: ${receiptValue.subtotal / 100}</Text>
+            <Text>Tax: ${receiptValue.tax / 100}</Text>
+            <Text>Tip: ${receiptValue.tip / 100} </Text>
+            <Text>Total: ${receiptValue.total / 100}</Text>
+            <Text>My Subtotal: ${userSubtotal}</Text>
+            <Text>My Tax: ${userTax}</Text>
+            <Text>My Tip: ${userTip}</Text>
+            <Text>My Total: ${userTotal}</Text>
+            <ItemCard
+              receiptId={props.navigation.getParam(
+                'receiptId',
+                'jbIXS3uNWk0VGEZWqcdP'
+              )}
+              receiptUserId={userValues[0].id}
+            />
+          </Content>
+        </Container>
+      );
+    } else {
+      return (
+        <Container>
+          {(receiptError || userError) && (
+            <Text>Error: {JSON.stringify(receiptError)}</Text>
+          )}
+          {(receiptLoading || userLoading) && (
+            <Text>Collection: Loading...</Text>
+          )}
+          <Content>
             <Text
               style={{
                 fontWeight: '600',
@@ -122,42 +168,33 @@ export default function CurrentReceipt(props) {
             >
               {receiptValue.restaurant}
             </Text>
-            <Button>
-              <Icon
-                name="md-person-add"
-                onPress={() =>
-                  props.navigation.navigate('Add User', {
-                    receipt: receiptValue,
-                  })
-                }
-              />
-            </Button>
-          </View>
-
-          <Text>{comments.restaurant}</Text>
-          <Text>{comments.misc}</Text>
-          <Text>{comments.date}</Text>
-          <Text>Id: {receiptValue.id}</Text>
-          <Text>Date: {receiptValue.date}</Text>
-          <Text>Owner: {receiptValue.owner}</Text>
-          <Text>Subtotal: ${receiptValue.subtotal / 100}</Text>
-          <Text>Tax: ${receiptValue.tax / 100}</Text>
-          <Text>Total: ${receiptValue.total / 100}</Text>
-          <Text>My Subtotal: ${userSubtotal}</Text>
-          <Text>My Tax: ${userTax}</Text>
-          <Text>My Tip: ${userTip}</Text>
-          <Text>My Total: ${userTotal}</Text>
-          <ItemCard
-            receiptId={props.navigation.getParam(
-              'receiptId',
-              'jbIXS3uNWk0VGEZWqcdP'
-            )}
-            receiptUserId={userValues[0].id}
-          />
-        </Content>
-      )}
-    </Container>
-  );
+            <Text>{comments.restaurant}</Text>
+            <Text>{comments.misc}</Text>
+            <Text>{comments.date}</Text>
+            <Text>Id: {receiptValue.id}</Text>
+            <Text>Date: {receiptValue.date}</Text>
+            <Text>Owner: {receiptValue.owner}</Text>
+            <Text>Subtotal: ${receiptValue.subtotal / 100}</Text>
+            <Text>Tax: ${receiptValue.tax / 100}</Text>
+            <Text>Tip: ${receiptValue.tip / 100} </Text>
+            <Text>Total: ${receiptValue.total / 100}</Text>
+            <Text>My Subtotal: ${userSubtotal}</Text>
+            <Text>My Tax: ${userTax}</Text>
+            <Text>My Tip: ${userTip}</Text>
+            <Text>My Total: ${userTotal}</Text>
+            <ItemCard
+              receiptId={props.navigation.getParam(
+                'receiptId',
+                'jbIXS3uNWk0VGEZWqcdP'
+              )}
+              receiptUserId={userValues[0].id}
+            />
+          </Content>
+        </Container>
+      );
+    }
+  }
+  return null;
 }
 
 const styles = StyleSheet.create({

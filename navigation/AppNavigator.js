@@ -15,6 +15,7 @@ import CurrentReceipt from '../screens/CurrentReceipt';
 import { Ionicons } from '@expo/vector-icons';
 import ReceiptForm from '../screens/ReceiptForm';
 import AccountScreen from '../screens/AccountScreen';
+import LoadScreen from '../screens/LoadScreen';
 
 // import MainTabNavigator from './MainTabNavigator';
 
@@ -48,6 +49,7 @@ const DrawerNavigator = createDrawerNavigator(
     Home: { screen: HomeScreen },
     'Add Receipt': { screen: CameraScreen },
     'My Receipts': { screen: MyReceipts },
+    'Load Screen': { screen: LoadScreen },
     'Current Receipt': {
       screen: CurrentReceipt,
       navigationOptions: {

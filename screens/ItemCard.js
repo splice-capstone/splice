@@ -1,28 +1,11 @@
 import React from 'react';
-import {
-  Container,
-  Header,
-  Content,
-  Button,
-  Icon,
-  Text,
-  Form,
-  Item,
-  Input,
-  List,
-  ListItem,
-  Left,
-  Body,
-  Right,
-  Thumbnail,
-  View,
-} from 'native-base';
+import { Content, Icon, Text, ListItem, Body, View } from 'native-base';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import db, { updateItem } from '../src/tools/firebase';
 import { useStateValue } from '../state';
 
 export default function ItemCard(props) {
-  const [{ currentUser, currentReceipt }, dispatch] = useStateValue();
+  const [{ currentUser }, dispatch] = useStateValue();
 
   const [values, loading, error] = useCollectionData(
     db
