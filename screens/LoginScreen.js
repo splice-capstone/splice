@@ -4,10 +4,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
-  Text,
   ScrollView,
 } from 'react-native';
-import { signIn } from '../src/utils/auth';
+import { Container, Header, Content, Button, Text, Title } from 'native-base';
+import { loginWithGoogle, loginWithFacebook } from '../src/utils/auth';
 import { useStateValue } from '../state';
 
 const LoginScreen = props => {
@@ -21,10 +21,17 @@ const LoginScreen = props => {
     dispatch({ type: 'SET_CONTACTS', contacts });
   };
 
-  handleSignIn = async () => {
+  handleSignIn = async (type, props) => {
     try {
-      const user = await signIn();
-      await setUser(user);
+      if (type === 'facebook') {
+        const user = await loginWithFacebook();
+        await setUser(user);
+        console.log('set user', user);
+      }
+      if (type === 'google') {
+        const user = await loginWithGoogle();
+        await setUser(user);
+      }
       props.navigation.navigate('Home');
     } catch (err) {
       console.log('error', err);
@@ -33,21 +40,28 @@ const LoginScreen = props => {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
-      >
-        <View style={styles.welcomeContainer}>
+      <View style={styles.welcomeContainer}>
+        <Image
+          source={require('../assets/images/splice.png')}
+          style={styles.welcomeImage}
+        />
+        <Text style={styles.header}>splice</Text>
+        <TouchableOpacity
+          style={styles.buttons}
+          onPress={() => handleSignIn('google')}
+        >
           <Image
-            source={require('../assets/images/splice.png')}
-            style={styles.welcomeImage}
+            style={styles.googleImage}
+            source={require('../assets/images/google-signin-button.png')}
           />
-          <Text style={styles.header}>splice</Text>
-          <TouchableOpacity onPress={() => handleSignIn()}>
-            <Image source={require('../assets/images/google_signin.png')} />
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleSignIn('facebook')}>
+          <Image
+            style={styles.facebookImage}
+            source={require('../assets/images/facebook.png')}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -60,16 +74,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     marginTop: 30,
   },
-  contentContainer: {
-    paddingTop: 30,
-  },
   header: {
     marginTop: 10,
     fontSize: 18,
   },
   welcomeContainer: {
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 80,
     marginBottom: 20,
   },
   welcomeImage: {
@@ -77,6 +88,18 @@ const styles = StyleSheet.create({
     height: 80,
     resizeMode: 'contain',
     marginTop: 3,
-    marginLeft: -10,
+  },
+  buttons: {
+    marginTop: 100,
+  },
+  googleImage: {
+    height: 50,
+    resizeMode: 'contain',
+    margin: 10,
+  },
+  facebookImage: {
+    height: 35,
+    resizeMode: 'contain',
+    margin: 10,
   },
 });

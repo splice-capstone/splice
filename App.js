@@ -44,10 +44,6 @@ export default function App(props) {
     dispatch({ type: 'SET_USER', user });
   };
 
-  // const setContacts = contacts => {
-  //   dispatch({ type: 'SET_CONTACTS', contacts });
-  // };
-
   const checkForUser = async () => {
     //check if signed in from auth function
     const user = await isSignedIn();
@@ -82,7 +78,7 @@ export default function App(props) {
       />
     );
   }
-  if (!currentUser.email) {
+  if (!currentUser || !currentUser.email) {
     return (
       <Animated.View style={{ ...styles.container }}>
         {Platform.OS === 'ios' && <StatusBar barStyle="default" />}

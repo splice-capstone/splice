@@ -21,62 +21,51 @@ export default function HomeScreen(props) {
 
   return (
     <View style={styles.container}>
-      <Header />
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
-      >
-        <View style={styles.welcomeContainer}>
-          <Image
-            source={require('../assets/images/splice.png')}
-            style={styles.welcomeImage}
-          />
-          <Title style={styles.header}>splice</Title>
-          <Text style={styles.header}>Welcome, {currentUser.name}</Text>
-          <Image style={styles.image} source={{ uri: currentUser.photoUrl }} />
-          <View style={styles.bottom}>
-            <Button
-              title="TAKE A SNAPSHOT"
-              success
-              style={styles.margin}
-              onPress={() => props.navigation.navigate('Add Receipt')}
-            >
-              <Title light>TAKE A SNAPSHOT</Title>
-            </Button>
-            <Button
-              light
-              style={styles.margin}
-              onPress={() => props.navigation.navigate('Receipt Form')}
-            >
-              <Title centered>BY HAND</Title>
-            </Button>
-            <Button light style={styles.margin} onPress={() => handleSignOut()}>
-              <Title centered>SIGN OUT</Title>
-            </Button>
-          </View>
-        </View>
-      </ScrollView>
+      <View style={styles.welcomeContainer}>
+        <Image
+          source={require('../assets/images/splice.png')}
+          style={styles.welcomeImage}
+        />
+        <Text style={styles.header}>splice</Text>
+      </View>
+      <View style={styles.bottom}>
+        <Button
+          title="TAKE A SNAPSHOT"
+          success
+          style={styles.button}
+          onPress={() => props.navigation.navigate('Add Receipt')}
+        >
+          <Text light>TAKE A SNAPSHOT</Text>
+        </Button>
+        <Button
+          light
+          style={styles.button}
+          onPress={() => props.navigation.navigate('Receipt Form')}
+        >
+          <Text black center>
+            BY HAND
+          </Text>
+        </Button>
+        <Button bordered style={styles.button} onPress={() => handleSignOut()}>
+          <Text black center>
+            SIGN OUT
+          </Text>
+        </Button>
+      </View>
     </View>
   );
 }
-
-HomeScreen.navigationOptions = {
-  headerRight: (
-    <Button
-      onPress={() => alert('This is a button!')}
-      title="Info"
-      color="#fff"
-    />
-  ),
-};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    marginTop: 30,
   },
-  contentContainer: {
-    paddingTop: 30,
+  bottom: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    marginBottom: 50,
   },
   header: {
     marginTop: 10,
@@ -84,20 +73,19 @@ const styles = StyleSheet.create({
   },
   welcomeContainer: {
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 40,
     marginBottom: 20,
+  },
+  button: {
+    margin: 5,
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   welcomeImage: {
     width: 100,
     height: 80,
     resizeMode: 'contain',
     marginTop: 3,
-    marginLeft: -10,
-  },
-  loginContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 200,
-    marginBottom: 20,
   },
 });

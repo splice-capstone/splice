@@ -156,7 +156,6 @@ export async function findUserByToken(token) {
           results.push(userDetails);
         });
       });
-    console.log('user results', results);
     return results;
   } catch (err) {
     return `error: ${err}`;

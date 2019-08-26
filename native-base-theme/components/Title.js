@@ -18,6 +18,9 @@ export default (variables /* : * */ = variable) => {
     '.light': {
       color: variables.inverseTextColor,
     },
+    '.center': {
+      textAlign: 'center',
+    },
   };
 
   return titleTheme;

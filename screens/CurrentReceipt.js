@@ -174,7 +174,9 @@ export default function CurrentReceipt(props) {
           <Text>Tax: ${receiptValue.tax / 100}</Text>
           <Text>Total: ${receiptValue.total / 100}</Text>
           <Button>
-            <Text light>COMPLETE</Text>
+            <Text center light>
+              COMPLETE
+            </Text>
           </Button>
         </Content>
       )}
