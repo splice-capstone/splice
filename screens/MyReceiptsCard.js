@@ -21,8 +21,6 @@ const MyReceiptsCard = props => {
     myDetails: { isOwner, paid },
   } = props.recptsData;
 
-  console.log(date);
-
   const totalInDollars = total / 100;
   return (
     <Card style={{ flex: 0 }} onPress>
