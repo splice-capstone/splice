@@ -25,8 +25,6 @@ export default function ItemCard(props) {
 
   const itemData = props.itemInfo.item
 
-  console.log(itemData.costPerUser, typeof itemData.costPerUser)
-
   let photoArr = []
 
   for (let [key, value] of Object.entries(itemData.payees)) {

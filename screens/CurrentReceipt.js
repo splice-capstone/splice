@@ -24,7 +24,10 @@ import {
   useCollectionData,
   useCollection
 } from "react-firebase-hooks/firestore";
-import db, { calculateSubtotal, toggleReceiptUser } from "../src/tools/firebase";
+import db, {
+  calculateSubtotal,
+  toggleReceiptUser
+} from "../src/tools/firebase";
 
 export default function CurrentReceipt(props) {
   const [{ currentUser }, dispatch] = useStateValue();
@@ -35,6 +38,7 @@ export default function CurrentReceipt(props) {
   const [userTotal, setTotal] = useState(0);
   const [receiptItems, setItems] = useState([]);
   const [loadingState, setLoadingState] = useState(true);
+  const [myPrices, setMyPrices] = useState({});
 
   const receiptId = props.navigation.getParam(
     "receiptId",
@@ -63,15 +67,29 @@ export default function CurrentReceipt(props) {
 
   const tapItem = async (userId, itemId, payees, amount) => {
     try {
-      const hehe = await toggleReceiptUser(userId, itemId, receiptId, payees, amount)
-      console.log(hehe)
+      const hehe = await toggleReceiptUser(
+        userId,
+        itemId,
+        receiptId,
+        payees,
+        amount
+      );
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
-  }
+  };
+
+  const calcSubtotal = () => {
+    let subtotal = 0;
+    receiptItems.forEach(item => {
+      if (item.payees[currentUser.email].isPayee) {
+        subtotal += item.costPerUser;
+      }
+    });
+    return subtotal;
+  };
 
   useEffect(() => {
-
     const unsub = db
       .collection("receipts")
       .doc(receiptId)
@@ -180,17 +198,13 @@ export default function CurrentReceipt(props) {
           <Text>Subtotal: ${receiptValue.subtotal / 100}</Text>
           <Text>Tax: ${receiptValue.tax / 100}</Text>
           <Text>Total: ${receiptValue.total / 100}</Text>
-          <Text>My Subtotal: ${userSubtotal}</Text>
+          <Text>My Subtotal: ${calcSubtotal() / 100}</Text>
           <Text>My Tax: ${userTax}</Text>
           <Text>My Tip: ${userTip}</Text>
           <Text>My Total: ${userTotal}</Text>
-          {!loadingState ? (
-            null
-          ) : (
-            <Text>still loading..</Text>
-          )}
+          {!loadingState ? null : <Text>still loading..</Text>}
 
-          {!loadingState &&
+          {!loadingState && (
             // receiptItems.map(itemInfo => {
             //   return (
             //     <ItemCard
@@ -202,14 +216,16 @@ export default function CurrentReceipt(props) {
             // })}
             <FlatList
               data={receiptItems}
-              renderItem={(itemInfo) => (<ItemCard
-                itemInfo={itemInfo}
-                receiptUser={currentUser}
-                key={itemInfo.key}
-                presser={tapItem}
-              />)}
+              renderItem={itemInfo => (
+                <ItemCard
+                  itemInfo={itemInfo}
+                  receiptUser={currentUser}
+                  key={itemInfo.key}
+                  presser={tapItem}
+                />
+              )}
             />
-          }
+          )}
         </Content>
       )}
     </Container>
