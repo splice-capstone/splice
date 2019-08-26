@@ -12,7 +12,7 @@ export default class LoadScreen extends React.Component {
           alignItems: 'center',
         }}
       >
-        <PacmanIndicator color="white" size={70} />
+        <PacmanIndicator color="white" size={100} />
       </Container>
     );
   }
