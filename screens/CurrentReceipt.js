@@ -14,7 +14,6 @@ import db, {
   calculateSubtotal,
   toggleReceiptUser,
 } from '../src/tools/firebase';
-import LoadScreen from './LoadScreen';
 
 export default function CurrentReceipt(props) {
   const [{ currentUser }, dispatch] = useStateValue();
