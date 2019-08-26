@@ -1,5 +1,7 @@
+/* eslint-disable quotes */
+/* eslint-disable complexity */
 import React, { useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, FlatList } from 'react-native';
 import { useStateValue } from '../state';
 import ItemCard from './ItemCard';
 import {
@@ -21,9 +23,12 @@ import {
 import {
   useDocumentData,
   useCollectionData,
+  useCollection,
 } from 'react-firebase-hooks/firestore';
-import db, { calculateSubtotal } from '../src/tools/firebase';
-import { ScrollView } from 'react-native-gesture-handler';
+import db, {
+  calculateSubtotal,
+  toggleReceiptUser,
+} from '../src/tools/firebase';
 
 export default function CurrentReceipt(props) {
   const [{ currentUser }, dispatch] = useStateValue();
@@ -32,17 +37,80 @@ export default function CurrentReceipt(props) {
   const [userTax, setTax] = useState(0);
   const [userTip, setTip] = useState(0);
   const [userTotal, setTotal] = useState(0);
+  const [receiptItems, setItems] = useState([]);
+  const [loadingState, setLoadingState] = useState(true);
+  const [myPrices, setMyPrices] = useState({});
 
   const receiptId = props.navigation.getParam(
     'receiptId',
-    'Sd5SAIYhhN7VWwmSNIBk'
+    '1Y8k9OAQhJAlctRTAjYW'
   );
 
-  if (!currentUser.email) {
-    currentUser.email = 'amandamarienelson2@gmail.com';
-  }
+  let [receiptValue, receiptLoading, receiptError] = useDocumentData(
+    db.collection('receipts').doc(receiptId),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+      idField: 'id',
+    }
+  );
+
+  let [userValues, userLoading, userError] = useCollectionData(
+    db
+      .collection('receipts')
+      .doc(receiptId)
+      .collection('receipt_users')
+      .where('email', '==', currentUser.email),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+      idField: 'id',
+    }
+  );
+
+  const tapItem = async (userId, itemId, payees, amount) => {
+    try {
+      const hehe = await toggleReceiptUser(
+        userId,
+        itemId,
+        receiptId,
+        payees,
+        amount
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const calcSubtotal = () => {
+    let subtotal = 0;
+    receiptItems.forEach(item => {
+      if (item.payees[currentUser.email].isPayee) {
+        subtotal += item.costPerUser;
+      }
+    });
+    return subtotal;
+  };
 
   useEffect(() => {
+    const unsub = db
+      .collection('receipts')
+      .doc(receiptId)
+      .collection('items')
+      .onSnapshot(snap => {
+        const itemArr = [];
+        snap.forEach(itemDoc => {
+          const { name, amount, payees, costPerUser } = itemDoc.data();
+          itemArr.push({
+            name,
+            key: itemDoc.id,
+            amount,
+            payees,
+            costPerUser,
+          });
+        });
+        setLoadingState(false);
+        setItems(itemArr);
+      });
+
     const newComments = props.navigation.getParam('comments', '');
     if (newComments) {
       setComments(newComments);
@@ -59,28 +127,10 @@ export default function CurrentReceipt(props) {
       //calculate user total based on user subtotal + user tax + user tip
       setTotal(userSubtotal + userTax + userTip);
     }
-  });
-
-  const [receiptValue, receiptLoading, receiptError] = useDocumentData(
-    db.collection('receipts').doc(receiptId),
-    {
-      snapshotListenOptions: { includeMetadataChanges: true },
-      idField: 'id',
-    }
-  );
+    return () => unsub();
+  }, [receiptId]);
 
   // listen on receipt_users doc that emails current user email
-  const [userValues, userLoading, userError] = useCollectionData(
-    db
-      .collection('receipts')
-      .doc(receiptId)
-      .collection('receipt_users')
-      .where('email', '==', currentUser.email),
-    {
-      snapshotListenOptions: { includeMetadataChanges: true },
-      idField: 'id',
-    }
-  );
 
   return (
     <Container>
@@ -173,11 +223,34 @@ export default function CurrentReceipt(props) {
           <Text>Subtotal: ${receiptValue.subtotal / 100}</Text>
           <Text>Tax: ${receiptValue.tax / 100}</Text>
           <Text>Total: ${receiptValue.total / 100}</Text>
-          <Button>
-            <Text center light>
-              COMPLETE
-            </Text>
-          </Button>
+          <Text>My Subtotal: ${calcSubtotal() / 100}</Text>
+          <Text>My Tax: ${userTax}</Text>
+          <Text>My Tip: ${userTip}</Text>
+          <Text>My Total: ${userTotal}</Text>
+          {!loadingState ? null : <Text>still loading..</Text>}
+
+          {!loadingState && (
+            // receiptItems.map(itemInfo => {
+            //   return (
+            //     <ItemCard
+            //       itemInfo={itemInfo}
+            //       receiptUserId={userValues[0].id}
+            //       key={itemInfo.key}
+            //     />
+            //   );
+            // })}
+            <FlatList
+              data={receiptItems}
+              renderItem={itemInfo => (
+                <ItemCard
+                  itemInfo={itemInfo}
+                  receiptUser={currentUser}
+                  key={itemInfo.key}
+                  presser={tapItem}
+                />
+              )}
+            />
+          )}
         </Content>
       )}
     </Container>

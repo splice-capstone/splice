@@ -15,7 +15,7 @@ const MyReceipts = (props) => {
     });
   }, []);
 
-  return myRecps.length > 0 ? (
+  return (myRecps.length > 0 && Array.isArray(myRecps))  ? (
     <Container>
       <Content>
         {myRecps.map(recData => {

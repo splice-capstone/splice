@@ -23,6 +23,7 @@ export const initialState = {
   mode: 'view',
   myReceipts: [],
   myContacts: [],
+  receiptItems: [],
   error: '',
 };
 
@@ -47,6 +48,11 @@ export const reducer = (state, action) => {
       return {
         ...state,
         mode: action.mode,
+      };
+    case 'SET_ITEMS':
+      return {
+        ...state,
+        receiptItems: action.items
       };
 
     default:
