@@ -26,7 +26,6 @@ const LoginScreen = props => {
       if (type === 'facebook') {
         const user = await loginWithFacebook();
         await setUser(user);
-        console.log('set user', user);
       }
       if (type === 'google') {
         const user = await loginWithGoogle();

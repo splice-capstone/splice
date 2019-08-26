@@ -13,14 +13,13 @@ import {
   Body,
   Right,
 } from 'native-base';
+import PayPal from './PayPal';
 
 const MyReceiptsCard = props => {
-
   const { restaurant, date, id, total, owner } = props.recptsData;
   const {
     myDetails: { isOwner, paid },
   } = props.recptsData;
-
 
   const totalInDollars = total / 100;
   return (

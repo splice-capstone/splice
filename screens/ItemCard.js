@@ -36,13 +36,6 @@ export default function ItemCard(props) {
         >
           <Text>{itemData.name}</Text>
           <Text>${itemData.costPerUser / 100}</Text>
-          {/* <Text>
-            {props.itemInfo.item.payees[props.receiptUser.email].isPayee ? (
-              <Icon color="3D9970" name="checkmark" />
-            ) : (
-              ""
-            )}
-          </Text> */}
           <Right>
             {photoArr.map((photoUri, ind) => {
               return <Thumbnail key={ind} small source={{ uri: photoUri }} />;
@@ -51,6 +44,5 @@ export default function ItemCard(props) {
         </View>
       </Content>
     </ListItem>
-    // <View><Text>hi</Text></View>
   );
 }

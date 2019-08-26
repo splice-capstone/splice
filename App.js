@@ -33,13 +33,14 @@ import getTheme from './native-base-theme/components';
 import commonColor from './native-base-theme/variables/commonColor';
 import { AsyncStorage } from 'react-native';
 import { signIn, isSignedIn } from './src/utils/auth';
+import { YellowBox } from 'react-native';
 
 export default function App(props) {
+  console.disableYellowBox = true;
   const [isAppReady, setAppReady] = useState(false);
   const [isSplashReady, setSplashReady] = useState(false);
   const [value] = useState(new Animated.Value(1));
   const [{ currentUser }, dispatch] = useStateValue();
-
   const setUser = user => {
     dispatch({ type: 'SET_USER', user });
   };
