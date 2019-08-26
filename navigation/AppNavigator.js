@@ -125,12 +125,21 @@ const AppStack = createStackNavigator({
   },
   'Add User': {
     screen: AddUserToReceiptScreen,
+    navigationOptions: {
+      title: 'Add User',
+    },
   },
   'Receipt Form': {
     screen: ReceiptForm,
+    navigationOptions: {
+      title: 'Edit Receipt',
+    },
   },
   'Current Receipt': {
     screen: CurrentReceipt,
+    navigationOptions: {
+      title: 'Current Receipt',
+    },
   },
 });
 
