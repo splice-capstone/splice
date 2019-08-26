@@ -4,7 +4,6 @@ import {
   Header,
   Card,
   CardItem,
-  Thumbnail,
   Text,
   Button,
   Icon,
@@ -12,10 +11,9 @@ import {
   Body,
   Right,
 } from 'native-base';
+import PayPal from './PayPal';
 
 const MyReceiptsCard = props => {
-
-
   const { restaurant, date, id, total, owner } = props.recptsData;
   const {
     myDetails: { isOwner, userTotal, paid },
@@ -23,6 +21,7 @@ const MyReceiptsCard = props => {
 
   const totalInDollars = total / 100;
   const userTotalInDollars = userTotal / 100;
+
   return (
     <Card style={{ flex: 0 }} onPress>
       <CardItem>
@@ -30,6 +29,7 @@ const MyReceiptsCard = props => {
           <Body>
             <Text>{restaurant}</Text>
             <Text note>{date}</Text>
+            <PayPal />
           </Body>
         </Left>
       </CardItem>
@@ -37,15 +37,19 @@ const MyReceiptsCard = props => {
         <Left>
           <Body>
             {isOwner ? (
-              <Text style={paid ? { color: 'green' } : { color: 'red' }}>{`${
-                paid
-                  ? `Received $${totalInDollars}`
-                  : `Receiving $${totalInDollars}`
-              }`}</Text>
+              <Text style={paid ? { color: 'green' } : { color: 'red' }}>
+                {`${
+                  paid
+                    ? `Received $${totalInDollars}`
+                    : `Receiving $${totalInDollars}`
+                }`}
+              </Text>
             ) : (
-              <Text style={paid ? { color: 'green' } : { color: 'red' }}>{`${
-                paid ? 'Paid' : 'Need to pay'
-              }: $${userTotalInDollars} to ${owner}`}</Text>
+              <Text style={paid ? { color: 'green' } : { color: 'red' }}>
+                {`${
+                  paid ? 'Paid' : 'Need to pay'
+                }: $${userTotalInDollars} to ${owner}`}
+              </Text>
             )}
           </Body>
         </Left>

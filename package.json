@@ -48,7 +48,8 @@
     "react-native-web": "^0.11.4",
     "react-navigation": "^3.11.0",
     "react-navigation-drawer": "^2.0.0",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "rn-expo-paypal-integration": "^1.2.0"
   },
   "devDependencies": {
     "babel-preset-expo": "^6.0.0",
