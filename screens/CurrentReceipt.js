@@ -15,11 +15,7 @@ import db, {
   toggleReceiptUser,
   completeReceipt,
 } from '../src/tools/firebase';
-<<<<<<< HEAD
 import LoadScreen from './LoadScreen';
-=======
-
->>>>>>> 018606c27ec7bfab83e05997d3174e0e87ac85e3
 export default function CurrentReceipt(props) {
   const [{ currentUser }, dispatch] = useStateValue();
   const [comments, setComments] = useState('');
@@ -59,10 +55,9 @@ export default function CurrentReceipt(props) {
         Alert.alert("You've already checked out!");
       } else {
         if (!receiptValue.open) {
-          Alert.alert("Receipt is closed!");
+          Alert.alert('Receipt is closed!');
         } else {
           await toggleReceiptUser(userId, itemId, receiptId, payees, amount);
-
         }
       }
     } catch (err) {
