@@ -104,7 +104,7 @@ export default function CurrentReceipt(props) {
       {(receiptError || userError) && (
         <Text>Error: {JSON.stringify(receiptError)}</Text>
       )}
-      {(receiptLoading || userLoading) && <Text>Collection: Loading...</Text>}
+      {(receiptLoading || userLoading) && null}
       {receiptValue && userValues && (
         <Content>
           <View

@@ -102,6 +102,7 @@ const parseReceipt = async (response, currentUser) => {
             amount: Math.ceil(data * 100),
             name: text,
             payees: itemPayees,
+            costPerUser: Math.ceil(data * 100)
           });
 
           //increment the sum for the check at the end
@@ -121,6 +122,7 @@ const parseReceipt = async (response, currentUser) => {
         amount: receipt.subtotal - sum,
         name: 'Misc item',
         payees: itemPayees,
+        costPerUser: receipt.subtotal - sum
       });
       comments['misc'] =
         'Items did not add up to subtotal so misc item was added';
