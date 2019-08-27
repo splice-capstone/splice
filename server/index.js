@@ -5,42 +5,42 @@ const expo = new Expo();
 let savedPushTokens = [];
 const PORT_NUMBER = 3000;
 
-const saveToken = (token) => {
+const saveToken = token => {
   if (savedPushTokens.indexOf(token === -1)) {
     savedPushTokens.push(token);
   }
-}
+};
 
-const handlePushTokens = (message) => {
+const handlePushTokens = (message, pushToken) => {
+  console.log('handling the message');
   let notifications = [];
-  for (let pushToken of savedPushTokens) {
-    if (!Expo.isExpoPushToken(pushToken)) {
-      console.error(`Push token ${pushToken} is not a valid Expo push token`);
-      continue;
-    }
-    notifications.push({
-      to: pushToken,
-      sound: 'default',
-      title: 'Message received!',
-      body: message,
-      data: { message }
-    })
+  // for (let pushToken of savedPushTokens) {
+  if (!Expo.isExpoPushToken(pushToken)) {
+    console.error(`Push token ${pushToken} is not a valid Expo push token`);
+    // continue;
   }
+  notifications.push({
+    to: pushToken,
+    sound: 'default',
+    title: '$plice that bill',
+    body: message,
+    data: { message },
+  });
+  // }
   let chunks = expo.chunkPushNotifications(notifications);
   (async () => {
     for (let chunk of chunks) {
       try {
         let receipts = await expo.sendPushNotificationsAsync(chunk);
-        console.log(receipts);
+        console.log('*****************inside chunk', receipts);
       } catch (error) {
         console.error(error);
       }
     }
   })();
-}
+};
 
 app.use(express.json());
-
 
 app.get('/', (req, res) => {
   res.send('Push Notification Server Running');
@@ -53,7 +53,8 @@ app.post('/token', (req, res) => {
 });
 
 app.post('/message', (req, res) => {
-  handlePushTokens(req.body.message);
+  console.log('sent message end point', req.body);
+  handlePushTokens(req.body.message, req.body.pushToken);
   console.log(`Received message, ${req.body.message}`);
   res.send(`Received message, ${req.body.message}`);
 });

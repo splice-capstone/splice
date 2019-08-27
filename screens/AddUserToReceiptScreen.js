@@ -1,13 +1,12 @@
-import React, { useState } from "react";
-import { StyleSheet, TextInput, View, TouchableOpacity } from "react-native";
+import React, { useState } from 'react';
+import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
 import {
   findUser,
   addUserToReceipt,
-  findOrCreateUser
-} from "../src/tools/firebase";
-import db from "../src/tools/firebase";
-
-import { useCollectionData } from "react-firebase-hooks/firestore";
+  findOrCreateUser,
+} from '../src/tools/firebase';
+import db from '../src/tools/firebase';
+import { useCollectionData } from 'react-firebase-hooks/firestore';
 import {
   Container,
   Header,
@@ -22,48 +21,46 @@ import {
   Text,
   Icon,
   Title,
-  Item
-} from "native-base";
+  Item,
+} from 'native-base';
 
 export default function AddUserToReceiptScreen(props) {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [searching, setSearching] = useState(false);
   const [usersToAdd, setUserOptions] = useState([]);
+
   //push notification stuff
+  const MESSAGE_ENPOINT = 'http://20c8fab0.ngrok.io/message';
 
-  const [messageText, setMessageText] = useState("");
-  const MESSAGE_ENPOINT = "http://dbd2929f.ngrok.io/message";
+  const sendMessage = async (messageText, pushToken) => {
+    console.log('sending message...............');
 
-  const sendMessage = async () => {
-    fetch(MESSAGE_ENPOINT, {
-      method: "POST",
+    await fetch(MESSAGE_ENPOINT, {
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        message: messageText
-      })
+        message: messageText,
+        pushToken,
+      }),
     });
-    setMessageText("");
   };
-
-  const handleChangeText = text => {
-    setMessageText(text);
-  };
+  //call sendMessage when a user is added to a receipt
 
   //end push notification stuff
 
-  const receipt = props.navigation.getParam("receipt");
+  const receipt = props.navigation.getParam('receipt');
 
   const [userValues, userLoading, userError] = useCollectionData(
     db
-      .collection("receipts")
+      .collection('receipts')
       .doc(receipt.id)
-      .collection("receipt_users"),
+      .collection('receipt_users'),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-      idField: "id"
+      idField: 'id',
     }
   );
 
@@ -74,31 +71,32 @@ export default function AddUserToReceiptScreen(props) {
     });
   };
 
-  const createUser = () => {
+  const createUser = async () => {
     setSearching(false);
     let user = {
       email: search,
-      name: search.replace(/@[^@]+$/, ""),
+      name: search.replace(/@[^@]+$/, ''),
       photoUrl:
-        "https://lh4.googleusercontent.com/-ZZkaquQy0CQ/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rfQM27r8piZ9BfdwEI15D-B6Quxqg/photo.jpg"
+        'https://lh4.googleusercontent.com/-ZZkaquQy0CQ/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rfQM27r8piZ9BfdwEI15D-B6Quxqg/photo.jpg',
     };
-    findOrCreateUser(user);
-    addUserToReceipt(receipt, user);
+    await findOrCreateUser(user);
+    await handleAddingUserToReceipt(receipt, user);
+  };
+
+  const handleAddingUserToReceipt = async (receipt, user) => {
+    //get expo token for sending message
+    const token = await addUserToReceipt(receipt, user.email);
+    console.log('response from find or create**********', token);
+
+    if (token) {
+      const message = `Don't forget to split the bill for ${receipt.restaurant}!`;
+      //TODO: need to also send/track receipt id somehow
+      await sendMessage(message, token);
+    }
   };
 
   return (
     <Container>
-      <View style={styles.container}>
-        <TextInput
-          value={messageText}
-          onChangeText={handleChangeText}
-          style={styles.textInput}
-        />
-        <TouchableOpacity style={styles.button} onPress={sendMessage}>
-          <Text style={styles.buttonText}>Send</Text>
-        </TouchableOpacity>
-      </View>
-
       <Content>
         <Title style={styles.header}>{receipt.restaurant}</Title>
         <Header searchBar rounded style={styles.standard}>
@@ -171,7 +169,7 @@ export default function AddUserToReceiptScreen(props) {
                     <Button
                       title="Add"
                       onPress={() => {
-                        addUserToReceipt(receipt, user.email);
+                        handleAddingUserToReceipt(receipt, user);
                       }}
                     >
                       <Text>+</Text>
@@ -190,35 +188,35 @@ export default function AddUserToReceiptScreen(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: '#fff',
   },
   contentContainer: {
-    paddingTop: 30
+    paddingTop: 30,
   },
   header: {
     marginTop: 10,
-    fontSize: 18
+    fontSize: 18,
   },
   welcomeContainer: {
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: 10,
-    marginBottom: 20
+    marginBottom: 20,
   },
   welcomeImage: {
     width: 100,
     height: 80,
-    resizeMode: "contain",
+    resizeMode: 'contain',
     marginTop: 3,
-    marginLeft: -10
+    marginLeft: -10,
   },
   loginContainer: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 200,
-    marginBottom: 20
+    marginBottom: 20,
   },
   standard: {
     marginTop: 10,
-    backgroundColor: "#fff"
-  }
+    backgroundColor: '#fff',
+  },
 });

@@ -44,12 +44,6 @@ const DrawerNavigator = createDrawerNavigator(
         title: 'Home',
       },
     },
-    Slide: {
-      screen: Slide,
-      navigationOpitons: {
-        title: 'slide',
-      },
-    },
     'Add Receipt': {
       screen: CameraScreen,
       navigationOptions: {
