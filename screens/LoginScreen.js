@@ -9,6 +9,7 @@ import {
 import { Container, Header, Content, Button, Text, Title } from 'native-base';
 import { loginWithGoogle, loginWithFacebook } from '../src/utils/auth';
 import { useStateValue } from '../state';
+import { registerForPushNotificationsAsync } from '../src/utils/pushNotification';
 
 const LoginScreen = props => {
   const [{ currentUser, contacts }, dispatch] = useStateValue();
@@ -26,10 +27,12 @@ const LoginScreen = props => {
       if (type === 'facebook') {
         const user = await loginWithFacebook();
         await setUser(user);
+        await registerForPushNotificationsAsync();
       }
       if (type === 'google') {
         const user = await loginWithGoogle();
         await setUser(user);
+        await registerForPushNotificationsAsync();
       }
       props.navigation.navigate('Home');
     } catch (err) {
