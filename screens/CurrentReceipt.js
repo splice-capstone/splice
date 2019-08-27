@@ -15,6 +15,7 @@ import db, {
   toggleReceiptUser,
   completeReceipt,
 } from '../src/tools/firebase';
+
 export default function CurrentReceipt(props) {
   const [{ currentUser }, dispatch] = useStateValue();
   const [comments, setComments] = useState('');
@@ -193,6 +194,15 @@ export default function CurrentReceipt(props) {
           <Text>Total: ${receiptValue.total / 100}</Text>
           <Button onPress={() => handleCheckout()}>
             <Text>Checkout</Text>
+          </Button>
+          <Button
+            onPress={() =>
+              props.navigation.navigate('Status', {
+                receipt: receiptValue,
+              })
+            }
+          >
+            <Text>Status</Text>
           </Button>
           {!loadingState ? null : <Text>still loading..</Text>}
           {!loadingState && (

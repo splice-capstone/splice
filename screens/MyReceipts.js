@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { View, Text } from "react-native";
-import { Container, Content } from "native-base";
-import { useStateValue } from "../state";
-import { getMyReceipts } from "../src/tools/firebase/index";
-import MyReceiptsCard from "./MyReceiptsCard";
+import React, { useState, useEffect } from 'react';
+import { View, Text } from 'react-native';
+import { Container, Content } from 'native-base';
+import { useStateValue } from '../state';
+import { getMyReceipts } from '../src/tools/firebase/index';
+import MyReceiptsCard from './MyReceiptsCard';
 
-const MyReceipts = (props) => {
+const MyReceipts = props => {
   const [{ currentUser }, dispatch] = useStateValue();
   const [myRecps, setMyReceipts] = useState([]);
 
@@ -15,16 +15,21 @@ const MyReceipts = (props) => {
     });
   }, []);
 
-  return (myRecps.length > 0 && Array.isArray(myRecps))  ? (
+  return myRecps.length > 0 && Array.isArray(myRecps) ? (
     <Container>
       <Content>
         {myRecps.map(recData => {
-          return <MyReceiptsCard key={recData.id} recptsData={recData} navigation={props.navigation}/>;
+          return (
+            <MyReceiptsCard
+              key={recData.id}
+              recptsData={recData}
+              navigation={props.navigation}
+            />
+          );
         })}
       </Content>
     </Container>
-  ) :
-  null;
+  ) : null;
 };
 
 export default MyReceipts;
