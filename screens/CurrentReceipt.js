@@ -51,10 +51,15 @@ export default function CurrentReceipt(props) {
   );
   const tapItem = async (userId, itemId, payees, amount) => {
     try {
-      if (userValues[0].paid) {
+      if (userValues[0].paid && !userValues[0].isOwner) {
         Alert.alert("You've already checked out!");
       } else {
-        await toggleReceiptUser(userId, itemId, receiptId, payees, amount);
+        if (!receiptValue.open) {
+          Alert.alert("Receipt is closed!");
+        } else {
+          await toggleReceiptUser(userId, itemId, receiptId, payees, amount);
+
+        }
       }
     } catch (err) {
       console.error(err);
