@@ -5,7 +5,6 @@ import {
   Header,
   Card,
   CardItem,
-  Thumbnail,
   Text,
   Button,
   Icon,
@@ -13,10 +12,8 @@ import {
   Body,
   Right,
 } from 'native-base';
-import PayPal from './PayPal';
 
 const MyReceiptsCard = props => {
-
   const { restaurant, date, id, total, owner, open } = props.recptsData;
   const {
     myDetails: { isOwner, paid },
@@ -37,15 +34,17 @@ const MyReceiptsCard = props => {
         <Left>
           <Body>
             {isOwner ? (
-              <Text style={open ? { color: 'red' } : { color: 'green' }}>{`${
-                !open
-                  ? `Received $${totalInDollars}`
-                  : `Receiving $${totalInDollars}`
-              }`}</Text>
+              <Text style={paid ? { color: 'green' } : { color: 'red' }}>
+                {`${
+                  paid
+                    ? `Received $${totalInDollars}`
+                    : `Receiving $${totalInDollars}`
+                }`}
+              </Text>
             ) : (
-              <Text style={paid ? { color: 'green' } : { color: 'red' }}>{`${
-                paid ? 'Paid' : 'Need to pay'
-              }: ${owner}`}</Text>
+              <Text style={paid ? { color: 'green' } : { color: 'red' }}>
+                {`${paid ? 'Paid' : 'Need to pay'}: ${owner}`}
+              </Text>
             )}
           </Body>
         </Left>
@@ -66,7 +65,7 @@ const MyReceiptsCard = props => {
                       });
                     }}
                   >
-                    <Icon type="Entypo" name="user" />
+                    <Icon type="MaterialCommunityIcons" name="venmo" />
                   </Button>
                 </Left>
                 <Right>
