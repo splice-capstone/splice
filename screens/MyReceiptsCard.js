@@ -13,6 +13,7 @@ import {
   Body,
   Right,
 } from 'native-base';
+import PayPal from './PayPal';
 
 const MyReceiptsCard = props => {
 
@@ -20,7 +21,6 @@ const MyReceiptsCard = props => {
   const {
     myDetails: { isOwner, paid },
   } = props.recptsData;
-
 
   const totalInDollars = total / 100;
   return (
@@ -37,7 +37,7 @@ const MyReceiptsCard = props => {
         <Left>
           <Body>
             {isOwner ? (
-              <Text style={open ? { color: 'green' } : { color: 'red' }}>{`${
+              <Text style={open ? { color: 'red' } : { color: 'green' }}>{`${
                 !open
                   ? `Received $${totalInDollars}`
                   : `Receiving $${totalInDollars}`
