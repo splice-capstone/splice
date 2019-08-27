@@ -50,7 +50,7 @@ const SummaryPieChart = props => {
               total: Math.floor(total / 100),
               email,
               isOwner,
-              paid,
+              paid,a\
               photoUrl,
               color: randomColor({
                 hue: 'green',
