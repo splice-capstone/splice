@@ -34,9 +34,9 @@ const MyReceiptsCard = props => {
         <Left>
           <Body>
             {isOwner ? (
-              <Text style={paid ? { color: 'green' } : { color: 'red' }}>
+              <Text style={open ? { color: 'red' } : { color: 'green' }}>
                 {`${
-                  paid
+                  !open
                     ? `Received $${totalInDollars}`
                     : `Receiving $${totalInDollars}`
                 }`}
