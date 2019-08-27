@@ -68,7 +68,6 @@ export default function ItemCard(props) {
           style={{
             flex: 2,
             flexDirection: 'row',
-            justifyContent: 'space-between',
             width: '100%',
           }}
         >
@@ -87,7 +86,7 @@ export default function ItemCard(props) {
           {photoArr.map(photoUri => {
             return (
               <Thumbnail
-                style={{ marginRight: '-17.5%' }}
+                style={{ marginRight: '-10.5%' }}
                 key={photoUri}
                 small
                 source={{ uri: photoUri }}

@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
   listItems: {
     color: '#3A3535',
     fontWeight: '300',
+    justifyContent: 'space-between',
   },
   swipeoutView: {
     height: 30,

@@ -21,7 +21,7 @@ const MyReceiptsCard = props => {
 
   const totalInDollars = total / 100;
   return (
-    <Card style={{ flex: 0 }} onPress>
+    <Card style={{ flex: 0, height: 150 }} onPress>
       <CardItem>
         <Left>
           <Body>
@@ -92,7 +92,7 @@ const MyReceiptsCard = props => {
                       // placeholder to navigate to paypal
                     }}
                   >
-                    <Icon type="Entypo" name="paypal" />
+                    <Icon type="MaterialCommunityIcons" name="venmo" />
                   </Button>
                 </Left>
                 <Right>

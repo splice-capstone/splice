@@ -146,12 +146,14 @@ export default class ReceiptForm extends React.Component {
               Total: ${this.state.total / 100}
             </Text>
           </View>
-          <Button
-            style={styles.finishButton}
-            onPress={() => this.handleComplete()}
-          >
-            <Text>finish</Text>
-          </Button>
+          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <Button
+              style={styles.finishButton}
+              onPress={() => this.handleComplete()}
+            >
+              <Text>finish</Text>
+            </Button>
+          </View>
         </Content>
       </Container>
     );
@@ -183,10 +185,10 @@ const styles = StyleSheet.create({
   finishButton: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 10,
     height: 33,
-    width: 150,
-    marginLeft: '29%',
+    width: 140,
   },
   tipInfo: {
     flexDirection: 'row',

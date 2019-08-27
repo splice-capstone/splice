@@ -201,7 +201,7 @@ export default function CurrentReceipt(props) {
           )}
           {receiptValue.owner == userValues[0].email ? (
             <View
-              styles={{
+              style={{
                 flex: 1,
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -256,9 +256,11 @@ const styles = StyleSheet.create({
   completeButton: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
+    flexWrap: 'wrap',
     marginTop: 10,
     height: 33,
-    width: 150,
-    marginLeft: '29%',
+    width: 140,
+    // marginLeft: '29%',
   },
 });
