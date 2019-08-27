@@ -236,7 +236,6 @@ export async function getMyReceipts(email) {
 }
 
 export async function addUserToReceipt(receipt, userEmail) {
-  console.log(receipt, userEmail);
   try {
     // const receiptDoc = await receiptRef.get();
 
@@ -314,8 +313,7 @@ export async function addUserToReceipt(receipt, userEmail) {
           .set({ payees: itemDataObj.payees }, { merge: true });
       })
     );
-
-    return receipt.id;
+    return userData.data().expoToken;
   } catch (err) {
     console.error(err);
     return `error: ${err}`;

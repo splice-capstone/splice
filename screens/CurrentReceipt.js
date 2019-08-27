@@ -16,6 +16,7 @@ import db, {
   completeReceipt,
 } from '../src/tools/firebase';
 import LoadScreen from './LoadScreen';
+
 export default function CurrentReceipt(props) {
   const [{ currentUser }, dispatch] = useStateValue();
   const [comments, setComments] = useState('');
@@ -51,10 +52,14 @@ export default function CurrentReceipt(props) {
   );
   const tapItem = async (userId, itemId, payees, amount) => {
     try {
-      if (userValues[0].paid) {
+      if (userValues[0].paid && !userValues[0].isOwner) {
         Alert.alert("You've already checked out!");
       } else {
-        await toggleReceiptUser(userId, itemId, receiptId, payees, amount);
+        if (!receiptValue.open) {
+          Alert.alert('Receipt is closed!');
+        } else {
+          await toggleReceiptUser(userId, itemId, receiptId, payees, amount);
+        }
       }
     } catch (err) {
       console.error(err);
@@ -227,6 +232,15 @@ export default function CurrentReceipt(props) {
               )}
             ></FlatList>
           )}
+          <Button
+            onPress={() =>
+              props.navigation.navigate('Status', {
+                receipt: receiptValue,
+              })
+            }
+          >
+            <Text>Summary</Text>
+          </Button>
         </Content>
       )}
     </Container>

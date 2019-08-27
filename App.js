@@ -9,6 +9,8 @@ import {
   View,
   Image,
   Animated,
+  TextInput,
+  TouchableOpacity,
 } from 'react-native';
 import {
   Container,
@@ -34,6 +36,10 @@ import commonColor from './native-base-theme/variables/commonColor';
 import { AsyncStorage } from 'react-native';
 import { signIn, isSignedIn } from './src/utils/auth';
 import { YellowBox } from 'react-native';
+//push stuff
+import { Notifications } from 'expo';
+import { registerForPushNotificationsAsync } from './src/utils/pushNotification';
+import db from './src/tools/firebase';
 
 export default function App(props) {
   console.disableYellowBox = true;
@@ -41,6 +47,9 @@ export default function App(props) {
   const [isSplashReady, setSplashReady] = useState(false);
   const [value] = useState(new Animated.Value(1));
   const [{ currentUser }, dispatch] = useStateValue();
+  const [notification, setNotification] = useState(null);
+  const [expoToken, setExpoToken] = useState(null);
+
   const setUser = user => {
     dispatch({ type: 'SET_USER', user });
   };
@@ -50,16 +59,41 @@ export default function App(props) {
     const user = await isSignedIn();
     if (user) {
       await setUser(user[0]);
+      // save token in firestore db for user
+      const userDoc = await db.collection('users').doc(user[0].email);
+      userDoc.set(
+        {
+          expoToken,
+        },
+        { merge: true }
+      );
     }
   };
 
+  const handleNotification = notification => {
+    setNotification(notification);
+    // props.navigation.navigate('Current Receipt', {
+    //   receiptId: id,
+    // });
+  };
+
   useEffect(() => {
-    checkForUser();
     Animated.timing(value, {
       toValue: 0,
       duration: 1000,
     }).start();
-  }, []);
+
+    //push stuff
+
+    let notificationSubscription = Notifications.addListener(
+      handleNotification
+    );
+    registerForPushNotificationsAsync(currentUser).then(response => {
+      const token = response;
+      setExpoToken(token);
+    });
+    checkForUser().then();
+  }, [expoToken]);
 
   if (!isSplashReady) {
     return (
@@ -115,9 +149,8 @@ async function _cacheResourcesAsync(setAppReady) {
         ...Entypo.font,
         'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
         Zocial: require('native-base/Fonts/Zocial.ttf'),
-        Feather: require('native-base/Fonts/Feather.ttf')
+        Feather: require('native-base/Fonts/Feather.ttf'),
       }),
-
     ]);
     setTimeout(() => setAppReady(true), 2000);
   } catch (err) {
