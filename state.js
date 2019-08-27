@@ -52,8 +52,15 @@ export const reducer = (state, action) => {
     case 'SET_ITEMS':
       return {
         ...state,
-        receiptItems: action.items
+        receiptItems: action.items,
       };
+    // case 'REMOVE_ITEM':
+    //   return {
+    //     ...state,
+    //     receiptItems: state.receiptItems.filter(
+    //       item => item.id !== action.itemId
+    //     ),
+    //   };
 
     default:
       return state;

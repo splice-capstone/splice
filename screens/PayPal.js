@@ -9,7 +9,7 @@ export default class Paypal extends Component {
     paymentId: null,
   };
   async componentDidMount() {
-    let currency = '100 USD';
+    let currency = '1 USD';
     currency.replace(' USD', '');
 
     const dataDetail = {
@@ -47,42 +47,44 @@ export default class Paypal extends Component {
 
     console.log('sending to oauth....');
 
-    let response1 = await fetch(PAYPAL_OAUTH_API, {
+    let authResponse = await fetch(PAYPAL_OAUTH_API, {
+      method: 'POST',
       headers: {
         Authorization:
-          'Basic QWNCRGcxTml0ZVpybjZpMVNnWkVVZXpOVGVuWnVuYTZ3OC1lX1FNTlNBS0JObGo4LXU3Vi1WaDFmM25ZMFduS1QxZzBLT1ZCNnVtaXZzXzc6RUZURi01SC1sT1o5MWxUa3IzbDZRTkRmaHgzY19SVlFvSWpJay1XU3R3Y0VQLTdJbzVBWVFzaFJGMnE1SE5oeFhaOER2ZTJLWmRoc3ZVZEM',
+          'Basic QWNCRGcxTml0ZVpybjZpMVNnWkVVZXpOVGVuWnVuYTZ3OC1lX1FNTlNBS0JObGo4LXU3Vi1WaDFmM25ZMFduS1QxZzBLT1ZCNnVtaXZzXzc6RUZURi01SC1sT1o5MWxUa3IzbDZRTkRmaHgzY19SVlFvSWpJay1XU3R3Y0VQLTdJbzVBWVFzaFJGMnE1SE5oeFhaOER2ZTJLWmRoc3ZVZEM=',
         'Content-Type': 'application/x-www-form-urlencoded',
         Accept: 'application/json',
       },
-      data: `grant_type=authorization_code`,
+      body: `grant_type=client_credentials`,
+    });
+    const authData = await authResponse.json();
+    await this.setState({
+      accessToken: authData.access_token,
     });
 
-    console.log('after oauth request********', response1);
-    const data = await response1.json();
-    console.log('data*************', data);
-    console.log('acces token', data.access_token);
+    console.log('state', this.state);
+    const response = await fetch(
+      'https://api.sandbox.paypal.com/v1/payments/payment',
+      dataDetail,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.state.accessToken}`,
+        },
+      }
+    );
+
+    console.log('response!', response);
+    const data2 = await response.json();
+    console.log('dat******************!', data2);
+
+    const { id, links } = response.data;
+    const approvalUrl = links.find(data => data.rel == 'approval_url');
     this.setState({
-      accessToken: data.access_token,
+      paymentId: id,
+      approvalUrl: approvalUrl.href,
     });
-
-    // const response = await fetch(
-    //   'https://api.sandbox.paypal.com/v1/payments/payment',
-    //   dataDetail,
-    //   {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       Authorization: `Bearer A21AAED2MsVp2eunmL7XHdZXwKitcaXRC4_M4NwzkqTvOZaEvSEVysuEcLHnuO6-d6mQ9GOQmcfEkPRqMcblnohRSjYETu5Gg`,
-    //     },
-    //   }
-    // );
-
-    // console.log('response!', response);
-    // const { id, links } = response.data;
-    // const approvalUrl = links.find(data => data.rel == 'approval_url');
-    // this.setState({
-    //   paymentId: id,
-    //   approvalUrl: approvalUrl.href,
-    // });
   }
 
   _onNavigationStateChange = webViewState => {
@@ -116,13 +118,12 @@ export default class Paypal extends Component {
       <View style={{ flex: 1 }}>
         {approvalUrl ? (
           <WebView
-            style={{ height: 400, width: 300 }}
+            style={{ height: 400, width: 300, marginTop: 20 }}
             source={{ uri: approvalUrl }}
             onNavigationStateChange={this._onNavigationStateChange}
             javaScriptEnabled={true}
             domStorageEnabled={true}
             startInLoadingState={false}
-            style={{ marginTop: 20 }}
           />
         ) : (
           <ActivityIndicator />

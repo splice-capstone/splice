@@ -458,17 +458,17 @@ export async function addReceiptItems(receiptId, newItem) {
   }
 }
 
-//Below is for swipe to delete (vk will take care of this)
+// delete item
 
-// export async function removeReceiptItem(receiptId, itemId) {
-//   try {
-//     const receiptItemEditRef = await db
-//       .collection('receipts')
-//       .doc(receiptId)
-//       .collection('items')
-//       .doc(itemId)
-//       .delete();
-//   } catch (err) {
-//     return err;
-//   }
-// }
+export async function removeReceiptItem(receiptId, itemId) {
+  try {
+    const receiptItemEditRef = await db
+      .collection('receipts')
+      .doc(receiptId)
+      .collection('items')
+      .doc(itemId)
+      .delete();
+  } catch (err) {
+    return err;
+  }
+}
