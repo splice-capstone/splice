@@ -113,7 +113,10 @@ async function _cacheResourcesAsync(setAppReady) {
         ...Ionicons.font,
         ...Entypo.font,
         'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
+        Zocial: require('native-base/Fonts/Zocial.ttf'),
+        Feather: require('native-base/Fonts/Feather.ttf')
       }),
+
     ]);
     setTimeout(() => setAppReady(true), 2000);
   } catch (err) {
