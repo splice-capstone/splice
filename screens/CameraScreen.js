@@ -14,7 +14,7 @@ import * as Permissions from 'expo-permissions';
 import { Camera } from 'expo-camera';
 import { Ionicons, MaterialIcons, Foundation } from '@expo/vector-icons';
 import { StateContext } from '../state';
-import LoadingScreen from './LoadingScreen';
+import LoadScreen from './LoadScreen';
 import sendToTaggun from '../src/utils/taggun';
 
 const flashModeOrder = {
@@ -223,7 +223,7 @@ export default class CameraScreen extends React.Component {
       : cameraScreenContent;
 
     if (!this.state.loading) return content;
-    else if (this.state.loading) return <LoadingScreen />;
+    else if (this.state.loading) return <LoadScreen />;
     else {
       return <Text>Error</Text>;
     }
