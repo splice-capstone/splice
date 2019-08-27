@@ -37,6 +37,7 @@ export default function CurrentReceipt(props) {
       idField: 'id',
     }
   );
+
   let [userValues, userLoading, userError] = useCollectionData(
     db
       .collection('receipts')
@@ -66,7 +67,7 @@ export default function CurrentReceipt(props) {
         subtotal += item.costPerUser;
       }
     });
-    return Math.floor(subtotal);
+    return subtotal;
   };
   const handleCheckout = () => {
     //save user amounts on receipt_user doc & update to say user has paid
@@ -107,9 +108,7 @@ export default function CurrentReceipt(props) {
     }
     if (userValues && receiptValue && userValues[0].id) {
       //recalculate my user subtotals based on sum of my items map
-      calculateSubtotal(receiptId, userValues[0].id).then(subtotal =>
-        setSubtotal(subtotal / 100)
-      );
+
       //calculate user tax based on user subtotal/overall total * overall tax
       setTax(((userSubtotal / receiptValue.total) * receiptValue.tax) / 100);
       //calculate user tip based on user subtotal/overall total * overall tip
@@ -195,19 +194,26 @@ export default function CurrentReceipt(props) {
               padding: 10,
             }}
           >
-            <Text light>My Subtotal: ${calcSubtotal() / 100}</Text>
-            <Text light>My Tax: ${userTax}</Text>
-            <Text light>My Tip: ${userTip}</Text>
+            <Text light>My Subtotal: ${Math.floor(calcSubtotal()) / 100}</Text>
+            <Text light>
+              My Tax: $
+              {(
+                Math.floor(
+                  (calcSubtotal() / receiptValue.total) * receiptValue.tax
+                ) / 100
+              ).toFixed(2)}
+            </Text>
+            {receiptValue.tip === 0 ? null : (
+              <Text light>
+                My Tip: $
+                {(
+                  Math.floor(
+                    (calcSubtotal() / receiptValue.total) * receiptValue.tip
+                  ) / 100
+                ).toFixed(2)}
+              </Text>
+            )}
           </View>
-          <Text center>My Total: ${userTotal}</Text>
-          <Text>Owner: {receiptValue.owner}</Text>
-          <Text>Subtotal: ${receiptValue.subtotal / 100}</Text>
-          <Text>Tax: ${receiptValue.tax / 100}</Text>
-          <Text>Total: ${receiptValue.total / 100}</Text>
-          <Button onPress={() => handleCheckout()}>
-            <Text>Checkout</Text>
-          </Button>
-          {!loadingState ? null : <Text>still loading..</Text>}
           {!loadingState && (
             <FlatList
               data={receiptItems}

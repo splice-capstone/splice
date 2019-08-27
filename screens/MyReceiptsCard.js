@@ -12,10 +12,9 @@ import {
   Body,
   Right,
 } from 'native-base';
-import PayPal from './PayPal';
 
 const MyReceiptsCard = props => {
-  const { restaurant, date, id, total, owner } = props.recptsData;
+  const { restaurant, date, id, total, owner, open } = props.recptsData;
   const {
     myDetails: { isOwner, paid },
   } = props.recptsData;
@@ -79,7 +78,7 @@ const MyReceiptsCard = props => {
                       });
                     }}
                   >
-                    <Icon type="Entypo" name="arrow-bold-right" />
+                    <Icon type="Entypo" name="info" />
                   </Button>
                 </Right>
               </CardItem>
@@ -106,7 +105,7 @@ const MyReceiptsCard = props => {
                       });
                     }}
                   >
-                    <Icon type="Entypo" name="arrow-bold-right" />
+                    <Icon type="Entypo" name="info" />
                   </Button>
                 </Right>
               </CardItem>
