@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput } from 'react-native';
+import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
 import {
   findUser,
   addUserToReceipt,
   findOrCreateUser,
 } from '../src/tools/firebase';
 import db from '../src/tools/firebase';
-
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import {
   Container,
@@ -30,6 +29,26 @@ export default function AddUserToReceiptScreen(props) {
   const [searching, setSearching] = useState(false);
   const [usersToAdd, setUserOptions] = useState([]);
 
+  //push notification stuff
+  const MESSAGE_ENPOINT = 'http://20c8fab0.ngrok.io/message';
+
+  const sendMessage = async (messageText, pushToken) => {
+    await fetch(MESSAGE_ENPOINT, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: messageText,
+        pushToken,
+      }),
+    });
+  };
+  //call sendMessage when a user is added to a receipt
+
+  //end push notification stuff
+
   const receipt = props.navigation.getParam('receipt');
 
   const [userValues, userLoading, userError] = useCollectionData(
@@ -50,7 +69,7 @@ export default function AddUserToReceiptScreen(props) {
     });
   };
 
-  const createUser = () => {
+  const createUser = async () => {
     setSearching(false);
     let user = {
       email: search,
@@ -58,8 +77,20 @@ export default function AddUserToReceiptScreen(props) {
       photoUrl:
         'https://lh4.googleusercontent.com/-ZZkaquQy0CQ/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rfQM27r8piZ9BfdwEI15D-B6Quxqg/photo.jpg',
     };
-    findOrCreateUser(user);
-    addUserToReceipt(receipt, user);
+    await findOrCreateUser(user);
+    await handleAddingUserToReceipt(receipt, user);
+  };
+
+  const handleAddingUserToReceipt = async (receipt, user) => {
+    //get expo token for sending message
+    const token = await addUserToReceipt(receipt, user.email);
+    console.log('response from find or create**********', token);
+
+    if (token) {
+      const message = `Don't forget to split the bill for ${receipt.restaurant}!`;
+      //TODO: need to also send/track receipt id somehow
+      await sendMessage(message, token);
+    }
   };
 
   return (
@@ -136,7 +167,7 @@ export default function AddUserToReceiptScreen(props) {
                     <Button
                       title="Add"
                       onPress={() => {
-                        addUserToReceipt(receipt, user.email);
+                        handleAddingUserToReceipt(receipt, user);
                       }}
                     >
                       <Text>+</Text>

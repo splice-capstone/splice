@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import ReceiptForm from '../screens/ReceiptForm';
 import AccountScreen from '../screens/AccountScreen';
 import LoginScreen from '../screens/LoginScreen';
+import SummaryPieChart from '../screens/PieChart';
 import Slide from '../screens/Slide';
 
 const styles = StyleSheet.create({
@@ -151,6 +152,12 @@ const AppStack = createStackNavigator({
     screen: CurrentReceipt,
     navigationOptions: {
       title: 'Current Receipt',
+    },
+  },
+  Status: {
+    screen: SummaryPieChart,
+    navigationOptions: {
+      title: 'Summary',
     },
   },
 });

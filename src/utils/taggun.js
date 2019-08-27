@@ -17,21 +17,19 @@ const create = async (receipt, receiptItems, currentUser) => {
 const parseReceipt = async (response, currentUser) => {
   const itemPayees = {
     [currentUser['email']]: {
-      email: (currentUser['email']),
+      email: currentUser['email'],
       isPayee: false,
-      photo: currentUser.photoUrl
-    }
-  }
+      photo: currentUser.photoUrl,
+    },
+  };
 
   try {
     //send user feedback on if items were not detected
     let comments = {};
-    let date = (response.date.data);
-    console.log('datatatatatat', date)
+    let date = response.date.data;
 
     if (!date) {
       date = new Date();
-      console.log('new date!!!!', date)
       comments['date'] = 'No date detected - defaulted to today';
     }
 
@@ -97,12 +95,11 @@ const parseReceipt = async (response, currentUser) => {
 
           //add keys needed for receipt_items document in database
 
-
           receiptItems.push({
             amount: Math.ceil(data * 100),
             name: text,
             payees: itemPayees,
-            costPerUser: Math.ceil(data * 100)
+            costPerUser: Math.ceil(data * 100),
           });
 
           //increment the sum for the check at the end
@@ -122,7 +119,7 @@ const parseReceipt = async (response, currentUser) => {
         amount: receipt.subtotal - sum,
         name: 'Misc item',
         payees: itemPayees,
-        costPerUser: receipt.subtotal - sum
+        costPerUser: receipt.subtotal - sum,
       });
       comments['misc'] =
         'Items did not add up to subtotal so misc item was added';
