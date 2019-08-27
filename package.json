@@ -6,7 +6,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "serve": "node -r esm server/index.js"
   },
   "jest": {
     "preset": "jest-expo"
@@ -17,6 +18,7 @@
     "@expo/vector-icons": "^10.0.3",
     "@react-navigation/web": "^1.0.0-alpha.9",
     "axios": "^0.19.0",
+    "esm": "^3.2.25",
     "expo": "^34.0.1",
     "expo-app-auth": "^6.0.0",
     "expo-asset": "^6.0.0",
@@ -33,10 +35,13 @@
     "expo-media-library": "^6.0.0",
     "expo-permissions": "^6.0.0",
     "expo-react-native-adapter": "^2.0.0",
+    "expo-server-sdk": "^3.3.0",
     "expo-web-browser": "6.0.0",
+    "express": "^4.17.1",
     "firebase": "^6.4.0",
     "lodash": "^4.17.15",
     "native-base": "^2.13.5",
+    "ngrok": "^3.2.5",
     "randomcolor": "^0.5.4",
     "react": "16.8.3",
     "react-dom": "^16.8.6",

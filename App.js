@@ -9,6 +9,8 @@ import {
   View,
   Image,
   Animated,
+  TextInput,
+  TouchableOpacity
 } from 'react-native';
 import {
   Container,
@@ -34,6 +36,11 @@ import commonColor from './native-base-theme/variables/commonColor';
 import { AsyncStorage } from 'react-native';
 import { signIn, isSignedIn } from './src/utils/auth';
 import { YellowBox } from 'react-native';
+//push stuff
+import {Notifications} from 'expo'
+import { registerForPushNotificationsAsync } from './src/utils/pushNotification';
+
+
 
 export default function App(props) {
   console.disableYellowBox = true;
@@ -41,6 +48,10 @@ export default function App(props) {
   const [isSplashReady, setSplashReady] = useState(false);
   const [value] = useState(new Animated.Value(1));
   const [{ currentUser }, dispatch] = useStateValue();
+  const [notification, setNotification] = useState(null);
+
+
+
   const setUser = user => {
     dispatch({ type: 'SET_USER', user });
   };
@@ -53,12 +64,34 @@ export default function App(props) {
     }
   };
 
+
+
+
+
+  const handleNotification = notification => {
+    setNotification(notification)
+  }
+
+
+
+
+
   useEffect(() => {
     checkForUser();
     Animated.timing(value, {
       toValue: 0,
       duration: 1000,
     }).start();
+
+    //push stuff
+
+    let notificationSubscription = Notifications.addListener(handleNotification)
+
+    registerForPushNotificationsAsync().then(response => {
+
+    })
+
+
   }, []);
 
   if (!isSplashReady) {
@@ -91,6 +124,9 @@ export default function App(props) {
     return (
       <Animated.View style={{ ...styles.container }}>
         {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+        {notification ? <View>
+          <Text>Fuck this shit yo</Text>
+        </View> : null}
         <AppNavigator />
       </Animated.View>
     );
