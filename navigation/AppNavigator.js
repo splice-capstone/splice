@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import ReceiptForm from '../screens/ReceiptForm';
 import AccountScreen from '../screens/AccountScreen';
 import LoginScreen from '../screens/LoginScreen';
+import Slide from '../screens/Slide';
 
 const styles = StyleSheet.create({
   container: {
@@ -40,6 +41,12 @@ const DrawerNavigator = createDrawerNavigator(
       screen: HomeScreen,
       navigationOptions: {
         title: 'Home',
+      },
+    },
+    Slide: {
+      screen: Slide,
+      navigationOpitons: {
+        title: 'slide',
       },
     },
     'Add Receipt': {

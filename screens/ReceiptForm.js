@@ -10,6 +10,7 @@ import {
   Item,
   Input,
   View,
+  Icon,
 } from 'native-base';
 import ItemCardEdit from './ItemCardEdit';
 import { editReceipt, addReceiptItems } from '../src/tools/firebase';
@@ -83,14 +84,7 @@ export default class ReceiptForm extends React.Component {
       <Container>
         <Content>
           <Form>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: 'row',
-                justifyContent: 'space-around',
-                padding: 20,
-              }}
-            >
+            <View style={styles.inputView}>
               <Item>
                 <TextInput
                   type="text"
@@ -109,8 +103,6 @@ export default class ReceiptForm extends React.Component {
                   value={this.state.amount}
                 />
               </Item>
-            </View>
-            <View style={{ height: 30, justifyContent: 'center' }}>
               <Button
                 title="add item"
                 textAlign="center"
@@ -120,7 +112,7 @@ export default class ReceiptForm extends React.Component {
                 success
                 onPress={this.handleCreateNewItem}
               >
-                <Text style={{ textAlign: 'center' }}>add item</Text>
+                <Icon type="Ionicons" name="ios-add" />
               </Button>
             </View>
             <Item>
@@ -163,5 +155,11 @@ const styles = StyleSheet.create({
   },
   addItemButton: {
     backgroundColor: '#3D9970',
+  },
+  inputView: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    padding: 10,
   },
 });

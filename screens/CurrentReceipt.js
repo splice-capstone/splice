@@ -127,7 +127,7 @@ export default function CurrentReceipt(props) {
       {(receiptLoading || userLoading) && <LoadScreen />}
       {receiptValue && userValues && (
         <Content>
-          {receiptValue.owner === userValues.email ? (
+          {receiptValue.owner == userValues[0].email ? (
             <View
               style={{
                 flexDirection: 'row',

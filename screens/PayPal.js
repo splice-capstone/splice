@@ -65,13 +65,13 @@ export default class Paypal extends Component {
     console.log('state', this.state);
     const response = await fetch(
       'https://api.sandbox.paypal.com/v1/payments/payment',
+      dataDetail,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.state.accessToken}`,
         },
-        body: dataDetail,
       }
     );
 

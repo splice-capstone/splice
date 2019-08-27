@@ -43,9 +43,9 @@ const MyReceiptsCard = props => {
                 }`}
               </Text>
             ) : (
-              <Text style={paid ? { color: 'green' } : { color: 'red' }}>{`${
-                paid ? 'Paid' : 'Need to pay'
-              }: ${owner}`}</Text>
+              <Text style={paid ? { color: 'green' } : { color: 'red' }}>
+                {`${paid ? 'Paid' : 'Need to pay'}: ${owner}`}
+              </Text>
             )}
           </Body>
         </Left>
@@ -66,7 +66,7 @@ const MyReceiptsCard = props => {
                       });
                     }}
                   >
-                    <Icon type="Entypo" name="user" />
+                    <Icon type="MaterialCommunityIcons" name="venmo" />
                   </Button>
                 </Left>
                 <Right>
