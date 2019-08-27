@@ -131,7 +131,7 @@ export default function CurrentReceipt(props) {
               <Icon
                 type="AntDesign"
                 name="form"
-                style={{ color: '#3D9970' }}
+                style={{ color: '#3d403d' }}
                 onPress={() =>
                   props.navigation.navigate('Receipt Form', {
                     current: receiptValue,
@@ -147,7 +147,7 @@ export default function CurrentReceipt(props) {
               </Text>
               <Icon
                 name="md-person-add"
-                style={{ color: '#3D9970' }}
+                style={{ color: '#3d403d' }}
                 onPress={() =>
                   props.navigation.navigate('Add User', {
                     receipt: receiptValue,
@@ -196,13 +196,23 @@ export default function CurrentReceipt(props) {
             ></FlatList>
           )}
           {receiptValue.owner == userValues[0].email ? (
-            <Button>
-              <Text>Close</Text>
-            </Button>
+            <View
+              styles={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Button style={styles.completeButton}>
+                <Text>Close</Text>
+              </Button>
+            </View>
           ) : (
-            <Button>
-              <Text>Payout</Text>
-            </Button>
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+              <Button style={styles.completeButton}>
+                <Text>Payout</Text>
+              </Button>
+            </View>
           )}
         </Content>
       )}
@@ -214,22 +224,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  // contentContainer: {
-  //   paddingTop: 30,
-  // },
-  header: {
-    marginTop: 10,
-    fontSize: 18,
-  },
   topView: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginRight: 2,
     marginLeft: 2,
+    marginTop: 20,
   },
   receiptInfo: {
-    fontWeight: '600',
+    fontWeight: '900',
     justifyContent: 'center',
     paddingTop: 7,
     color: 'black',
@@ -238,9 +242,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
     justifyContent: 'space-evenly',
+    alignItems: 'center',
     backgroundColor: '#3D9970',
     borderWidth: 0.5,
     borderColor: 'white',
-    padding: 8,
+    padding: 6,
+    height: 33,
+  },
+  completeButton: {
+    flex: 1,
+    justifyContent: 'center',
+    marginTop: 10,
+    height: 33,
+    width: 150,
+    marginLeft: '29%',
   },
 });
