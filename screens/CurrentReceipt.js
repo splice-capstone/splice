@@ -8,8 +8,8 @@ import { Container, Content, Button, Icon, Text, View } from 'native-base';
 import {
   useDocumentData,
   useCollectionData,
-  useCollection,
-} from 'react-firebase-hooks/firestore';
+  useCollection
+} from "react-firebase-hooks/firestore";
 import db, {
   calculateSubtotal,
   toggleReceiptUser,
@@ -17,7 +17,7 @@ import db, {
 } from '../src/tools/firebase';
 export default function CurrentReceipt(props) {
   const [{ currentUser }, dispatch] = useStateValue();
-  const [comments, setComments] = useState('');
+  const [comments, setComments] = useState("");
   const [userSubtotal, setSubtotal] = useState(0);
   const [userTax, setTax] = useState(0);
   const [userTip, setTip] = useState(0);
@@ -26,25 +26,26 @@ export default function CurrentReceipt(props) {
   const [loadingState, setLoadingState] = useState(true);
   const [myPrices, setMyPrices] = useState({});
   const receiptId = props.navigation.getParam(
-    'receiptId',
-    '1Y8k9OAQhJAlctRTAjYW'
+    "receiptId",
+    "1Y8k9OAQhJAlctRTAjYW"
   );
   let [receiptValue, receiptLoading, receiptError] = useDocumentData(
-    db.collection('receipts').doc(receiptId),
+    db.collection("receipts").doc(receiptId),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-      idField: 'id',
+      idField: "id"
     }
   );
+
   let [userValues, userLoading, userError] = useCollectionData(
     db
-      .collection('receipts')
+      .collection("receipts")
       .doc(receiptId)
-      .collection('receipt_users')
-      .where('email', '==', currentUser.email),
+      .collection("receipt_users")
+      .where("email", "==", currentUser.email),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-      idField: 'id',
+      idField: "id"
     }
   );
   const tapItem = async (userId, itemId, payees, amount) => {
@@ -65,7 +66,7 @@ export default function CurrentReceipt(props) {
         subtotal += item.costPerUser;
       }
     });
-    return Math.floor(subtotal);
+    return subtotal;
   };
   const handleCheckout = () => {
     //save user amounts on receipt_user doc & update to say user has paid
@@ -82,9 +83,9 @@ export default function CurrentReceipt(props) {
 
   useEffect(() => {
     const unsub = db
-      .collection('receipts')
+      .collection("receipts")
       .doc(receiptId)
-      .collection('items')
+      .collection("items")
       .onSnapshot(snap => {
         const itemArr = [];
         snap.forEach(itemDoc => {
@@ -94,21 +95,19 @@ export default function CurrentReceipt(props) {
             key: itemDoc.id,
             amount,
             payees,
-            costPerUser,
+            costPerUser
           });
         });
         setLoadingState(false);
         setItems(itemArr);
       });
-    const newComments = props.navigation.getParam('comments', '');
+    const newComments = props.navigation.getParam("comments", "");
     if (newComments) {
       setComments(newComments);
     }
     if (userValues && receiptValue && userValues[0].id) {
       //recalculate my user subtotals based on sum of my items map
-      calculateSubtotal(receiptId, userValues[0].id).then(subtotal =>
-        setSubtotal(subtotal / 100)
-      );
+
       //calculate user tax based on user subtotal/overall total * overall tax
       setTax(((userSubtotal / receiptValue.total) * receiptValue.tax) / 100);
       //calculate user tip based on user subtotal/overall total * overall tip
@@ -123,24 +122,24 @@ export default function CurrentReceipt(props) {
       {(receiptError || userError) && (
         <Text>Error: {JSON.stringify(receiptError)}</Text>
       )}
-      {(receiptLoading || userLoading) && <Text>Collection: Loading...</Text>}
+      {(receiptLoading || userLoading) && null}
       {receiptValue && userValues && (
         <Content>
           <View
             style={{
-              flexDirection: 'row',
+              flexDirection: "row",
               flex: 1,
-              justifyContent: 'space-evenly',
+              justifyContent: "space-evenly"
             }}
           >
             <Button>
               <Text
                 onPress={() =>
-                  props.navigation.navigate('Receipt Form', {
+                  props.navigation.navigate("Receipt Form", {
                     current: receiptValue,
                     navigation: props.navigation,
                     userId: userValues[0].id,
-                    email: currentUser.email,
+                    email: currentUser.email
                   })
                 }
               >
@@ -149,22 +148,22 @@ export default function CurrentReceipt(props) {
             </Button>
             <Text
               style={{
-                fontWeight: '600',
-                alignItems: 'center',
-                justifyContent: 'center',
+                fontWeight: "600",
+                alignItems: "center",
+                justifyContent: "center"
               }}
             >
               {receiptValue.restaurant}
             </Text>
             <Text>
-              {new Date(receiptValue.date).toLocaleDateString('en-US')}
+              {new Date(receiptValue.date).toLocaleDateString("en-US")}
             </Text>
             <Button>
               <Icon
                 name="md-person-add"
                 onPress={() =>
-                  props.navigation.navigate('Add User', {
-                    receipt: receiptValue,
+                  props.navigation.navigate("Add User", {
+                    receipt: receiptValue
                   })
                 }
               />
@@ -175,26 +174,34 @@ export default function CurrentReceipt(props) {
           <Text>{comments.date}</Text>
           <View
             style={{
-              flexDirection: 'row',
+              flexDirection: "row",
               flex: 1,
-              justifyContent: 'space-evenly',
-              backgroundColor: '#3D9970',
-              padding: 10,
+              justifyContent: "space-evenly",
+              backgroundColor: "#3D9970",
+              padding: 10
             }}
           >
-            <Text light>My Subtotal: ${calcSubtotal() / 100}</Text>
-            <Text light>My Tax: ${userTax}</Text>
-            <Text light>My Tip: ${userTip}</Text>
+            <Text light>My Subtotal: ${Math.floor(calcSubtotal()) / 100}</Text>
+            <Text light>
+              My Tax: $
+              {(
+                Math.floor(
+                  (calcSubtotal() / receiptValue.total) * receiptValue.tax
+                ) / 100
+              ).toFixed(2)}
+            </Text>
+            {receiptValue.tip === 0 ? (
+              null ) :
+              (<Text light>
+              My Tip: $
+              {(
+                Math.floor(
+                  (calcSubtotal() / receiptValue.total) * receiptValue.tip
+                ) / 100
+              ).toFixed(2)}
+            </Text>
+            )}
           </View>
-          <Text center>My Total: ${userTotal}</Text>
-          <Text>Owner: {receiptValue.owner}</Text>
-          <Text>Subtotal: ${receiptValue.subtotal / 100}</Text>
-          <Text>Tax: ${receiptValue.tax / 100}</Text>
-          <Text>Total: ${receiptValue.total / 100}</Text>
-          <Button onPress={() => handleCheckout()}>
-            <Text>Checkout</Text>
-          </Button>
-          {!loadingState ? null : <Text>still loading..</Text>}
           {!loadingState && (
             <FlatList
               data={receiptItems}
@@ -216,13 +223,13 @@ export default function CurrentReceipt(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff"
   },
   contentContainer: {
-    paddingTop: 30,
+    paddingTop: 30
   },
   header: {
     marginTop: 10,
-    fontSize: 18,
-  },
+    fontSize: 18
+  }
 });

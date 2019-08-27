@@ -1,7 +1,24 @@
-import React, { useEffect } from 'react';
-import { Content, Text, ListItem, Right, Thumbnail, View } from 'native-base';
+import React, { useEffect } from "react";
+import { StyleSheet } from "react-native";
+import { Content, Text, ListItem, Left, Right, Thumbnail, View } from "native-base";
 
 export default function ItemCard(props) {
+  const styles = StyleSheet.create({
+    container: {
+      display: "flex",
+      flexDirection: "row",
+      flex: 1,
+      backgroundColor: "#fff"
+    },
+    contentContainer: {
+      paddingTop: 30
+    },
+    header: {
+      marginTop: 10,
+      fontSize: 18
+    }
+  });
+
   const itemData = props.itemInfo.item;
 
   let photoArr = [];
@@ -15,7 +32,7 @@ export default function ItemCard(props) {
   return (
     <ListItem
       noIdent
-      style={{ backgroundColor: 'white' }}
+      style={{ backgroundColor: "white", flex: 1, minHeight: '100%', justifyContent: 'space-between', fontFamily: 'Feather'}}
       onPress={() =>
         props.presser(
           props.receiptUser,
@@ -25,24 +42,30 @@ export default function ItemCard(props) {
         )
       }
     >
-      <Content>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            justifyContent: 'space-evenly',
-            padding: 2,
-          }}
-        >
-          <Text>{itemData.name}</Text>
-          <Text>${itemData.costPerUser / 100}</Text>
-          <Right>
-            {photoArr.map((photoUri, ind) => {
-              return <Thumbnail key={ind} small source={{ uri: photoUri }} />;
-            })}
-          </Right>
-        </View>
-      </Content>
+      <View
+        style={{
+          // // flex: 2,
+          flexDirection: "row",
+          padding: 2,
+          minWidth: '100%',
+        }}
+      >
+        <Left style={{flex: 2, flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
+        <Text >{itemData.name}</Text>
+        <Text style={{marginRight: '0%'}}> @ {`$${itemData.costPerUser / 100}/ea`}</Text>
+        </Left>
+        <Content></Content>
+        <Right style={{
+          flex: 1.25,
+          flexDirection: 'row',
+          }}>
+          {photoArr.map(photoUri => {
+            return (
+              <Thumbnail style={{marginRight: '-17.5%'}} key={photoUri} small source={{ uri: photoUri }} />
+            );
+          })}
+        </Right>
+      </View>
     </ListItem>
   );
 }
