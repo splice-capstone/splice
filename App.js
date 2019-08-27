@@ -10,7 +10,7 @@ import {
   Image,
   Animated,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import {
   Container,
@@ -37,10 +37,9 @@ import { AsyncStorage } from 'react-native';
 import { signIn, isSignedIn } from './src/utils/auth';
 import { YellowBox } from 'react-native';
 //push stuff
-import {Notifications} from 'expo'
+import { Notifications } from 'expo';
 import { registerForPushNotificationsAsync } from './src/utils/pushNotification';
-
-
+import db from './src/tools/firebase';
 
 export default function App(props) {
   console.disableYellowBox = true;
@@ -49,8 +48,7 @@ export default function App(props) {
   const [value] = useState(new Animated.Value(1));
   const [{ currentUser }, dispatch] = useStateValue();
   const [notification, setNotification] = useState(null);
-
-
+  const [expoToken, setExpoToken] = useState(null);
 
   const setUser = user => {
     dispatch({ type: 'SET_USER', user });
@@ -61,23 +59,29 @@ export default function App(props) {
     const user = await isSignedIn();
     if (user) {
       await setUser(user[0]);
+      console.log('token***********', expoToken);
+      // save token in firestore db for user
+      const userDoc = await db.collection('users').doc(user[0].email);
+      userDoc.set(
+        {
+          expoToken,
+        },
+        { merge: true }
+      );
+      console.log('user doc updated');
     }
   };
 
-
-
-
-
   const handleNotification = notification => {
-    setNotification(notification)
-  }
-
-
-
-
+    console.log('inside handle notification', notification);
+    //maybe put redirect here?? need to get receipt id
+    setNotification(notification);
+    // props.navigation.navigate('Current Receipt', {
+    //   receiptId: id,
+    // });
+  };
 
   useEffect(() => {
-    checkForUser();
     Animated.timing(value, {
       toValue: 0,
       duration: 1000,
@@ -85,14 +89,15 @@ export default function App(props) {
 
     //push stuff
 
-    let notificationSubscription = Notifications.addListener(handleNotification)
-
-    registerForPushNotificationsAsync().then(response => {
-
-    })
-
-
-  }, []);
+    let notificationSubscription = Notifications.addListener(
+      handleNotification
+    );
+    registerForPushNotificationsAsync(currentUser).then(response => {
+      const token = response;
+      setExpoToken(token);
+    });
+    checkForUser().then();
+  }, [expoToken]);
 
   if (!isSplashReady) {
     return (
@@ -124,9 +129,6 @@ export default function App(props) {
     return (
       <Animated.View style={{ ...styles.container }}>
         {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-        {notification ? <View>
-          <Text>Fuck this shit yo</Text>
-        </View> : null}
         <AppNavigator />
       </Animated.View>
     );
@@ -151,9 +153,8 @@ async function _cacheResourcesAsync(setAppReady) {
         ...Entypo.font,
         'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
         Zocial: require('native-base/Fonts/Zocial.ttf'),
-        Feather: require('native-base/Fonts/Feather.ttf')
+        Feather: require('native-base/Fonts/Feather.ttf'),
       }),
-
     ]);
     setTimeout(() => setAppReady(true), 2000);
   } catch (err) {

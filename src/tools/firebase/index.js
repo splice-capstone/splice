@@ -120,6 +120,7 @@ export async function getReceipt(receiptId) {
 
 export async function findOrCreateUser(user) {
   try {
+    console.log('*****************find or create user', user);
     const newUser = await db
       .collection('users')
       .doc(user.email)
@@ -236,7 +237,6 @@ export async function getMyReceipts(email) {
 }
 
 export async function addUserToReceipt(receipt, userEmail) {
-  console.log(receipt, userEmail);
   try {
     // const receiptDoc = await receiptRef.get();
 
@@ -314,8 +314,7 @@ export async function addUserToReceipt(receipt, userEmail) {
           .set({ payees: itemDataObj.payees }, { merge: true });
       })
     );
-
-    return receipt.id;
+    return userData.data().expoToken;
   } catch (err) {
     console.error(err);
     return `error: ${err}`;
