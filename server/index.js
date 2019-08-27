@@ -12,7 +12,6 @@ const saveToken = token => {
 };
 
 const handlePushTokens = (message, pushToken) => {
-  console.log('handling the message');
   let notifications = [];
   // for (let pushToken of savedPushTokens) {
   if (!Expo.isExpoPushToken(pushToken)) {
@@ -25,6 +24,9 @@ const handlePushTokens = (message, pushToken) => {
     title: '$plice that bill',
     body: message,
     data: { message },
+    ios: {
+      _displayInForeground: true,
+    },
   });
   // }
   let chunks = expo.chunkPushNotifications(notifications);
@@ -32,7 +34,6 @@ const handlePushTokens = (message, pushToken) => {
     for (let chunk of chunks) {
       try {
         let receipts = await expo.sendPushNotificationsAsync(chunk);
-        console.log('*****************inside chunk', receipts);
       } catch (error) {
         console.error(error);
       }
@@ -53,7 +54,6 @@ app.post('/token', (req, res) => {
 });
 
 app.post('/message', (req, res) => {
-  console.log('sent message end point', req.body);
   handlePushTokens(req.body.message, req.body.pushToken);
   console.log(`Received message, ${req.body.message}`);
   res.send(`Received message, ${req.body.message}`);
