@@ -127,73 +127,41 @@ export default function CurrentReceipt(props) {
       {receiptValue && userValues && (
         <Content>
           {receiptValue.owner == userValues[0].email ? (
-            <View
-              style={{
-                flexDirection: 'row',
-                flex: 1,
-                justifyContent: 'space-evenly',
-              }}
-            >
-              <Button>
-                <Text
-                  onPress={() =>
-                    props.navigation.navigate('Receipt Form', {
-                      current: receiptValue,
-                      navigation: props.navigation,
-                      userId: userValues[0].id,
-                      email: currentUser.email,
-                    })
-                  }
-                >
-                  Edit
-                </Text>
-              </Button>
-              <Text
-                style={{
-                  fontWeight: '600',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                {receiptValue.restaurant}
-              </Text>
-              <Text>
+            <View style={styles.topView}>
+              <Icon
+                type="AntDesign"
+                name="form"
+                style={{ color: '#3D9970' }}
+                onPress={() =>
+                  props.navigation.navigate('Receipt Form', {
+                    current: receiptValue,
+                    navigation: props.navigation,
+                    userId: userValues[0].id,
+                    email: currentUser.email,
+                  })
+                }
+              />
+              <Text style={styles.receiptInfo}>{receiptValue.restaurant}</Text>
+              <Text style={styles.receiptInfo}>
                 {new Date(receiptValue.date).toLocaleDateString('en-US')}
               </Text>
-              <Button>
-                <Icon
-                  name="md-person-add"
-                  onPress={() =>
-                    props.navigation.navigate('Add User', {
-                      receipt: receiptValue,
-                    })
-                  }
-                />
-              </Button>
+              <Icon
+                name="md-person-add"
+                style={{ color: '#3D9970' }}
+                onPress={() =>
+                  props.navigation.navigate('Add User', {
+                    receipt: receiptValue,
+                  })
+                }
+              />
             </View>
           ) : (
-            <Text
-              style={{
-                fontWeight: '600',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              {receiptValue.restaurant}
-            </Text>
+            <Text style={styles.receiptInfo}>{receiptValue.restaurant}</Text>
           )}
           <Text>{comments.restaurant}</Text>
           <Text>{comments.misc}</Text>
-          <Text>{comments.date}</Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              flex: 1,
-              justifyContent: 'space-evenly',
-              backgroundColor: '#3D9970',
-              padding: 10,
-            }}
-          >
+          <Text style={styles.receiptInfo}>{comments.date}</Text>
+          <View style={styles.costInfo}>
             <Text light>My Subtotal: ${Math.floor(calcSubtotal()) / 100}</Text>
             <Text light>
               My Tax: $
@@ -227,6 +195,15 @@ export default function CurrentReceipt(props) {
               )}
             ></FlatList>
           )}
+          {receiptValue.owner == userValues[0].email ? (
+            <Button>
+              <Text>Close</Text>
+            </Button>
+          ) : (
+            <Button>
+              <Text>Payout</Text>
+            </Button>
+          )}
         </Content>
       )}
     </Container>
@@ -237,11 +214,33 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  contentContainer: {
-    paddingTop: 30,
-  },
+  // contentContainer: {
+  //   paddingTop: 30,
+  // },
   header: {
     marginTop: 10,
     fontSize: 18,
+  },
+  topView: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginRight: 2,
+    marginLeft: 2,
+  },
+  receiptInfo: {
+    fontWeight: '600',
+    justifyContent: 'center',
+    paddingTop: 7,
+    color: 'black',
+  },
+  costInfo: {
+    flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'space-evenly',
+    backgroundColor: '#3D9970',
+    borderWidth: 0.5,
+    borderColor: 'white',
+    padding: 8,
   },
 });
