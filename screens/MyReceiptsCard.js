@@ -12,7 +12,7 @@ import {
   Body,
   Right,
 } from 'native-base';
-import { WebBrowser } from 'expo';
+import * as WebBrowser from 'expo-web-browser';
 
 const MyReceiptsCard = props => {
   const { restaurant, date, id, total, owner, open } = props.recptsData;
@@ -22,12 +22,14 @@ const MyReceiptsCard = props => {
 
   const totalInDollars = total / 100;
 
-  const handleOpenWithWebBrowser = function() {
-    WebBrowser.openBrowserAsync('https://venmo.com/account/sign-in');
-  };
+  // const _handleOpenWithWebBrowser = function() {
+  //   WebBrowser.openBrowserAsync('https://venmo.com/account/sign-in');
+  // };
 
-  const handleOpenWithLinking = function() {
-    Linking.openURL('https://venmo.com/account/sign-in');
+  // // or to signed in view
+
+  const _handleOpenWithWebBrowser = function() {
+    WebBrowser.openBrowserAsync('https://venmo.com/');
   };
 
   return (
@@ -80,13 +82,7 @@ const MyReceiptsCard = props => {
                   <Button
                     transparent
                     textStyle={{ color: '#87838B' }}
-                    // onPress={() => {
-                    //   // placeholder to navigate to paypal
-                    //   props.navigation.navigate('Add User', {
-                    //     receipt: props.recptsData,
-                    //   });
-                    // }}
-                    onPress={handleOpenWithWebBrowser}
+                    onPress={_handleOpenWithWebBrowser}
                   >
                     <Icon
                       type="MaterialCommunityIcons"
@@ -105,7 +101,7 @@ const MyReceiptsCard = props => {
                       });
                     }}
                   >
-                    <Icon type="Entypo" name="info" />
+                    <Icon type="Entypo" name="info" padding="2" />
                   </Button>
                 </Right>
               </CardItem>
@@ -115,11 +111,13 @@ const MyReceiptsCard = props => {
                   <Button
                     transparent
                     textStyle={{ color: '#87838B' }}
-                    onPress={() => {
-                      // placeholder to navigate to paypal
-                    }}
+                    onPress={_handleOpenWithWebBrowser}
                   >
-                    <Icon type="MaterialCommunityIcons" name="venmo" />
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="venmo"
+                      padding="2"
+                    />
                   </Button>
                 </Left>
                 <Right>

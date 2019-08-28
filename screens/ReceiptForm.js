@@ -156,7 +156,7 @@ export default class ReceiptForm extends React.Component {
               style={styles.finishButton}
               onPress={() => this.handleComplete()}
             >
-              <Text>finish</Text>
+              <Text>Finish</Text>
             </Button>
           </View>
         </Content>
