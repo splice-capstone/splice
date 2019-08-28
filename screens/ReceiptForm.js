@@ -132,7 +132,12 @@ export default class ReceiptForm extends React.Component {
           >
             <View style={styles.tipInfo}>
               <Input
-                style={{ height: 20 }}
+                style={{
+                  height: 20,
+                  width: 20,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
                 placeholder="enter tip"
                 onChangeText={tipAmount => this.updateTotal(tipAmount)}
               />
@@ -191,11 +196,13 @@ const styles = StyleSheet.create({
     width: 140,
   },
   tipInfo: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: '30%',
+    textAlign: 'center',
     padding: 10,
+    marginLeft: '37%',
   },
   generalText: {
     color: '#3A3535',

@@ -1,6 +1,6 @@
 /* eslint-disable complexity */
 import React from 'react';
-import { View } from 'react-native';
+import { View, Linking } from 'react-native';
 import {
   Header,
   Card,
@@ -12,6 +12,7 @@ import {
   Body,
   Right,
 } from 'native-base';
+import { WebBrowser } from 'expo';
 
 const MyReceiptsCard = props => {
   const { restaurant, date, id, total, owner, open } = props.recptsData;
@@ -20,8 +21,17 @@ const MyReceiptsCard = props => {
   } = props.recptsData;
 
   const totalInDollars = total / 100;
+
+  const handleOpenWithWebBrowser = function() {
+    WebBrowser.openBrowserAsync('https://venmo.com/account/sign-in');
+  };
+
+  const handleOpenWithLinking = function() {
+    Linking.openURL('https://venmo.com/account/sign-in');
+  };
+
   return (
-    <Card style={{ flex: 0, height: 150 }} onPress>
+    <Card style={{ flex: 0, height: 140 }} onPress>
       <CardItem>
         <Left>
           <Body>
@@ -70,14 +80,19 @@ const MyReceiptsCard = props => {
                   <Button
                     transparent
                     textStyle={{ color: '#87838B' }}
-                    onPress={() => {
-                      // placeholder to navigate to paypal
-                      props.navigation.navigate('Add User', {
-                        receipt: props.recptsData,
-                      });
-                    }}
+                    // onPress={() => {
+                    //   // placeholder to navigate to paypal
+                    //   props.navigation.navigate('Add User', {
+                    //     receipt: props.recptsData,
+                    //   });
+                    // }}
+                    onPress={handleOpenWithWebBrowser}
                   >
-                    <Icon type="MaterialCommunityIcons" name="venmo" />
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="venmo"
+                      padding="2"
+                    />
                   </Button>
                 </Left>
                 <Right>

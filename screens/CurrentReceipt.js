@@ -141,7 +141,7 @@ export default function CurrentReceipt(props) {
               <Icon
                 type="AntDesign"
                 name="form"
-                style={{ color: '#3d403d' }}
+                style={{ color: '#3d403d', paddingLeft: 3, paddingTop: 2 }}
                 onPress={() =>
                   props.navigation.navigate('Receipt Form', {
                     current: receiptValue,
@@ -167,7 +167,7 @@ export default function CurrentReceipt(props) {
               </View>
               <Icon
                 name="md-person-add"
-                style={{ color: '#3d403d' }}
+                style={{ color: '#3d403d', paddingRight: 3, paddingTop: 2 }}
                 onPress={() =>
                   props.navigation.navigate('Add User', {
                     receipt: receiptValue,
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: 'bold',
     justifyContent: 'center',
-    paddingTop: 5,
+    paddingTop: 2,
     color: 'black',
   },
   receiptInfo2: {

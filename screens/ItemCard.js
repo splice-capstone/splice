@@ -45,7 +45,6 @@ export default function ItemCard(props) {
         flex: 1,
         height: 45,
         justifyContent: 'space-between',
-        fontFamily: 'Feather',
       }}
       onPress={() =>
         props.presser(
