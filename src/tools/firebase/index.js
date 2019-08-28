@@ -120,7 +120,6 @@ export async function getReceipt(receiptId) {
 
 export async function findOrCreateUser(user) {
   try {
-    console.log('*****************find or create user', user);
     const newUser = await db
       .collection('users')
       .doc(user.email)

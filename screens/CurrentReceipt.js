@@ -131,36 +131,60 @@ export default function CurrentReceipt(props) {
       {receiptValue && userValues && (
         <Content>
           {receiptValue.owner == userValues[0].email ? (
-            <View style={styles.topView}>
-              <Icon
-                type="AntDesign"
-                name="form"
-                style={{ color: '#3d403d' }}
-                onPress={() =>
-                  props.navigation.navigate("Receipt Form", {
-                    current: receiptValue,
-                    navigation: props.navigation,
-                    userId: userValues[0].id,
-                    email: currentUser.email
-                  })
-                }
-              />
-              <Text style={styles.receiptInfo}>{receiptValue.restaurant}</Text>
-              <Text style={styles.receiptInfo}>
-                {new Date(receiptValue.date).toLocaleDateString("en-US")}
+            <View
+              style={{
+                flexDirection: 'row',
+                flex: 1,
+                justifyContent: 'space-evenly',
+              }}
+            >
+              <Button>
+                <Text
+                  onPress={() =>
+                    props.navigation.navigate('Receipt Form', {
+                      current: receiptValue,
+                      navigation: props.navigation,
+                      userId: userValues[0].id,
+                      email: currentUser.email,
+                    })
+                  }
+                >
+                  Edit
+                </Text>
+              </Button>
+              <Text
+                style={{
+                  fontWeight: '600',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                {receiptValue.restaurant}
               </Text>
-              <Icon
-                name="md-person-add"
-                style={{ color: '#3d403d' }}
-                onPress={() =>
-                  props.navigation.navigate("Add User", {
-                    receipt: receiptValue
-                  })
-                }
-              />
+              <Text>
+                {new Date(receiptValue.date).toLocaleDateString('en-US')}
+              </Text>
+              <Button>
+                <Icon
+                  name="md-person-add"
+                  onPress={() =>
+                    props.navigation.navigate('Add User', {
+                      receipt: receiptValue,
+                    })
+                  }
+                />
+              </Button>
             </View>
           ) : (
-            <Text style={styles.receiptInfo}>{receiptValue.restaurant}</Text>
+            <Text
+              style={{
+                fontWeight: '600',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {receiptValue.restaurant}
+            </Text>
           )}
           <Text>{comments.restaurant}</Text>
           <Text>{comments.misc}</Text>

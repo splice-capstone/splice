@@ -33,8 +33,6 @@ export default function AddUserToReceiptScreen(props) {
   const MESSAGE_ENPOINT = 'http://20c8fab0.ngrok.io/message';
 
   const sendMessage = async (messageText, pushToken) => {
-    console.log('sending message...............');
-
     await fetch(MESSAGE_ENPOINT, {
       method: 'POST',
       headers: {
