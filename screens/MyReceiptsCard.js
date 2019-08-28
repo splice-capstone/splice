@@ -12,6 +12,7 @@ import {
   Body,
   Right,
 } from 'native-base';
+import * as WebBrowser from 'expo-web-browser';
 
 const MyReceiptsCard = props => {
   const { restaurant, date, id, total, owner, open } = props.recptsData;
@@ -20,12 +21,17 @@ const MyReceiptsCard = props => {
   } = props.recptsData;
 
   const totalInDollars = total / 100;
+
+  const _handleOpenWithWebBrowser = function() {
+    WebBrowser.openBrowserAsync('https://venmo.com/');
+  };
+
   return (
-    <Card style={{ flex: 0 }} onPress>
+    <Card style={{ flex: 0, height: 140 }} onPress>
       <CardItem>
         <Left>
           <Body>
-            <Text>{restaurant}</Text>
+            <Text style={{ fontSize: 20 }}>{restaurant}</Text>
             <Text note>{new Date(date).toLocaleDateString('en-US')}</Text>
           </Body>
         </Left>
@@ -34,7 +40,13 @@ const MyReceiptsCard = props => {
         <Left>
           <Body>
             {isOwner ? (
-              <Text style={open ? { color: 'red' } : { color: 'green' }}>
+              <Text
+                style={
+                  paid
+                    ? { color: 'green', fontSize: 13 }
+                    : { color: 'red', fontSize: 13 }
+                }
+              >
                 {`${
                   !open
                     ? `Received $${totalInDollars}`
@@ -42,7 +54,13 @@ const MyReceiptsCard = props => {
                 }`}
               </Text>
             ) : (
-              <Text style={paid ? { color: 'green' } : { color: 'red' }}>
+              <Text
+                style={
+                  paid
+                    ? { color: 'green', fontSize: 13 }
+                    : { color: 'red', fontSize: 13 }
+                }
+              >
                 {`${paid ? 'Paid' : 'Need to pay'}: ${owner}`}
               </Text>
             )}
@@ -58,14 +76,13 @@ const MyReceiptsCard = props => {
                   <Button
                     transparent
                     textStyle={{ color: '#87838B' }}
-                    onPress={() => {
-                      // placeholder to navigate to paypal
-                      props.navigation.navigate('Add User', {
-                        receipt: props.recptsData,
-                      });
-                    }}
+                    onPress={_handleOpenWithWebBrowser}
                   >
-                    <Icon type="MaterialCommunityIcons" name="venmo" />
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="venmo"
+                      padding="2"
+                    />
                   </Button>
                 </Left>
                 <Right>
@@ -78,7 +95,7 @@ const MyReceiptsCard = props => {
                       });
                     }}
                   >
-                    <Icon type="Entypo" name="info" />
+                    <Icon type="Entypo" name="info" padding="2" />
                   </Button>
                 </Right>
               </CardItem>
@@ -88,11 +105,13 @@ const MyReceiptsCard = props => {
                   <Button
                     transparent
                     textStyle={{ color: '#87838B' }}
-                    onPress={() => {
-                      // placeholder to navigate to paypal
-                    }}
+                    onPress={_handleOpenWithWebBrowser}
                   >
-                    <Icon type="Entypo" name="paypal" />
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="venmo"
+                      padding="2"
+                    />
                   </Button>
                 </Left>
                 <Right>

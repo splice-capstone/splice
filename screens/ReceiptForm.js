@@ -93,7 +93,7 @@ export default class ReceiptForm extends React.Component {
                 <TextInput
                   type="text"
                   name="name"
-                  placeholder="i t e m  n a m e"
+                  placeholder="item name"
                   onChangeText={name => this.handleNameText(name)}
                   value={this.state.name}
                 />
@@ -102,7 +102,7 @@ export default class ReceiptForm extends React.Component {
                 <TextInput
                   type="number"
                   name="amount"
-                  placeholder="a m o u n t"
+                  placeholder="amount"
                   onChangeText={amount => this.handleAmountText(amount)}
                   value={this.state.amount}
                 />
@@ -132,8 +132,13 @@ export default class ReceiptForm extends React.Component {
           >
             <View style={styles.tipInfo}>
               <Input
-                style={{ height: 20 }}
-                placeholder="e n t e r  t i p"
+                style={{
+                  height: 20,
+                  width: 20,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                placeholder="enter tip"
                 onChangeText={tipAmount => this.updateTotal(tipAmount)}
               />
             </View>
@@ -146,12 +151,14 @@ export default class ReceiptForm extends React.Component {
               Total: ${this.state.total / 100}
             </Text>
           </View>
-          <Button
-            style={styles.finishButton}
-            onPress={() => this.handleComplete()}
-          >
-            <Text>finish</Text>
-          </Button>
+          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <Button
+              style={styles.finishButton}
+              onPress={() => this.handleComplete()}
+            >
+              <Text>Finish</Text>
+            </Button>
+          </View>
         </Content>
       </Container>
     );
@@ -183,17 +190,19 @@ const styles = StyleSheet.create({
   finishButton: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 10,
     height: 33,
-    width: 150,
-    marginLeft: '29%',
+    width: 140,
   },
   tipInfo: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: '30%',
+    textAlign: 'center',
     padding: 10,
+    marginLeft: '37%',
   },
   generalText: {
     color: '#3A3535',

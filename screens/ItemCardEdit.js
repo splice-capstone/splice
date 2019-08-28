@@ -32,7 +32,6 @@ export default function ItemCardCopy(props) {
     return (
       <Button
         title="delete"
-        style={{ width: 300, height: 100 }}
         color="white"
         onPress={() => {
           handleDelete(deleteProps.docId);
@@ -42,6 +41,7 @@ export default function ItemCardCopy(props) {
           style={{
             justifyContent: 'center',
             alignItems: 'center',
+            textAlign: 'center',
           }}
         >
           delete
@@ -65,6 +65,7 @@ export default function ItemCardCopy(props) {
                       {
                         component: <DeleteButton docId={doc.id} />,
                         backgroundColor: '#F02828',
+                        height: '100%',
                       },
                     ]}
                   >
@@ -90,13 +91,16 @@ const styles = StyleSheet.create({
   listItems: {
     color: '#3A3535',
     fontWeight: '300',
+    justifyContent: 'space-between',
   },
   swipeoutView: {
-    height: 30,
+    height: 45,
     backgroundColor: 'white',
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
+    paddingRight: 2,
+    paddingLeft: 2,
   },
 });
