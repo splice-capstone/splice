@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  StyleSheet,
+  ImageBackground,
+} from 'react-native';
 import { Container, Content } from 'native-base';
 import { useStateValue } from '../state';
 import { getMyReceipts } from '../src/tools/firebase/index';
@@ -17,17 +23,26 @@ const MyReceipts = props => {
 
   return myRecps.length > 0 && Array.isArray(myRecps) ? (
     <Container>
-      <Content>
-        {myRecps.map(recData => {
-          return (
-            <MyReceiptsCard
-              key={recData.id}
-              recptsData={recData}
-              navigation={props.navigation}
-            />
-          );
-        })}
-      </Content>
+      <ImageBackground
+        source={require('../assets/shapes/united-squares.png')}
+        style={{
+          width: '100%',
+          height: '100%',
+        }}
+        resizeMode="repeat"
+      >
+        <Content style={{ marginTop: '5%', zIndex: -1 }}>
+          {myRecps.map(recData => {
+            return (
+              <MyReceiptsCard
+                key={recData.id}
+                recptsData={recData}
+                navigation={props.navigation}
+              />
+            );
+          })}
+        </Content>
+      </ImageBackground>
     </Container>
   ) : (
     <View style={styles.container}>
