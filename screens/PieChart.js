@@ -56,8 +56,6 @@ const SummaryPieChart = props => {
               isOwner,
               paid,
               photoUrl,
-              // legendFontColor: '#7F7F7F',
-              // legendFontSize: 15,
             });
             sum += total;
           } else if (!isOwner && !paid) {
@@ -80,7 +78,6 @@ const SummaryPieChart = props => {
             legendFontSize: 15,
           });
         }
-
         setRemainingArr(remainingUsers);
         setPaidArr(paidUsers);
       });
@@ -91,7 +88,7 @@ const SummaryPieChart = props => {
     <Content>
       <Title
         style={{
-          marginTop: 60,
+          marginTop: 30,
         }}
       >
         Paid

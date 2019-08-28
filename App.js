@@ -59,14 +59,17 @@ export default function App(props) {
     const user = await isSignedIn();
     if (user) {
       await setUser(user[0]);
-      // save token in firestore db for user
-      const userDoc = await db.collection('users').doc(user[0].email);
-      userDoc.set(
-        {
-          expoToken,
-        },
-        { merge: true }
-      );
+
+      if (expoToken) {
+        // save token in firestore db for user
+        const userDoc = await db.collection('users').doc(user[0].email);
+        userDoc.set(
+          {
+            expoToken,
+          },
+          { merge: true }
+        );
+      }
     }
   };
 
@@ -90,7 +93,9 @@ export default function App(props) {
     );
     registerForPushNotificationsAsync(currentUser).then(response => {
       const token = response;
-      setExpoToken(token);
+      if (token) {
+        setExpoToken(token);
+      }
     });
     checkForUser().then();
   }, [expoToken]);
