@@ -1,15 +1,15 @@
 /* eslint-disable quotes */
 /* eslint-disable complexity */
-import React, { useEffect, useState } from "react";
-import { StyleSheet, FlatList, ScrollView, Alert } from "react-native";
-import { useStateValue } from "../state";
-import ItemCard from "./ItemCard";
-import { Container, Content, Button, Icon, Text, View } from "native-base";
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, FlatList, ScrollView, Alert } from 'react-native';
+import { useStateValue } from '../state';
+import ItemCard from './ItemCard';
+import { Container, Content, Button, Icon, Text, View } from 'native-base';
 import {
   useDocumentData,
   useCollectionData,
-  useCollection
-} from "react-firebase-hooks/firestore";
+  useCollection,
+} from 'react-firebase-hooks/firestore';
 import db, {
   calculateSubtotal,
   toggleReceiptUser,
@@ -18,7 +18,7 @@ import db, {
 import LoadScreen from './LoadScreen';
 export default function CurrentReceipt(props) {
   const [{ currentUser }, dispatch] = useStateValue();
-  const [comments, setComments] = useState("");
+  const [comments, setComments] = useState('');
   const [userSubtotal, setSubtotal] = useState(0);
   const [userTax, setTax] = useState(0);
   const [userTip, setTip] = useState(0);
@@ -27,26 +27,26 @@ export default function CurrentReceipt(props) {
   const [loadingState, setLoadingState] = useState(true);
   const [myPrices, setMyPrices] = useState({});
   const receiptId = props.navigation.getParam(
-    "receiptId",
-    "1Y8k9OAQhJAlctRTAjYW"
+    'receiptId',
+    '1Y8k9OAQhJAlctRTAjYW'
   );
   let [receiptValue, receiptLoading, receiptError] = useDocumentData(
-    db.collection("receipts").doc(receiptId),
+    db.collection('receipts').doc(receiptId),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-      idField: "id"
+      idField: 'id',
     }
   );
 
   let [userValues, userLoading, userError] = useCollectionData(
     db
-      .collection("receipts")
+      .collection('receipts')
       .doc(receiptId)
-      .collection("receipt_users")
-      .where("email", "==", currentUser.email),
+      .collection('receipt_users')
+      .where('email', '==', currentUser.email),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-      idField: "id"
+      idField: 'id',
     }
   );
   const tapItem = async (userId, itemId, payees, amount) => {
@@ -80,7 +80,7 @@ export default function CurrentReceipt(props) {
       tax: userTax,
       tip: userTip,
       total: userTotal,
-      paid: true
+      paid: true,
     };
     const receiptUserId = userValues[0].id;
     completeReceipt(receiptId, checkoutData, receiptUserId, currentUser.email);
@@ -88,9 +88,9 @@ export default function CurrentReceipt(props) {
 
   useEffect(() => {
     const unsub = db
-      .collection("receipts")
+      .collection('receipts')
       .doc(receiptId)
-      .collection("items")
+      .collection('items')
       .onSnapshot(snap => {
         const itemArr = [];
         snap.forEach(itemDoc => {
@@ -100,13 +100,13 @@ export default function CurrentReceipt(props) {
             key: itemDoc.id,
             amount,
             payees,
-            costPerUser
+            costPerUser,
           });
         });
         setLoadingState(false);
         setItems(itemArr);
       });
-    const newComments = props.navigation.getParam("comments", "");
+    const newComments = props.navigation.getParam('comments', '');
     if (newComments) {
       setComments(newComments);
     }
@@ -234,6 +234,16 @@ export default function CurrentReceipt(props) {
               <Button style={styles.completeButton}>
                 <Text>Close</Text>
               </Button>
+              <Button
+                style={styles.completeButton}
+                onPress={() =>
+                  props.navigation.navigate('Summary', {
+                    receipt: receiptValue,
+                  })
+                }
+              >
+                <Text>View Summary</Text>
+              </Button>
             </View>
           ) : (
             <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -254,8 +264,8 @@ const styles = StyleSheet.create({
   },
   topView: {
     flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginRight: 2,
     marginLeft: 2,
     marginTop: 20,
@@ -264,10 +274,10 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     justifyContent: 'center',
     paddingTop: 7,
-    color: "black"
+    color: 'black',
   },
   costInfo: {
-    flexDirection: "row",
+    flexDirection: 'row',
     flex: 1,
     justifyContent: 'space-evenly',
     alignItems: 'center',
