@@ -1,24 +1,27 @@
 import React from 'react';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, ScrollView, View, Image } from 'react-native';
+import { useStateValue } from '../state';
+import { Title, Text, Thumbnail } from 'native-base';
 
-export default function AccountScreen(props) {
+export default function AccountScreen() {
+  const [{ currentUser }, dispatch] = useStateValue();
+
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
-      >
-        <View style={styles.welcomeContainer}>
-          <Image
-            source={require('../assets/images/splice.png')}
-            style={styles.welcomeImage}
-          />
-          <Text style={styles.header}>splice</Text>
-          <View>
-            <Text>My Account</Text>
+      <View style={styles.welcomeContainer}>
+        <Image
+          source={require('../assets/images/splice.png')}
+          style={styles.welcomeImage}
+        />
+        <Text style={styles.header}>splice</Text>
+        <View style={styles.contentContainer}>
+          <Text>{currentUser.name}</Text>
+          <Text>{currentUser.email}</Text>
+          <View style={styles.contentContainer}>
+            <Thumbnail large source={{ uri: currentUser.photoUrl }} />
           </View>
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 }
@@ -30,6 +33,9 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingTop: 30,
+    alignItems: 'center',
+    alignContent: 'center',
+    textAlign: 'center',
   },
   header: {
     marginTop: 10,
@@ -45,7 +51,6 @@ const styles = StyleSheet.create({
     height: 80,
     resizeMode: 'contain',
     marginTop: 3,
-    marginLeft: -10,
   },
   loginContainer: {
     alignItems: 'center',

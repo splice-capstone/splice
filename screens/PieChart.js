@@ -1,4 +1,9 @@
-import { PieChart } from 'react-native-chart-kit';
+import {
+  VictoryPie,
+  VictoryChart,
+  VictoryTheme,
+  VictoryLegend,
+} from 'victory-native';
 import React, { useState, useEffect } from 'react';
 import { Dimensions } from 'react-native';
 import db from '../src/tools/firebase';
@@ -17,7 +22,6 @@ import {
   Title,
   Item,
 } from 'native-base';
-import randomColor from 'randomcolor';
 
 const SummaryPieChart = props => {
   const [paidArr, setPaidArr] = useState([]);
@@ -52,11 +56,8 @@ const SummaryPieChart = props => {
               isOwner,
               paid,
               photoUrl,
-              color: randomColor({
-                hue: 'green',
-              }),
-              legendFontColor: '#7F7F7F',
-              legendFontSize: 15,
+              // legendFontColor: '#7F7F7F',
+              // legendFontSize: 15,
             });
             sum += total;
           } else if (!isOwner && !paid) {
@@ -95,24 +96,15 @@ const SummaryPieChart = props => {
       >
         Paid
       </Title>
-      <PieChart
+      <VictoryPie
         data={paidArr}
-        width={Dimensions.get('window').width - 50}
-        height={200}
-        chartConfig={{
-          backgroundColor: '#1cc910',
-          backgroundGradientFrom: '#eff3ff',
-          backgroundGradientTo: '#efefef',
-          decimalPlaces: 2,
-          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          style: {
-            borderRadius: 1,
-          },
+        x="name"
+        y="total"
+        animate={{
+          duration: 2000,
         }}
-        accessor="total"
-        backgroundColor="transparent"
-        paddingLeft="15"
-        absolute //for the absolute number remove if you want percentage
+        labels={d => `$${d.data[d.index].total} - ${d.data[d.index].xName}`}
+        colorScale={['#2EC4B6', '#083D77', '#006989', '#011627', '#476A6F']}
       />
       <Text center>Total: ${Math.floor(receipt.total / 100)}</Text>
       <Title
@@ -121,7 +113,7 @@ const SummaryPieChart = props => {
           marginTop: 60,
         }}
       >
-        Left to pay
+        Need to pay
       </Title>
       {remainingArr &&
         remainingArr.map(user => (
