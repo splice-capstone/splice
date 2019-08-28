@@ -237,5 +237,8 @@ const styles = StyleSheet.create({
   },
   standard: {
     backgroundColor: '#fff',
+    justifyContent: 'center',
+    fontSize: 18,
+    marginLeft: 10,
   },
 });

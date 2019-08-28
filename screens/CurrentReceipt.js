@@ -1,15 +1,11 @@
 /* eslint-disable quotes */
 /* eslint-disable complexity */
 import React, { useEffect, useState } from 'react';
-import {
-  StyleSheet,
-  FlatList,
-  ScrollView,
-  Alert,
-  ActivityIndicator,
-} from 'react-native';
+import { StyleSheet, FlatList, ScrollView, Alert } from 'react-native';
 import { useStateValue } from '../state';
 import ItemCard from './ItemCard';
+import * as WebBrowser from 'expo-web-browser';
+
 import { Container, Content, Button, Icon, Text, View } from 'native-base';
 import {
   useDocumentData,
@@ -21,7 +17,6 @@ import db, {
   toggleReceiptUser,
   completeReceipt,
 } from '../src/tools/firebase';
-import LoadScreen from './LoadScreen';
 export default function CurrentReceipt(props) {
   const [{ currentUser }, dispatch] = useStateValue();
   const [comments, setComments] = useState('');
@@ -81,15 +76,31 @@ export default function CurrentReceipt(props) {
   };
   const handleCheckout = () => {
     //save user amounts on receipt_user doc & update to say user has paid
+    const subtotal = calcSubtotal();
+    const tip = Number(
+      Math.floor((subtotal / receiptValue.total) * receiptValue.tip)
+    );
+    const tax = Number(
+      Math.floor((subtotal / receiptValue.total) * receiptValue.tax)
+    );
+
     const checkoutData = {
-      subtotal: calcSubtotal() / 100,
-      tax: userTax,
-      tip: userTip,
-      total: userTotal,
+      subtotal,
+      tax,
+      tip,
+      total: subtotal + tax + tip,
       paid: true,
     };
     const receiptUserId = userValues[0].id;
     completeReceipt(receiptId, checkoutData, receiptUserId, currentUser.email);
+  };
+  const _handleOpenWithWebBrowser = function() {
+    WebBrowser.openBrowserAsync('https://venmo.com/');
+  };
+
+  const handleFinal = () => {
+    handleCheckout();
+    _handleOpenWithWebBrowser();
   };
 
   useEffect(() => {
@@ -185,7 +196,13 @@ export default function CurrentReceipt(props) {
           <Text style={styles.receiptInfo}>{comments.date}</Text>
           <View style={styles.costInfo}>
             <Text style={styles.costText}>
-              My Subtotal: ${Math.floor(calcSubtotal()) / 100}
+              My Total: $
+              {(
+                (calcSubtotal() +
+                  (calcSubtotal() / receiptValue.total) * receiptValue.tax +
+                  (calcSubtotal() / receiptValue.total) * receiptValue.tip) /
+                100
+              ).toFixed(2)}
             </Text>
             <Text style={styles.costText}>
               My Tax: $
@@ -224,6 +241,7 @@ export default function CurrentReceipt(props) {
               style={{
                 flex: 1,
                 justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
               <Button style={styles.completeButton}>
@@ -248,9 +266,6 @@ export default function CurrentReceipt(props) {
                 alignItems: 'center',
               }}
             >
-              <Button style={styles.payoutButton}>
-                <Text>Payout</Text>
-              </Button>
               <Button
                 style={styles.completeButton}
                 onPress={() =>
@@ -261,6 +276,34 @@ export default function CurrentReceipt(props) {
               >
                 <Text>View Summary</Text>
               </Button>
+              {userValues[0].paid ? (
+                <Button disabled small iconRight style={{ marginTop: 6 }}>
+                  <Text>Pay</Text>
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="venmo"
+                    style={{
+                      color: 'white',
+                    }}
+                  />
+                </Button>
+              ) : (
+                <Button
+                  iconRight
+                  small
+                  style={{ marginTop: 6 }}
+                  onPress={handleFinal}
+                >
+                  <Text>Pay</Text>
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="venmo"
+                    style={{
+                      color: 'white',
+                    }}
+                  />
+                </Button>
+              )}
             </View>
           )}
         </Content>
@@ -268,6 +311,7 @@ export default function CurrentReceipt(props) {
     </Container>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -296,7 +340,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   costText: {
-    fontSize: 13.5,
+    fontSize: 15,
     color: 'white',
   },
   costInfo: {
@@ -320,16 +364,8 @@ const styles = StyleSheet.create({
   },
   completeButton: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    marginTop: 10,
-    height: 33,
-    width: 140,
-  },
-  payoutButton: {
-    flex: 1,
-    justifyContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
     flexWrap: 'wrap',
     marginTop: 10,
