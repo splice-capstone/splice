@@ -204,7 +204,6 @@ export default function CurrentReceipt(props) {
               styles={{
                 flex: 1,
                 justifyContent: 'center',
-                alignItems: 'center',
               }}
             >
               <Button style={styles.completeButton}>
