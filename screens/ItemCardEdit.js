@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import { Content, Text, ListItem, Body, View, Button, Icon } from 'native-base';
+import { Content, Text, ListItem, Body, View, Icon } from 'native-base';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import db, { updateItem, removeReceiptItem } from '../src/tools/firebase';
 import { useStateValue } from '../state';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Button } from 'react-native';
 import Swipeout from 'react-native-swipeout';
 
 export default function ItemCardCopy(props) {
@@ -31,11 +31,21 @@ export default function ItemCardCopy(props) {
   const DeleteButton = deleteProps => {
     return (
       <Button
+        title="delete"
+        style={{ width: 300, height: 100 }}
+        color="white"
         onPress={() => {
           handleDelete(deleteProps.docId);
         }}
       >
-        <Icon type="Ionicons" name="ios-trash" />
+        <Text
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          delete
+        </Text>
       </Button>
     );
   };
@@ -54,12 +64,13 @@ export default function ItemCardCopy(props) {
                     right={[
                       {
                         component: <DeleteButton docId={doc.id} />,
+                        backgroundColor: '#F02828',
                       },
                     ]}
                   >
                     <View style={styles.swipeoutView}>
-                      <Text>{doc.name}</Text>
-                      <Text>${doc.amount / 100}</Text>
+                      <Text style={styles.listItems}>{doc.name}</Text>
+                      <Text style={styles.listItems}>${doc.amount / 100}</Text>
                     </View>
                   </Swipeout>
                 </View>
@@ -75,6 +86,10 @@ export default function ItemCardCopy(props) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
+  },
+  listItems: {
+    color: '#3A3535',
+    fontWeight: '300',
   },
   swipeoutView: {
     height: 30,
