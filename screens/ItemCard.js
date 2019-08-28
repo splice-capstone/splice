@@ -110,5 +110,5 @@ export default function ItemCard(props) {
 }
 
 theStyle = {
-  fontSize: 15
+  fontSize: 12
 };
