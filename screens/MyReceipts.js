@@ -1,9 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, ImageBackground } from "react-native";
-import { Container, Content } from "native-base";
-import { useStateValue } from "../state";
-import { getMyReceipts } from "../src/tools/firebase/index";
-import MyReceiptsCard from "./MyReceiptsCard";
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  StyleSheet,
+  ImageBackground,
+} from 'react-native';
+import { Container, Content } from 'native-base';
+import { useStateValue } from '../state';
+import { getMyReceipts } from '../src/tools/firebase/index';
+import MyReceiptsCard from './MyReceiptsCard';
 
 const MyReceipts = props => {
   const [{ currentUser }, dispatch] = useStateValue();
@@ -18,14 +24,14 @@ const MyReceipts = props => {
   return myRecps.length > 0 && Array.isArray(myRecps) ? (
     <Container>
       <ImageBackground
-        source={require("../assets/shapes/united-squares.png")}
+        source={require('../assets/shapes/united-squares.png')}
         style={{
-          width: "100%",
-          height: "100%",
+          width: '100%',
+          height: '100%',
         }}
-        resizeMode='repeat'
+        resizeMode="repeat"
       >
-        <Content style={{ marginTop: "5%", zIndex: -1 }}>
+        <Content style={{ marginTop: '5%', zIndex: -1 }}>
           {myRecps.map(recData => {
             return (
               <MyReceiptsCard
@@ -38,7 +44,19 @@ const MyReceipts = props => {
         </Content>
       </ImageBackground>
     </Container>
-  ) : null;
+  ) : (
+    <View style={styles.container}>
+      <ActivityIndicator size="large" color="#3D9970" />
+    </View>
+  );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default MyReceipts;
