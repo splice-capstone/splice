@@ -17,7 +17,6 @@ import ReceiptForm from '../screens/ReceiptForm';
 import AccountScreen from '../screens/AccountScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SummaryPieChart from '../screens/PieChart';
-import Slide from '../screens/Slide';
 
 const styles = StyleSheet.create({
   container: {
@@ -148,7 +147,7 @@ const AppStack = createStackNavigator({
       title: 'Current Receipt',
     },
   },
-  Status: {
+  Summary: {
     screen: SummaryPieChart,
     navigationOptions: {
       title: 'Summary',
