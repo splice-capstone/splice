@@ -43,7 +43,7 @@ export default function ItemCard(props) {
       style={{
         backgroundColor: 'white',
         flex: 1,
-        minHeight: '100%',
+        height: 45,
         justifyContent: 'space-between',
         fontFamily: 'Feather',
       }}

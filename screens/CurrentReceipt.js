@@ -1,7 +1,13 @@
 /* eslint-disable quotes */
 /* eslint-disable complexity */
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, FlatList, ScrollView, Alert } from 'react-native';
+import {
+  StyleSheet,
+  FlatList,
+  ScrollView,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import { useStateValue } from '../state';
 import ItemCard from './ItemCard';
 import { Container, Content, Button, Icon, Text, View } from 'native-base';
@@ -127,7 +133,7 @@ export default function CurrentReceipt(props) {
       {(receiptError || userError) && (
         <Text>Error: {JSON.stringify(receiptError)}</Text>
       )}
-      {(receiptLoading || userLoading) && <LoadScreen />}
+      {(receiptLoading || userLoading) && null}
       {receiptValue && userValues && (
         <Content>
           {receiptValue.owner == userValues[0].email ? (
@@ -145,10 +151,20 @@ export default function CurrentReceipt(props) {
                   })
                 }
               />
-              <Text style={styles.receiptInfo}>{receiptValue.restaurant}</Text>
-              <Text style={styles.receiptInfo}>
-                {new Date(receiptValue.date).toLocaleDateString('en-US')}
-              </Text>
+              <View style={styles.info}>
+                <Text style={styles.receiptInfo}>
+                  {receiptValue.restaurant}
+                </Text>
+                <Text
+                  style={{
+                    color: 'gray',
+                    fontSize: '15',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {new Date(receiptValue.date).toLocaleDateString('en-US')}
+                </Text>
+              </View>
               <Icon
                 name="md-person-add"
                 style={{ color: '#3d403d' }}
@@ -160,14 +176,18 @@ export default function CurrentReceipt(props) {
               />
             </View>
           ) : (
-            <Text style={styles.receiptInfo}>{receiptValue.restaurant}</Text>
+            <View style={styles.info2}>
+              <Text style={styles.receiptInfo2}>{receiptValue.restaurant}</Text>
+            </View>
           )}
           <Text>{comments.restaurant}</Text>
           <Text>{comments.misc}</Text>
           <Text style={styles.receiptInfo}>{comments.date}</Text>
           <View style={styles.costInfo}>
-            <Text light>My Subtotal: ${Math.floor(calcSubtotal()) / 100}</Text>
-            <Text light>
+            <Text style={styles.costText}>
+              My Subtotal: ${Math.floor(calcSubtotal()) / 100}
+            </Text>
+            <Text style={styles.costText}>
               My Tax: $
               {(
                 Math.floor(
@@ -176,7 +196,7 @@ export default function CurrentReceipt(props) {
               ).toFixed(2)}
             </Text>
             {receiptValue.tip === 0 ? null : (
-              <Text light>
+              <Text style={styles.costText}>
                 My Tip: $
                 {(
                   Math.floor(
@@ -208,12 +228,18 @@ export default function CurrentReceipt(props) {
               }}
             >
               <Button style={styles.completeButton}>
-                <Text>Close</Text>
+                <Text>Complete</Text>
               </Button>
             </View>
           ) : (
-            <View style={{ flex: 1, justifyContent: 'center' }}>
-              <Button style={styles.completeButton}>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Button style={styles.payoutButton}>
                 <Text>Payout</Text>
               </Button>
             </View>
@@ -237,10 +263,22 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   receiptInfo: {
-    fontWeight: '900',
+    fontSize: 25,
+    fontWeight: 'bold',
     justifyContent: 'center',
-    paddingTop: 7,
+    paddingTop: 5,
     color: 'black',
+  },
+  receiptInfo2: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    justifyContent: 'center',
+    paddingTop: 5,
+    color: 'black',
+  },
+  costText: {
+    fontSize: 13.5,
+    color: 'white',
   },
   costInfo: {
     flexDirection: 'row',
@@ -253,6 +291,14 @@ const styles = StyleSheet.create({
     padding: 6,
     height: 33,
   },
+  info: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  info2: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   completeButton: {
     flex: 1,
     justifyContent: 'center',
@@ -261,6 +307,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
     height: 33,
     width: 140,
-    // marginLeft: '29%',
+  },
+  payoutButton: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    marginTop: 10,
+    height: 33,
+    width: 140,
   },
 });

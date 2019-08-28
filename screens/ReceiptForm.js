@@ -93,7 +93,7 @@ export default class ReceiptForm extends React.Component {
                 <TextInput
                   type="text"
                   name="name"
-                  placeholder="i t e m  n a m e"
+                  placeholder="item name"
                   onChangeText={name => this.handleNameText(name)}
                   value={this.state.name}
                 />
@@ -102,7 +102,7 @@ export default class ReceiptForm extends React.Component {
                 <TextInput
                   type="number"
                   name="amount"
-                  placeholder="a m o u n t"
+                  placeholder="amount"
                   onChangeText={amount => this.handleAmountText(amount)}
                   value={this.state.amount}
                 />
@@ -133,7 +133,7 @@ export default class ReceiptForm extends React.Component {
             <View style={styles.tipInfo}>
               <Input
                 style={{ height: 20 }}
-                placeholder="e n t e r  t i p"
+                placeholder="enter tip"
                 onChangeText={tipAmount => this.updateTotal(tipAmount)}
               />
             </View>

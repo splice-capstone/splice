@@ -25,7 +25,7 @@ const MyReceiptsCard = props => {
       <CardItem>
         <Left>
           <Body>
-            <Text>{restaurant}</Text>
+            <Text style={{ fontSize: 20 }}>{restaurant}</Text>
             <Text note>{new Date(date).toLocaleDateString('en-US')}</Text>
           </Body>
         </Left>
@@ -34,7 +34,13 @@ const MyReceiptsCard = props => {
         <Left>
           <Body>
             {isOwner ? (
-              <Text style={paid ? { color: 'green' } : { color: 'red' }}>
+              <Text
+                style={
+                  paid
+                    ? { color: 'green', fontSize: 13 }
+                    : { color: 'red', fontSize: 13 }
+                }
+              >
                 {`${
                   paid
                     ? `Received $${totalInDollars}`
@@ -42,7 +48,13 @@ const MyReceiptsCard = props => {
                 }`}
               </Text>
             ) : (
-              <Text style={paid ? { color: 'green' } : { color: 'red' }}>
+              <Text
+                style={
+                  paid
+                    ? { color: 'green', fontSize: 13 }
+                    : { color: 'red', fontSize: 13 }
+                }
+              >
                 {`${paid ? 'Paid' : 'Need to pay'}: ${owner}`}
               </Text>
             )}
