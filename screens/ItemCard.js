@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { StyleSheet } from "react-native";
+import React, { useEffect } from 'react';
+import { StyleSheet } from 'react-native';
 import {
   Content,
   Text,
@@ -7,24 +7,24 @@ import {
   Left,
   Right,
   Thumbnail,
-  View
-} from "native-base";
+  View,
+} from 'native-base';
 
 export default function ItemCard(props) {
   const styles = StyleSheet.create({
     container: {
-      display: "flex",
-      flexDirection: "row",
+      display: 'flex',
+      flexDirection: 'row',
       flex: 1,
-      backgroundColor: "#fff"
+      backgroundColor: '#fff',
     },
     contentContainer: {
-      paddingTop: 30
+      paddingTop: 30,
     },
     header: {
       marginTop: 10,
-      fontSize: 18
-    }
+      fontSize: 18,
+    },
   });
 
   const itemData = props.itemInfo.item;
@@ -41,8 +41,8 @@ export default function ItemCard(props) {
     <ListItem
       noIdent
       style={{
-        maxWidth: "100%",
-        minHeight: 65
+        maxWidth: '100%',
+        minHeight: 65,
       }}
       onPress={() =>
         props.presser(
@@ -55,20 +55,20 @@ export default function ItemCard(props) {
     >
       <View
         style={{
-          width: "70%",
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between"
+          width: '70%',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
         }}
       >
         <Left style={{ flex: 2 }}>
-          <Text style={theStyle}>{itemData.name}</Text>
+          <Text style={theStyle}>{itemData.name.toUpperCase()}</Text>
         </Left>
         <Right
           style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "flex-start"
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
           }}
         >
           <Text style={theStyle}>
@@ -78,25 +78,25 @@ export default function ItemCard(props) {
       </View>
       <View
         style={{
-          width: "30%",
-          display: "flex",
-          justifyContent: "center",
-          flexDirection: "row"
+          width: '30%',
+          display: 'flex',
+          justifyContent: 'center',
+          flexDirection: 'row',
         }}
       >
         <View
           style={{
             flex: 1,
-            flexDirection: "row",
-            justifyContent: "flex-start",
-            textAlign: "right",
-            paddingLeft: "7.5%"
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            textAlign: 'right',
+            paddingLeft: '7.5%',
           }}
         >
           {photoArr.map(photoUri => {
             return (
               <Thumbnail
-                style={{ marginRight: "-18.5%" }}
+                style={{ marginRight: '-18.5%' }}
                 key={photoUri}
                 small
                 source={{ uri: photoUri }}
@@ -110,5 +110,5 @@ export default function ItemCard(props) {
 }
 
 theStyle = {
-  fontSize: 12
+  fontSize: 12,
 };
