@@ -1,15 +1,11 @@
 /* eslint-disable quotes */
 /* eslint-disable complexity */
 import React, { useEffect, useState } from 'react';
-import {
-  StyleSheet,
-  FlatList,
-  ScrollView,
-  Alert,
-  ActivityIndicator,
-} from 'react-native';
+import { StyleSheet, FlatList, ScrollView, Alert } from 'react-native';
 import { useStateValue } from '../state';
 import ItemCard from './ItemCard';
+import * as WebBrowser from 'expo-web-browser';
+
 import { Container, Content, Button, Icon, Text, View } from 'native-base';
 import {
   useDocumentData,
@@ -90,6 +86,10 @@ export default function CurrentReceipt(props) {
     };
     const receiptUserId = userValues[0].id;
     completeReceipt(receiptId, checkoutData, receiptUserId, currentUser.email);
+  };
+
+  const _handleOpenWithWebBrowser = function() {
+    WebBrowser.openBrowserAsync('https://venmo.com/');
   };
 
   useEffect(() => {
@@ -249,7 +249,10 @@ export default function CurrentReceipt(props) {
                 alignItems: 'center',
               }}
             >
-              <Button style={styles.payoutButton}>
+              <Button
+                style={styles.payoutButton}
+                onPress={_handleOpenWithWebBrowser}
+              >
                 <Text>Payout</Text>
               </Button>
             </View>
