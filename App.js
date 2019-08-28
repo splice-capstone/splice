@@ -59,22 +59,21 @@ export default function App(props) {
     const user = await isSignedIn();
     if (user) {
       await setUser(user[0]);
-      console.log('token***********', expoToken);
-      // save token in firestore db for user
-      const userDoc = await db.collection('users').doc(user[0].email);
-      userDoc.set(
-        {
-          expoToken,
-        },
-        { merge: true }
-      );
-      console.log('user doc updated');
+
+      if (expoToken) {
+        // save token in firestore db for user
+        const userDoc = await db.collection('users').doc(user[0].email);
+        userDoc.set(
+          {
+            expoToken,
+          },
+          { merge: true }
+        );
+      }
     }
   };
 
   const handleNotification = notification => {
-    console.log('inside handle notification', notification);
-    //maybe put redirect here?? need to get receipt id
     setNotification(notification);
     // props.navigation.navigate('Current Receipt', {
     //   receiptId: id,
@@ -94,7 +93,9 @@ export default function App(props) {
     );
     registerForPushNotificationsAsync(currentUser).then(response => {
       const token = response;
-      setExpoToken(token);
+      if (token) {
+        setExpoToken(token);
+      }
     });
     checkForUser().then();
   }, [expoToken]);

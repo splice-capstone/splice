@@ -41,10 +41,8 @@ export default function ItemCard(props) {
     <ListItem
       noIdent
       style={{
-        backgroundColor: 'white',
-        flex: 1,
-        height: 45,
-        justifyContent: 'space-between',
+        maxWidth: '100%',
+        minHeight: 65,
       }}
       onPress={() =>
         props.presser(
@@ -57,43 +55,60 @@ export default function ItemCard(props) {
     >
       <View
         style={{
-          // // flex: 2,
+          width: '70%',
+          display: 'flex',
           flexDirection: 'row',
-          padding: 2,
-          minWidth: '100%',
+          justifyContent: 'space-between',
         }}
       >
-        <Left
-          style={{
-            flex: 2,
-            flexDirection: 'row',
-            width: '100%',
-          }}
-        >
-          <Text style={{ color: '#3A3535' }}>{itemData.name}</Text>
-          <Text style={{ marginRight: '0%', color: '#3A3535' }}>
-            {' '}
-            @ {`$${itemData.costPerUser / 100}/ea`}
-          </Text>
+        <Left style={{ flex: 2 }}>
+          <Text style={theStyle}>{itemData.name.toUpperCase()}</Text>
         </Left>
         <Right
           style={{
-            flex: 1.25,
+            display: 'flex',
             flexDirection: 'row',
+            justifyContent: 'flex-start',
+          }}
+        >
+          <Text style={theStyle}>
+            @ {`$${(itemData.costPerUser / 100).toFixed(2)}/ea`}
+          </Text>
+        </Right>
+      </View>
+      <View
+        style={{
+          width: '30%',
+          display: 'flex',
+          justifyContent: 'center',
+          flexDirection: 'row',
+        }}
+      >
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            textAlign: 'right',
+            paddingLeft: '7.5%',
           }}
         >
           {photoArr.map(photoUri => {
             return (
               <Thumbnail
-                style={{ marginRight: '-10.5%' }}
+                style={{ marginRight: '-18.5%' }}
                 key={photoUri}
                 small
                 source={{ uri: photoUri }}
               />
             );
           })}
-        </Right>
+        </View>
       </View>
     </ListItem>
   );
 }
+
+theStyle = {
+  fontSize: 12,
+};

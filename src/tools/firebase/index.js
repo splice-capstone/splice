@@ -120,7 +120,6 @@ export async function getReceipt(receiptId) {
 
 export async function findOrCreateUser(user) {
   try {
-    console.log('*****************find or create user', user);
     const newUser = await db
       .collection('users')
       .doc(user.email)
@@ -305,7 +304,6 @@ export async function addUserToReceipt(receipt, userEmail) {
           isPayee: false,
           photo: userData.data().photoUrl,
         };
-
         return db
           .collection('receipts')
           .doc(receipt.id)
@@ -314,7 +312,8 @@ export async function addUserToReceipt(receipt, userEmail) {
           .set({ payees: itemDataObj.payees }, { merge: true });
       })
     );
-    return userData.data().expoToken;
+    if (userData.data().expoToken) return userData.data().expoToken;
+    else return null;
   } catch (err) {
     console.error(err);
     return `error: ${err}`;

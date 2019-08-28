@@ -1,6 +1,6 @@
 /* eslint-disable complexity */
 import React from 'react';
-import { View, Linking } from 'react-native';
+import { View } from 'react-native';
 import {
   Header,
   Card,
@@ -21,12 +21,6 @@ const MyReceiptsCard = props => {
   } = props.recptsData;
 
   const totalInDollars = total / 100;
-
-  // const _handleOpenWithWebBrowser = function() {
-  //   WebBrowser.openBrowserAsync('https://venmo.com/account/sign-in');
-  // };
-
-  // // or to signed in view
 
   const _handleOpenWithWebBrowser = function() {
     WebBrowser.openBrowserAsync('https://venmo.com/');
@@ -54,7 +48,7 @@ const MyReceiptsCard = props => {
                 }
               >
                 {`${
-                  paid
+                  !open
                     ? `Received $${totalInDollars}`
                     : `Receiving $${totalInDollars}`
                 }`}

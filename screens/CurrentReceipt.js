@@ -230,6 +230,16 @@ export default function CurrentReceipt(props) {
               <Button style={styles.completeButton}>
                 <Text>Complete</Text>
               </Button>
+              <Button
+                style={styles.completeButton}
+                onPress={() =>
+                  props.navigation.navigate('Summary', {
+                    receipt: receiptValue,
+                  })
+                }
+              >
+                <Text>View Summary</Text>
+              </Button>
             </View>
           ) : (
             <View
