@@ -47,6 +47,10 @@ export default class ReceiptForm extends React.Component {
     this.setState({ amount });
   };
 
+  handleTipInput = tipAmount => {
+    this.setState({ tip: tipAmount });
+  };
+
   async handleCreateNewItem(event) {
     event.preventDefault();
     const receiptId = await this.props.navigation.getParam('current').id;
@@ -89,7 +93,7 @@ export default class ReceiptForm extends React.Component {
                 <TextInput
                   type="text"
                   name="name"
-                  placeholder="item name"
+                  placeholder="i t e m  n a m e"
                   onChangeText={name => this.handleNameText(name)}
                   value={this.state.name}
                 />
@@ -98,7 +102,7 @@ export default class ReceiptForm extends React.Component {
                 <TextInput
                   type="number"
                   name="amount"
-                  placeholder="amount"
+                  placeholder="a m o u n t"
                   onChangeText={amount => this.handleAmountText(amount)}
                   value={this.state.amount}
                 />
@@ -109,30 +113,43 @@ export default class ReceiptForm extends React.Component {
                 backgroundColor="#3D9970"
                 small
                 rounded
-                success
                 onPress={this.handleCreateNewItem}
               >
                 <Icon type="Ionicons" name="ios-add" />
               </Button>
             </View>
-            <Item>
-              <Input
-                placeholder="tip"
-                onChangeText={tip => this.updateTotal(tip)}
-              />
-            </Item>
           </Form>
           <ItemCardEdit
             receiptId={this.props.navigation.getParam('current').id}
             receiptUserId={this.props.navigation.getParam('userId')}
           />
-          <View style={{ marginTop: 10, marginBottom: 10 }}>
-            <Text>Subtotal: ${this.state.subtotal / 100}</Text>
-            <Text>Tax: ${this.state.tax / 100}</Text>
-            <Text>Tip: ${this.state.tip} </Text>
-            <Text>Total: ${this.state.total / 100}</Text>
+          <View
+            style={{
+              marginTop: 14,
+              marginBottom: 14,
+              marginLeft: 5,
+            }}
+          >
+            <View style={styles.tipInfo}>
+              <Input
+                style={{ height: 20 }}
+                placeholder="e n t e r  t i p"
+                onChangeText={tipAmount => this.updateTotal(tipAmount)}
+              />
+            </View>
+            <Text style={styles.generalText}>
+              Subtotal: ${this.state.subtotal / 100}
+            </Text>
+            <Text style={styles.generalText}>Tax: ${this.state.tax / 100}</Text>
+            <Text style={styles.generalText}>Tip: ${this.state.tip} </Text>
+            <Text style={styles.generalText}>
+              Total: ${this.state.total / 100}
+            </Text>
           </View>
-          <Button small rounded danger onPress={() => this.handleComplete()}>
+          <Button
+            style={styles.finishButton}
+            onPress={() => this.handleComplete()}
+          >
             <Text>finish</Text>
           </Button>
         </Content>
@@ -158,8 +175,29 @@ const styles = StyleSheet.create({
   },
   inputView: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    marginLeft: 20,
     padding: 10,
+  },
+  finishButton: {
+    flex: 1,
+    justifyContent: 'center',
+    marginTop: 10,
+    height: 33,
+    width: 150,
+    marginLeft: '29%',
+  },
+  tipInfo: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: '30%',
+    padding: 10,
+  },
+  generalText: {
+    color: '#3A3535',
+    padding: 2,
+    fontWeight: '300',
   },
 });
