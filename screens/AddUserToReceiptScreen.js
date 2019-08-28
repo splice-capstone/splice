@@ -120,7 +120,8 @@ export default function AddUserToReceiptScreen(props) {
             <Text>Search</Text>
           </Button>
         </Header>
-        <Text style={styles.standard}>Current Users on Receipt</Text>
+
+        <Text style={styles.standard}>friends on receipt</Text>
         {userValues &&
           userValues.map(user => (
             <List key={user.email}>
@@ -138,7 +139,7 @@ export default function AddUserToReceiptScreen(props) {
         {!usersToAdd.length && searching ? (
           <ListItem>
             <Left>
-              <Text>User does not exist yet.</Text>
+              <Text>User does not exist yet</Text>
             </Left>
             <Right>
               <Button
@@ -216,5 +217,8 @@ const styles = StyleSheet.create({
   standard: {
     marginTop: 10,
     backgroundColor: '#fff',
+    justifyContent: 'center',
+    fontSize: 18,
+    marginLeft: 10,
   },
 });

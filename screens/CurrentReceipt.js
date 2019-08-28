@@ -17,7 +17,6 @@ import db, {
   toggleReceiptUser,
   completeReceipt,
 } from '../src/tools/firebase';
-import LoadScreen from './LoadScreen';
 export default function CurrentReceipt(props) {
   const [{ currentUser }, dispatch] = useStateValue();
   const [comments, setComments] = useState('');
@@ -87,9 +86,13 @@ export default function CurrentReceipt(props) {
     const receiptUserId = userValues[0].id;
     completeReceipt(receiptId, checkoutData, receiptUserId, currentUser.email);
   };
-
   const _handleOpenWithWebBrowser = function() {
     WebBrowser.openBrowserAsync('https://venmo.com/');
+  };
+
+  const handleFinal = () => {
+    handleCheckout();
+    _handleOpenWithWebBrowser();
   };
 
   useEffect(() => {
@@ -249,12 +252,34 @@ export default function CurrentReceipt(props) {
                 alignItems: 'center',
               }}
             >
-              <Button
-                style={styles.payoutButton}
-                onPress={_handleOpenWithWebBrowser}
-              >
-                <Text>Payout</Text>
-              </Button>
+              {userValues[0].paid ? (
+                <Button disabled small iconRight style={{ marginTop: 6 }}>
+                  <Text>Pay</Text>
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="venmo"
+                    style={{
+                      color: 'white',
+                    }}
+                  />
+                </Button>
+              ) : (
+                <Button
+                  iconRight
+                  small
+                  style={{ marginTop: 6 }}
+                  onPress={handleFinal}
+                >
+                  <Text>Pay</Text>
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="venmo"
+                    style={{
+                      color: 'white',
+                    }}
+                  />
+                </Button>
+              )}
             </View>
           )}
         </Content>
@@ -262,6 +287,7 @@ export default function CurrentReceipt(props) {
     </Container>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -314,16 +340,8 @@ const styles = StyleSheet.create({
   },
   completeButton: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    marginTop: 10,
-    height: 33,
-    width: 140,
-  },
-  payoutButton: {
-    flex: 1,
-    justifyContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
     flexWrap: 'wrap',
     marginTop: 10,
