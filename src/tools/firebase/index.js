@@ -432,6 +432,18 @@ export async function completeReceipt(
   }
 }
 
+export async function closeReceipt(receiptId) {
+  try {
+    await db
+      .collection('receipts')
+      .doc(receiptId)
+      .set({ open: false }, { merge: true });
+    return 'success';
+  } catch (err) {
+    return `error: ${err}`;
+  }
+}
+
 export async function editReceipt(receiptId, tip, total, subtotal) {
   try {
     const receiptEditRef = await db.collection('receipts').doc(receiptId);
