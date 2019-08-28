@@ -158,7 +158,7 @@ export default function CurrentReceipt(props) {
                 <Text
                   style={{
                     color: 'gray',
-                    fontSize: '15',
+                    fontSize: 15,
                     justifyContent: 'center',
                   }}
                 >

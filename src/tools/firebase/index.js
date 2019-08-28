@@ -120,6 +120,9 @@ export async function getReceipt(receiptId) {
 
 export async function findOrCreateUser(user) {
   try {
+    if (!user.token) {
+      user.token = null;
+    }
     const newUser = await db
       .collection('users')
       .doc(user.email)

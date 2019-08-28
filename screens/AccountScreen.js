@@ -1,10 +1,22 @@
 import React from 'react';
 import { StyleSheet, ScrollView, View, Image } from 'react-native';
 import { useStateValue } from '../state';
-import { Title, Text, Thumbnail } from 'native-base';
+import { Title, Text, Thumbnail, Button } from 'native-base';
+import { signOut } from '../src/utils/auth';
 
 export default function AccountScreen() {
   const [{ currentUser }, dispatch] = useStateValue();
+
+  const setUser = user => {
+    dispatch({ type: 'SET_USER', user });
+  };
+
+  handleSignOut = () => {
+    //clear token from Async storage
+    signOut();
+    //clear user from state which will navigate to login
+    setUser({});
+  };
 
   return (
     <View style={styles.container}>
@@ -21,12 +33,23 @@ export default function AccountScreen() {
             <Thumbnail large source={{ uri: currentUser.photoUrl }} />
           </View>
         </View>
+        <Button bordered style={styles.button} onPress={() => handleSignOut()}>
+          <Text black center>
+            SIGN OUT
+          </Text>
+        </Button>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  button: {
+    margin: 5,
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
