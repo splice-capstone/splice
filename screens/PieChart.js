@@ -3,6 +3,8 @@ import {
   VictoryChart,
   VictoryTheme,
   VictoryLegend,
+  VictoryLabel,
+  VictoryContainer,
 } from 'victory-native';
 import React, { useState, useEffect } from 'react';
 import { Dimensions } from 'react-native';
@@ -93,25 +95,46 @@ const SummaryPieChart = props => {
       >
         Paid
       </Title>
-      <VictoryPie
-        data={paidArr}
-        x="name"
-        y="total"
-        animate={{
-          duration: 2000,
-        }}
-        labels={d => `$${d.data[d.index].total} - ${d.data[d.index].xName}`}
-        colorScale={['#2EC4B6', '#083D77', '#006989', '#011627', '#476A6F']}
-      />
-      <Text center>Total: ${Math.floor(receipt.total / 100)}</Text>
-      <Title
-        center
-        style={{
-          marginTop: 60,
-        }}
+      <VictoryContainer
+        style={{ labels: { fontSize: 15 }, parent: { width: 100 } }}
       >
-        Need to pay
-      </Title>
+        <VictoryPie
+          data={paidArr}
+          x="name"
+          y="total"
+          innerRadius={90}
+          style={{ labels: { fontSize: 15 }, parent: { width: 100 } }}
+          labels={d => `$${d.data[d.index].total} - ${d.data[d.index].xName}`}
+          labelRadius={({ innerRadius }) => innerRadius + 5}
+          colorScale={['#44CFCB', '#B8CDF8', '#95F2D9', '#9D8DF1', '#E0ACD5']}
+        />
+        <VictoryLabel
+          textAnchor="middle"
+          style={{ fontSize: 20 }}
+          x={185}
+          y={185}
+          text={`Total: $${Math.floor(receipt.total / 100)}`}
+        />
+      </VictoryContainer>
+      {remainingArr.length ? (
+        <Title
+          center
+          style={{
+            marginTop: 60,
+          }}
+        >
+          Need to pay
+        </Title>
+      ) : (
+        <Title
+          center
+          style={{
+            marginTop: 60,
+          }}
+        >
+          Everyone has paid!
+        </Title>
+      )}
       {remainingArr &&
         remainingArr.map(user => (
           <List key={user.email}>

@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import {
   findUser,
   addUserToReceipt,
@@ -27,7 +33,10 @@ import {
 export default function AddUserToReceiptScreen(props) {
   const [search, setSearch] = useState('');
   const [searching, setSearching] = useState(false);
+  const [adding, setAdding] = useState(false);
   const [usersToAdd, setUserOptions] = useState([]);
+
+  const receipt = props.navigation.getParam('receipt');
 
   //push notification stuff
   const MESSAGE_ENPOINT = 'http://20c8fab0.ngrok.io/message';
@@ -46,10 +55,7 @@ export default function AddUserToReceiptScreen(props) {
     });
   };
   //call sendMessage when a user is added to a receipt
-
   //end push notification stuff
-
-  const receipt = props.navigation.getParam('receipt');
 
   const [userValues, userLoading, userError] = useCollectionData(
     db
@@ -63,32 +69,49 @@ export default function AddUserToReceiptScreen(props) {
   );
 
   const getUsers = search => {
+    //called when pressing search
     setSearching(true);
     findUser(search).then(users => {
-      setUserOptions(users);
+      //if user doesn't exist yet, prompt to add to database
+      if (!users.length) {
+        //display create user option
+        setAdding(true);
+      }
+      //if user is not currently on the receipt, add to local state user options
+      else if (receipt.payees[users[0].email] !== false) {
+        setUserOptions(users);
+      } else {
+        setUserOptions([]);
+        Alert.alert('Already on receipt');
+      }
     });
+    setSearching(false);
   };
 
   const createUser = async () => {
     setSearching(false);
+    setAdding(false);
+
     let user = {
       email: search,
       name: search.replace(/@[^@]+$/, ''),
       photoUrl:
-        'https://lh4.googleusercontent.com/-ZZkaquQy0CQ/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rfQM27r8piZ9BfdwEI15D-B6Quxqg/photo.jpg',
+        'https://i.pinimg.com/originals/17/63/f6/1763f6db9854dc06fdb7b65efb858cec.jpg',
     };
     await findOrCreateUser(user);
     await handleAddingUserToReceipt(receipt, user);
   };
 
   const handleAddingUserToReceipt = async (receipt, user) => {
+    setSearching(false);
+    //stop displaying user options
+    setUserOptions([]);
+
     //get expo token for sending message
     const token = await addUserToReceipt(receipt, user.email);
-    console.log('response from find or create**********', token);
 
     if (token) {
       const message = `Don't forget to split the bill for ${receipt.restaurant}!`;
-      //TODO: need to also send/track receipt id somehow
       await sendMessage(message, token);
     }
   };
@@ -96,7 +119,6 @@ export default function AddUserToReceiptScreen(props) {
   return (
     <Container>
       <Content>
-        <Title style={styles.header}>{receipt.restaurant}</Title>
         <Header searchBar rounded style={styles.standard}>
           <Item style={styles.standard}>
             <Icon
@@ -106,7 +128,7 @@ export default function AddUserToReceiptScreen(props) {
               }}
             />
             <TextInput
-              placeholder="Search for user by email"
+              placeholder="Search for friend by email"
               onChangeText={search => setSearch(search)}
               value={search}
             />
@@ -120,8 +142,9 @@ export default function AddUserToReceiptScreen(props) {
             <Text>Search</Text>
           </Button>
         </Header>
-
-        <Text style={styles.standard}>friends on receipt</Text>
+        <View style={styles.costInfo}>
+          <Text style={styles.costText}>Current Friends on Receipt</Text>
+        </View>
         {userValues &&
           userValues.map(user => (
             <List key={user.email}>
@@ -136,10 +159,10 @@ export default function AddUserToReceiptScreen(props) {
               </ListItem>
             </List>
           ))}
-        {!usersToAdd.length && searching ? (
+        {!usersToAdd.length && adding ? (
           <ListItem>
             <Left>
-              <Text>User does not exist yet</Text>
+              <Text>Invite user</Text>
             </Left>
             <Right>
               <Button
@@ -185,37 +208,34 @@ export default function AddUserToReceiptScreen(props) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  contentContainer: {
-    paddingTop: 30,
-  },
-  header: {
-    marginTop: 10,
-    fontSize: 18,
-  },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  loginContainer: {
-    alignItems: 'center',
+  info: {
+    flexDirection: 'column',
     justifyContent: 'center',
-    marginTop: 200,
-    marginBottom: 20,
+  },
+  receiptInfo: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    justifyContent: 'center',
+    paddingTop: 2,
+    color: 'black',
+  },
+  costText: {
+    fontSize: 15,
+    color: 'white',
+  },
+  costInfo: {
+    flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    backgroundColor: '#3D9970',
+    borderWidth: 0.5,
+    borderColor: 'white',
+    padding: 6,
+    height: 33,
+    marginTop: 10,
   },
   standard: {
-    marginTop: 10,
     backgroundColor: '#fff',
     justifyContent: 'center',
     fontSize: 18,

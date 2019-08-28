@@ -132,7 +132,7 @@ const AppStack = createStackNavigator({
   'Add User': {
     screen: AddUserToReceiptScreen,
     navigationOptions: {
-      title: 'Add User',
+      title: 'Invite Friends',
     },
   },
   'Receipt Form': {

@@ -76,11 +76,19 @@ export default function CurrentReceipt(props) {
   };
   const handleCheckout = () => {
     //save user amounts on receipt_user doc & update to say user has paid
+    const subtotal = calcSubtotal();
+    const tip = Number(
+      Math.floor((subtotal / receiptValue.total) * receiptValue.tip)
+    );
+    const tax = Number(
+      Math.floor((subtotal / receiptValue.total) * receiptValue.tax)
+    );
+
     const checkoutData = {
-      subtotal: calcSubtotal() / 100,
-      tax: userTax,
-      tip: userTip,
-      total: userTotal,
+      subtotal,
+      tax,
+      tip,
+      total: subtotal + tax + tip,
       paid: true,
     };
     const receiptUserId = userValues[0].id;
@@ -161,7 +169,7 @@ export default function CurrentReceipt(props) {
                 <Text
                   style={{
                     color: 'gray',
-                    fontSize: '15',
+                    fontSize: 15,
                     justifyContent: 'center',
                   }}
                 >
@@ -188,7 +196,13 @@ export default function CurrentReceipt(props) {
           <Text style={styles.receiptInfo}>{comments.date}</Text>
           <View style={styles.costInfo}>
             <Text style={styles.costText}>
-              My Subtotal: ${Math.floor(calcSubtotal()) / 100}
+              My Total: $
+              {(
+                (calcSubtotal() +
+                  (calcSubtotal() / receiptValue.total) * receiptValue.tax +
+                  (calcSubtotal() / receiptValue.total) * receiptValue.tip) /
+                100
+              ).toFixed(2)}
             </Text>
             <Text style={styles.costText}>
               My Tax: $
@@ -252,6 +266,16 @@ export default function CurrentReceipt(props) {
                 alignItems: 'center',
               }}
             >
+              <Button
+                style={styles.completeButton}
+                onPress={() =>
+                  props.navigation.navigate('Summary', {
+                    receipt: receiptValue,
+                  })
+                }
+              >
+                <Text>View Summary</Text>
+              </Button>
               {userValues[0].paid ? (
                 <Button disabled small iconRight style={{ marginTop: 6 }}>
                   <Text>Pay</Text>
@@ -316,7 +340,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   costText: {
-    fontSize: 13.5,
+    fontSize: 15,
     color: 'white',
   },
   costInfo: {
