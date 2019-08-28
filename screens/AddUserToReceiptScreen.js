@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import {
   findUser,
   addUserToReceipt,
@@ -66,10 +72,17 @@ export default function AddUserToReceiptScreen(props) {
     //called when pressing search
     setSearching(true);
     findUser(search).then(users => {
-      setUserOptions(users);
+      //if user doesn't exist yet, prompt to add to database
       if (!users.length) {
         //display create user option
         setAdding(true);
+      }
+      //if user is not currently on the receipt, add to local state user options
+      else if (receipt.payees[users[0].email] !== false) {
+        setUserOptions(users);
+      } else {
+        setUserOptions([]);
+        Alert.alert('Already on receipt');
       }
     });
     setSearching(false);
