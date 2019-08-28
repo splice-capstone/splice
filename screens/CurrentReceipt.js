@@ -137,24 +137,24 @@ export default function CurrentReceipt(props) {
                 name="form"
                 style={{ color: '#3d403d' }}
                 onPress={() =>
-                  props.navigation.navigate("Receipt Form", {
+                  props.navigation.navigate('Receipt Form', {
                     current: receiptValue,
                     navigation: props.navigation,
                     userId: userValues[0].id,
-                    email: currentUser.email
+                    email: currentUser.email,
                   })
                 }
               />
               <Text style={styles.receiptInfo}>{receiptValue.restaurant}</Text>
               <Text style={styles.receiptInfo}>
-                {new Date(receiptValue.date).toLocaleDateString("en-US")}
+                {new Date(receiptValue.date).toLocaleDateString('en-US')}
               </Text>
               <Icon
                 name="md-person-add"
                 style={{ color: '#3d403d' }}
                 onPress={() =>
-                  props.navigation.navigate("Add User", {
-                    receipt: receiptValue
+                  props.navigation.navigate('Add User', {
+                    receipt: receiptValue,
                   })
                 }
               />

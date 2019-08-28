@@ -147,7 +147,7 @@ const AppStack = createStackNavigator({
       title: 'Current Receipt',
     },
   },
-  Status: {
+  Summary: {
     screen: SummaryPieChart,
     navigationOptions: {
       title: 'Summary',
