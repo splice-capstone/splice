@@ -94,6 +94,7 @@ export default class ReceiptForm extends React.Component {
                   type="text"
                   name="name"
                   placeholder="item name"
+                  returnKeyType="done"
                   onChangeText={name => this.handleNameText(name)}
                   value={this.state.name}
                 />
@@ -103,6 +104,7 @@ export default class ReceiptForm extends React.Component {
                   type="number"
                   name="amount"
                   placeholder="amount"
+                  returnKeyType="done"
                   onChangeText={amount => this.handleAmountText(amount)}
                   value={this.state.amount}
                 />
@@ -139,6 +141,7 @@ export default class ReceiptForm extends React.Component {
                   alignItems: 'center',
                 }}
                 placeholder="enter tip"
+                returnKeyType="done"
                 onChangeText={tipAmount => this.updateTotal(tipAmount)}
               />
             </View>
