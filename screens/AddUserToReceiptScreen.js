@@ -43,7 +43,7 @@ export default function AddUserToReceiptScreen(props) {
   const receipt = props.navigation.getParam('receipt');
 
   //push notification stuff
-  const MESSAGE_ENPOINT = 'http://6674eafa.ngrok.io/message';
+  const MESSAGE_ENPOINT = 'http://a242df62.ngrok.io/message';
 
   const sendMessage = async (messageText, pushToken) => {
     await fetch(MESSAGE_ENPOINT, {
