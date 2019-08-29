@@ -105,7 +105,7 @@ export default function CurrentReceipt(props) {
   };
 
   const _handleOpenWithWebBrowser = function() {
-    WebBrowser.openBrowserAsync('https://venmo.com/');
+    WebBrowser.openBrowserAsync('https://venmo.com/account/sign-in');
   };
 
   const handleFinal = () => {
