@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   TextInput,
@@ -10,8 +10,10 @@ import {
   findUser,
   addUserToReceipt,
   findOrCreateUser,
+  getMyFriends,
 } from '../src/tools/firebase';
 import db from '../src/tools/firebase';
+import { useStateValue } from '../state';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import {
   Container,
@@ -31,15 +33,17 @@ import {
 } from 'native-base';
 
 export default function AddUserToReceiptScreen(props) {
+  const [{ currentUser }, dispatch] = useStateValue();
   const [search, setSearch] = useState('');
   const [searching, setSearching] = useState(false);
   const [adding, setAdding] = useState(false);
   const [usersToAdd, setUserOptions] = useState([]);
+  const [friendsArr, setFriends] = useState([]);
 
   const receipt = props.navigation.getParam('receipt');
 
   //push notification stuff
-  const MESSAGE_ENPOINT = 'http://6674eafa.ngrok.io/message';
+  const MESSAGE_ENPOINT = 'http://a242df62.ngrok.io/message';
 
   const sendMessage = async (messageText, pushToken) => {
     await fetch(MESSAGE_ENPOINT, {
@@ -67,6 +71,13 @@ export default function AddUserToReceiptScreen(props) {
       idField: 'id',
     }
   );
+
+  //get all friends
+  useEffect(() => {
+    getMyFriends(currentUser.email).then(friend => {
+      setFriends(friend);
+    });
+  }, [currentUser.email]);
 
   const getUsers = search => {
     //called when pressing search
@@ -142,26 +153,6 @@ export default function AddUserToReceiptScreen(props) {
             <Text>Search</Text>
           </Button>
         </Header>
-        <View style={styles.costInfo}>
-          <Text style={styles.costText}>My Friends</Text>
-        </View>
-        <View style={styles.costInfo}>
-          <Text style={styles.costText}>Current Friends on Receipt</Text>
-        </View>
-        {userValues &&
-          userValues.map(user => (
-            <List key={user.email}>
-              <ListItem avatar>
-                <Left>
-                  <Thumbnail source={{ uri: user.photoUrl }} />
-                </Left>
-                <Body>
-                  <Text>{user.name}</Text>
-                  <Text note>{user.email}</Text>
-                </Body>
-              </ListItem>
-            </List>
-          ))}
         {!usersToAdd.length && adding ? (
           <ListItem>
             <Left>
@@ -191,20 +182,62 @@ export default function AddUserToReceiptScreen(props) {
                     <Text note>{user.email}</Text>
                   </Body>
                   <Right>
-                    <Button
-                      title="Add"
+                    <Icon
+                      name="add"
+                      style={{ color: '#3D9970' }}
                       onPress={() => {
                         handleAddingUserToReceipt(receipt, user);
                       }}
-                    >
-                      <Text>+</Text>
-                    </Button>
+                    />
                   </Right>
                 </ListItem>
               </List>
             );
           })
         )}
+        <View style={styles.costInfo}>
+          <Text style={styles.costText}>My Friends</Text>
+        </View>
+        {friendsArr &&
+          friendsArr.map(user => (
+            <List key={user.email}>
+              <ListItem avatar>
+                <Left>
+                  <Thumbnail source={{ uri: user.photoUrl }} />
+                </Left>
+                <Body>
+                  <Text>{user.name}</Text>
+                  <Text note>{user.email}</Text>
+                </Body>
+                <Right>
+                  <Icon
+                    name="add"
+                    style={{ color: '#3D9970' }}
+                    onPress={() => {
+                      handleAddingUserToReceipt(receipt, user);
+                    }}
+                  />
+                </Right>
+              </ListItem>
+            </List>
+          ))}
+        <View style={styles.costInfo}>
+          <Text style={styles.costText}>Current Friends on Receipt</Text>
+        </View>
+        {userValues &&
+          userValues.map(user => (
+            <List key={user.email}>
+              <ListItem avatar>
+                <Left>
+                  <Thumbnail source={{ uri: user.photoUrl }} />
+                </Left>
+                <Body>
+                  <Text>{user.name}</Text>
+                  <Text note>{user.email}</Text>
+                </Body>
+              </ListItem>
+            </List>
+          ))}
       </Content>
     </Container>
   );

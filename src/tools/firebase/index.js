@@ -194,7 +194,6 @@ export async function findUser(email) {
 export async function getMyReceipts(email) {
   try {
     let user = db.collection('users').doc(email);
-
     user = await user.get();
     const myReceipts = await Promise.all(
       user.data().receipts.map(async receipt => {
@@ -484,5 +483,32 @@ export async function removeReceiptItem(receiptId, itemId) {
       .delete();
   } catch (err) {
     return err;
+  }
+}
+
+export async function getMyFriends(email) {
+  try {
+    let myFriends = [];
+    let user = db.collection('users').doc(email);
+    user = await user.get();
+    const myFriendsRefs = await Promise.all(
+      user.data().friends.map(async friend => {
+        let friendDetails = await db
+          .collection('users')
+          .doc(friend.id)
+          .get();
+
+        const { name, photoUrl } = friendDetails.data();
+        myFriends.push({
+          name,
+          photoUrl,
+          id: friendDetails.id,
+          email: friendDetails.id,
+        });
+      })
+    );
+    return myFriends;
+  } catch (err) {
+    return `error: ${err}`;
   }
 }

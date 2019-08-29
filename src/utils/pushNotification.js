@@ -2,8 +2,8 @@ import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 import db from '../tools/firebase';
 
-const PUSH_ENDPOINT = 'http://6674eafa.ngrok.io/token';
-const MESSAGE_ENPOINT = 'http://6674eafa.ngrok.io/message';
+const PUSH_ENDPOINT = 'http://a242df62.ngrok.io/token';
+const MESSAGE_ENPOINT = 'http://a242df62.ngrok.io/message';
 
 export async function registerForPushNotificationsAsync(user) {
   const { status: existingStatus } = await Permissions.getAsync(
