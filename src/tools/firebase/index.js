@@ -168,10 +168,11 @@ export async function findUserByToken(token) {
 export async function findUser(email) {
   try {
     const results = [];
+    const search = email.toLowerCase().trim();
 
     const user = await db
       .collection('users')
-      .where('email', '==', email.toLowerCase())
+      .where('email', '==', search)
       .get()
       .then(function(querySnapshot) {
         querySnapshot.forEach(doc => {

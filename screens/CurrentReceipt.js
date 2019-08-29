@@ -97,11 +97,11 @@ export default function CurrentReceipt(props) {
   };
 
   const handleComplete = () => {
+    //mark host as paid for their items - save total in database
+    handleCheckout();
     //alert //disbable button //update status in firestore
     closeReceipt(receiptId);
     Alert.alert('Receipt closed!');
-
-    //set receipt to open false
   };
 
   const _handleOpenWithWebBrowser = function() {
