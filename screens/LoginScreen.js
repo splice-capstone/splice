@@ -60,6 +60,9 @@ const LoginScreen = props => {
             source={require('../assets/images/facebook.png')}
           />
         </TouchableOpacity>
+        <Button small bordered style={{ marginTop: 10 }}>
+          <Text>Login with email</Text>
+        </Button>
       </View>
     </View>
   );
