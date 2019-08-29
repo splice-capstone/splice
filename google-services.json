@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "625731564294",
+    "firebase_url": "https://splice-77382.firebaseio.com",
+    "project_id": "splice-77382",
+    "storage_bucket": "splice-77382.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:625731564294:android:d44a7db9cf6f20f2",
+        "android_client_info": {
+          "package_name": "com.splice.splice"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "625731564294-achg37iiup2hosjum77d0ctef1hkp0dm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTOF339MHn0G3Fix9f6TbADaB17eijrPo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "625731564294-achg37iiup2hosjum77d0ctef1hkp0dm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "625731564294-vte9tj39d2k2n0t1paqco60ivfts8d8k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "host.exp.exponent"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

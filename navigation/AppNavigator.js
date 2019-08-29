@@ -144,7 +144,7 @@ const AppStack = createStackNavigator({
   'Current Receipt': {
     screen: CurrentReceipt,
     navigationOptions: {
-      title: 'Current Receipt',
+      title: '',
     },
   },
   Summary: {

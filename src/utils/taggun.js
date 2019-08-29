@@ -77,6 +77,7 @@ const parseReceipt = async (response, currentUser) => {
         !text.toLowerCase().includes('tax') &&
         !text.toLowerCase().includes('tip') &&
         !text.toLowerCase().includes('total') &&
+        !text.toLowerCase().includes('balance') &&
         text &&
         data
       ) {
