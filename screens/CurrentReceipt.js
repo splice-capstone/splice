@@ -16,6 +16,7 @@ import db, {
   calculateSubtotal,
   toggleReceiptUser,
   completeReceipt,
+  closeReceipt,
 } from '../src/tools/firebase';
 export default function CurrentReceipt(props) {
   const [{ currentUser }, dispatch] = useStateValue();
@@ -94,8 +95,17 @@ export default function CurrentReceipt(props) {
     const receiptUserId = userValues[0].id;
     completeReceipt(receiptId, checkoutData, receiptUserId, currentUser.email);
   };
+
+  const handleComplete = () => {
+    //alert //disbable button //update status in firestore
+    closeReceipt(receiptId);
+    Alert.alert('Receipt closed!');
+
+    //set receipt to open false
+  };
+
   const _handleOpenWithWebBrowser = function() {
-    WebBrowser.openBrowserAsync('https://venmo.com/');
+    WebBrowser.openBrowserAsync('https://venmo.com/account/sign-in');
   };
 
   const handleFinal = () => {
@@ -244,9 +254,19 @@ export default function CurrentReceipt(props) {
                 alignItems: 'center',
               }}
             >
-              <Button style={styles.completeButton}>
-                <Text>Complete</Text>
-              </Button>
+              {receiptValue.open ? (
+                <Button style={styles.completeButton} onPress={handleComplete}>
+                  <Text>Complete</Text>
+                </Button>
+              ) : (
+                <Button
+                  disabled
+                  style={styles.completeButton}
+                  onPress={handleComplete}
+                >
+                  <Text>Complete</Text>
+                </Button>
+              )}
               <Button
                 style={styles.completeButton}
                 onPress={() =>

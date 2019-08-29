@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Content, Text, ListItem, Body, View, Icon } from 'native-base';
+import { Content, Text, ListItem, Body, View } from 'native-base';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import db, { updateItem, removeReceiptItem } from '../src/tools/firebase';
 import { useStateValue } from '../state';
@@ -70,7 +70,9 @@ export default function ItemCardCopy(props) {
                     ]}
                   >
                     <View style={styles.swipeoutView}>
-                      <Text style={styles.listItems}>{doc.name}</Text>
+                      <Text style={styles.listItems}>
+                        {doc.name.toUpperCase()}
+                      </Text>
                       <Text style={styles.listItems}>${doc.amount / 100}</Text>
                     </View>
                   </Swipeout>
