@@ -195,6 +195,24 @@ export default function AddUserToReceiptScreen(props) {
             );
           })
         )}
+
+        <View style={styles.costInfo}>
+          <Text style={styles.costText}>Current Friends on Receipt</Text>
+        </View>
+        {userValues &&
+          userValues.map(user => (
+            <List key={user.email}>
+              <ListItem avatar>
+                <Left>
+                  <Thumbnail source={{ uri: user.photoUrl }} />
+                </Left>
+                <Body>
+                  <Text>{user.name}</Text>
+                  <Text note>{user.email}</Text>
+                </Body>
+              </ListItem>
+            </List>
+          ))}
         <View style={styles.costInfo}>
           <Text style={styles.costText}>My Friends</Text>
         </View>
@@ -218,23 +236,6 @@ export default function AddUserToReceiptScreen(props) {
                     }}
                   />
                 </Right>
-              </ListItem>
-            </List>
-          ))}
-        <View style={styles.costInfo}>
-          <Text style={styles.costText}>Current Friends on Receipt</Text>
-        </View>
-        {userValues &&
-          userValues.map(user => (
-            <List key={user.email}>
-              <ListItem avatar>
-                <Left>
-                  <Thumbnail source={{ uri: user.photoUrl }} />
-                </Left>
-                <Body>
-                  <Text>{user.name}</Text>
-                  <Text note>{user.email}</Text>
-                </Body>
               </ListItem>
             </List>
           ))}
