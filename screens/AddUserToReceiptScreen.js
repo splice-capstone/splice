@@ -143,6 +143,9 @@ export default function AddUserToReceiptScreen(props) {
           </Button>
         </Header>
         <View style={styles.costInfo}>
+          <Text style={styles.costText}>My Friends</Text>
+        </View>
+        <View style={styles.costInfo}>
           <Text style={styles.costText}>Current Friends on Receipt</Text>
         </View>
         {userValues &&
