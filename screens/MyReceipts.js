@@ -23,26 +23,26 @@ const MyReceipts = props => {
 
   return myRecps.length > 0 && Array.isArray(myRecps) ? (
     <Container>
-      <ImageBackground
+      {/* <ImageBackground
         source={require('../assets/shapes/united-squares.png')}
         style={{
           width: '100%',
           height: '100%',
         }}
         resizeMode="repeat"
-      >
-        <Content style={{ marginTop: '5%', zIndex: -1 }}>
-          {myRecps.map(recData => {
-            return (
-              <MyReceiptsCard
-                key={recData.id}
-                recptsData={recData}
-                navigation={props.navigation}
-              />
-            );
-          })}
-        </Content>
-      </ImageBackground>
+      > */}
+      <Content style={{ marginTop: '5%', zIndex: -1 }}>
+        {myRecps.map(recData => {
+          return (
+            <MyReceiptsCard
+              key={recData.id}
+              recptsData={recData}
+              navigation={props.navigation}
+            />
+          );
+        })}
+      </Content>
+      {/* </ImageBackground> */}
     </Container>
   ) : (
     <View style={styles.container}>

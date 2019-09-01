@@ -448,9 +448,9 @@ export async function editReceipt(receiptId, tip, total, subtotal) {
   try {
     const receiptEditRef = await db.collection('receipts').doc(receiptId);
     const updatedReceipt = receiptEditRef.update({
-      subtotal: subtotal,
+      // subtotal: subtotal,
       tip: tip,
-      total: total,
+      // total: total,
     });
     return receiptEditRef.data();
   } catch (err) {
