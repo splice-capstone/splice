@@ -23,14 +23,6 @@ const MyReceipts = props => {
 
   return myRecps.length > 0 && Array.isArray(myRecps) ? (
     <Container>
-      {/* <ImageBackground
-        source={require('../assets/shapes/united-squares.png')}
-        style={{
-          width: '100%',
-          height: '100%',
-        }}
-        resizeMode="repeat"
-      > */}
       <Content style={{ marginTop: '5%', zIndex: -1 }}>
         {myRecps.map(recData => {
           return (
@@ -42,7 +34,6 @@ const MyReceipts = props => {
           );
         })}
       </Content>
-      {/* </ImageBackground> */}
     </Container>
   ) : (
     <View style={styles.container}>
