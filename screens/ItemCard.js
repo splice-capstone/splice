@@ -62,7 +62,7 @@ export default function ItemCard(props) {
         }}
       >
         <Left style={{ flex: 2 }}>
-          <Text style={theStyle}>{itemData.name.toUpperCase()}</Text>
+          <Text style={textStyle}>{itemData.name.toUpperCase()}</Text>
         </Left>
         <Right
           style={{
@@ -71,7 +71,7 @@ export default function ItemCard(props) {
             justifyContent: 'flex-start',
           }}
         >
-          <Text style={theStyle}>
+          <Text style={textStyle}>
             @ {`$${(itemData.costPerUser / 100).toFixed(2)}/ea`}
           </Text>
         </Right>
@@ -109,6 +109,6 @@ export default function ItemCard(props) {
   );
 }
 
-theStyle = {
+textStyle = {
   fontSize: 15,
 };
