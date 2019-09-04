@@ -35,6 +35,7 @@ export default function HomeScreen(props) {
         <Text style={styles.header}>splice</Text>
       </View>
       <View style={styles.bottom}>
+        <Text> Android</Text>
         <Button
           title="TAKE A SNAPSHOT"
           success

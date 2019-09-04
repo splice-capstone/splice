@@ -1,3 +1,4 @@
+require('./pollyfill.js');
 import React, { useState, useEffect } from 'react';
 import { StyleProvider } from 'native-base';
 import { StateProvider, initialState, reducer, useStateValue } from './state';
