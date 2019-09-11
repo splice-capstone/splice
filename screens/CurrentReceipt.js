@@ -1,5 +1,3 @@
-/* eslint-disable quotes */
-/* eslint-disable complexity */
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, FlatList, ScrollView, Alert } from 'react-native';
 import { useStateValue } from '../state';
@@ -21,13 +19,9 @@ import db, {
 export default function CurrentReceipt(props) {
   const [{ currentUser }, dispatch] = useStateValue();
   const [comments, setComments] = useState('');
-  const [userSubtotal, setSubtotal] = useState(0);
-  const [userTax, setTax] = useState(0);
-  const [userTip, setTip] = useState(0);
-  const [userTotal, setTotal] = useState(0);
   const [receiptItems, setItems] = useState([]);
   const [loadingState, setLoadingState] = useState(true);
-  const [myPrices, setMyPrices] = useState({});
+
   const receiptId = props.navigation.getParam(
     'receiptId',
     '1Y8k9OAQhJAlctRTAjYW'
@@ -39,7 +33,6 @@ export default function CurrentReceipt(props) {
       idField: 'id',
     }
   );
-
   let [userValues, userLoading, userError] = useCollectionData(
     db
       .collection('receipts')
@@ -84,7 +77,6 @@ export default function CurrentReceipt(props) {
     const tax = Number(
       Math.floor((subtotal / receiptValue.total) * receiptValue.tax)
     );
-
     const checkoutData = {
       subtotal,
       tax,
@@ -99,7 +91,7 @@ export default function CurrentReceipt(props) {
   const handleComplete = () => {
     //mark host as paid for their items - save total in database
     handleCheckout();
-    //alert //disbable button //update status in firestore
+    //alert //disable button //update status in firestore
     closeReceipt(receiptId);
     Alert.alert('Receipt closed!');
   };
@@ -137,18 +129,9 @@ export default function CurrentReceipt(props) {
     if (newComments) {
       setComments(newComments);
     }
-    if (userValues && receiptValue && userValues[0].id) {
-      //recalculate my user subtotals based on sum of my items map
-
-      //calculate user tax based on user subtotal/overall total * overall tax
-      setTax(((userSubtotal / receiptValue.total) * receiptValue.tax) / 100);
-      //calculate user tip based on user subtotal/overall total * overall tip
-      setTip(((userSubtotal / receiptValue.total) * receiptValue.tip) / 100);
-      //calculate user total based on user subtotal + user tax + user tip
-      setTotal(userSubtotal + userTax + userTip);
-    }
     return () => unsub();
   }, [receiptId]);
+
   return (
     <Container>
       {(receiptError || userError) && (

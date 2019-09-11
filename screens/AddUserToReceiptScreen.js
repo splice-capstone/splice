@@ -13,6 +13,7 @@ import {
   getMyFriends,
 } from '../src/tools/firebase';
 import db from '../src/tools/firebase';
+import Constants from 'expo-constants';
 import { useStateValue } from '../state';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import {
@@ -42,8 +43,8 @@ export default function AddUserToReceiptScreen(props) {
 
   const receipt = props.navigation.getParam('receipt');
 
-  //push notification stuff
-  const MESSAGE_ENPOINT = 'http://a242df62.ngrok.io/message';
+  //push notifications
+  const MESSAGE_ENPOINT = `${Constants.manifest.extra.ngrok}/message`;
 
   const sendMessage = async (messageText, pushToken) => {
     await fetch(MESSAGE_ENPOINT, {
@@ -59,7 +60,6 @@ export default function AddUserToReceiptScreen(props) {
     });
   };
   //call sendMessage when a user is added to a receipt
-  //end push notification stuff
 
   const [userValues, userLoading, userError] = useCollectionData(
     db
@@ -106,6 +106,7 @@ export default function AddUserToReceiptScreen(props) {
     let user = {
       email: search,
       name: search.replace(/@[^@]+$/, ''),
+      //default the photo url
       photoUrl:
         'https://i.pinimg.com/originals/17/63/f6/1763f6db9854dc06fdb7b65efb858cec.jpg',
     };
@@ -118,7 +119,7 @@ export default function AddUserToReceiptScreen(props) {
     //stop displaying user options
     setUserOptions([]);
 
-    //get expo token for sending message
+    //get expo token for sending push notifications
     const token = await addUserToReceipt(receipt, user.email);
 
     if (token) {
@@ -245,17 +246,6 @@ export default function AddUserToReceiptScreen(props) {
 }
 
 const styles = StyleSheet.create({
-  info: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-  },
-  receiptInfo: {
-    fontSize: 25,
-    fontWeight: 'bold',
-    justifyContent: 'center',
-    paddingTop: 2,
-    color: 'black',
-  },
   costText: {
     fontSize: 15,
     color: 'white',

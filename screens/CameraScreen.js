@@ -1,4 +1,3 @@
-/* eslint-disable complexity */
 import React from 'react';
 import {
   StyleSheet,
@@ -310,7 +309,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
   },
-
   row: {
     flexDirection: 'row',
   },

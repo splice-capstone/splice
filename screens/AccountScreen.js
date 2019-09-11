@@ -75,10 +75,4 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     marginTop: 3,
   },
-  loginContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 200,
-    marginBottom: 20,
-  },
 });
