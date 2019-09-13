@@ -5,7 +5,7 @@ import getTheme from './native-base-theme/components';
 import commonColor from './native-base-theme/variables/commonColor';
 import Main from './Main';
 
-export default function Root() {
+export default function App() {
   return (
     <StateProvider initialState={initialState} reducer={reducer}>
       <StyleProvider style={getTheme(commonColor)}>

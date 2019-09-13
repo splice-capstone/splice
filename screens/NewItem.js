@@ -11,7 +11,6 @@ import {
   Item,
   Input,
 } from 'native-base';
-// import { useStateValue, StateContext } from '../state';
 import ItemCard from './ItemCard';
 import { editReceipt } from '../src/tools/firebase';
 

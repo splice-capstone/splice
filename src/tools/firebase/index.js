@@ -216,9 +216,6 @@ export async function getMyReceipts(email) {
           };
         });
 
-        // const receiptData = receipt_users.data();
-        //create object for user details you want accessible on my receipt
-
         //get receipt doc
         let receiptDetails = await receipt.get();
 

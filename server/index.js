@@ -13,10 +13,8 @@ const saveToken = token => {
 
 const handlePushTokens = (message, pushToken) => {
   let notifications = [];
-  // for (let pushToken of savedPushTokens) {
   if (!Expo.isExpoPushToken(pushToken)) {
     console.error(`Push token ${pushToken} is not a valid Expo push token`);
-    // continue;
   }
   notifications.push({
     to: pushToken,
@@ -28,7 +26,7 @@ const handlePushTokens = (message, pushToken) => {
       _displayInForeground: true,
     },
   });
-  // }
+
   let chunks = expo.chunkPushNotifications(notifications);
   (async () => {
     for (let chunk of chunks) {
