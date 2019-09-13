@@ -1,4 +1,5 @@
 require('./pollyfill.js');
+import 'babel-polyfill';
 import React, { useState, useEffect } from 'react';
 import { StyleProvider } from 'native-base';
 import { StateProvider, initialState, reducer, useStateValue } from './state';

@@ -1,15 +1,24 @@
-var _ = require('lodash');
+const _ = require('lodash');
 
 const parseReceipt = async (response, currentUser) => {
+  const itemPayees = {
+    [currentUser['email']]: {
+      email: currentUser['email'],
+      isPayee: false,
+      photo: currentUser.photoUrl,
+    },
+  };
+
   try {
     //send user feedback on if items were not detected
     let comments = {};
-
     let date = response.date.data;
+
     if (!date) {
       date = new Date();
       comments['date'] = 'No date detected - defaulted to today';
     }
+
     let restaurant = response.merchantName.data;
     if (!restaurant) {
       restaurant = '';
@@ -18,8 +27,8 @@ const parseReceipt = async (response, currentUser) => {
     }
 
     //set host as one of the payees
-    let payees = {};
-    payees[currentUser.email] = true;
+    let payee = {};
+    payee[currentUser.email] = false;
 
     //get base receipt level structure
     const receipt = {
@@ -28,8 +37,9 @@ const parseReceipt = async (response, currentUser) => {
       subtotal: 0,
       tax: Math.ceil(response.taxAmount.data * 100),
       total: Math.ceil(response.totalAmount.data * 100),
+      tip: 0,
       owner: currentUser.email,
-      payees,
+      payees: payee,
       open: true,
     };
 
@@ -53,6 +63,7 @@ const parseReceipt = async (response, currentUser) => {
         !text.toLowerCase().includes('tax') &&
         !text.toLowerCase().includes('tip') &&
         !text.toLowerCase().includes('total') &&
+        !text.toLowerCase().includes('balance') &&
         text &&
         data
       ) {
@@ -70,10 +81,12 @@ const parseReceipt = async (response, currentUser) => {
           duplicateTextCheck.push(response.amounts[i].text);
 
           //add keys needed for receipt_items document in database
+
           receiptItems.push({
             amount: Math.ceil(data * 100),
             name: text,
-            payees,
+            payees: itemPayees,
+            costPerUser: Math.ceil(data * 100),
           });
 
           //increment the sum for the check at the end
@@ -92,7 +105,8 @@ const parseReceipt = async (response, currentUser) => {
       receiptItems.push({
         amount: receipt.subtotal - sum,
         name: 'Misc item',
-        payees,
+        payees: itemPayees,
+        costPerUser: receipt.subtotal - sum,
       });
       comments['misc'] =
         'Items did not add up to subtotal so misc item was added';
@@ -101,25 +115,22 @@ const parseReceipt = async (response, currentUser) => {
       receipt.tax = receipt.total - receipt.subtotal;
       comments['tax'] = 'Auto calculated tax';
     }
+    //testing output
+    console.log('receipt', receipt);
+    console.log('receiptItems', receiptItems);
+    console.log('comments', comments);
 
-    //now you have all the info to create receipt, receipt_items, and receipt_user in the database
-    // try {
-    //   const receiptId = await createReceipt(receipt, receiptItems, currentUser);
-    //   return receiptId;
-    // } catch (err) {
-    //   console.log('hit an error while creating receipt');
-    //   return err;
-    // }
-  } catch (err) {
+    return { receipt, receiptItems, comments };
+  } catch (error) {
     console.log('hit an error while parsing receipt');
-    console.error(err);
-    return err;
+    console.error(error);
+    return { error };
   }
 };
 
-const testReceipt = () => {
+module.exports.testReceipt = () => {
   const fs = require('fs');
-  const fileRead = fs.readFileSync(__dirname + `/recp3.json`);
+  const fileRead = fs.readFileSync(__dirname + `/recp4.json`);
   const rawReceipt = JSON.parse(fileRead);
   parseReceipt(rawReceipt, {
     email: 'amandamarienelson2@gmail.com',
@@ -128,5 +139,3 @@ const testReceipt = () => {
       'https://lh3.googleusercontent.com/a-/AAuE7mDzK9pomGGFxLRgyCqf_jCXF4jhsNkQWre9W_pU8A',
   });
 };
-
-testReceipt();

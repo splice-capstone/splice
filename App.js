@@ -40,6 +40,8 @@ import { YellowBox } from 'react-native';
 import { Notifications } from 'expo';
 import { registerForPushNotificationsAsync } from './src/utils/pushNotification';
 import db from './src/tools/firebase';
+import 'core-js/es6/symbol';
+import 'core-js/fn/symbol/iterator';
 
 export default function App(props) {
   console.disableYellowBox = true;

@@ -1,5 +1,3 @@
-/* eslint-disable max-statements */
-/* eslint-disable complexity */
 import axios from 'axios';
 import Constants from 'expo-constants';
 import _ from 'lodash';
